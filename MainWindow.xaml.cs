@@ -22,6 +22,8 @@ namespace ModbusSynchFormTest
     /// </summary>
     public partial class MainWindow : Window
     {
+        MasterSyncStruct masterSyncStruct;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,7 +31,7 @@ namespace ModbusSynchFormTest
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            MasterSyncStruct masterSyncStruct = new MasterSyncStruct();
+            masterSyncStruct = new MasterSyncStruct();
             masterSyncStruct.Open();
         }
 
@@ -40,6 +42,41 @@ namespace ModbusSynchFormTest
             Thread thread = new Thread(slaveSyncSruct.Open);
             thread.Start();
             
+        }
+
+        //отправка данных по Master
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox.Text!=""&& textBox1.Text!="")
+            {
+                ushort address = (ushort)Convert.ToInt16(textBox.Text);
+                
+                ushort value = (ushort)Convert.ToInt16(textBox1.Text);
+                
+                masterSyncStruct.send_single_message(value, address);
+            }
+            
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox2.Text!="")
+            {
+                string[] words = textBox2.Text.Split(new char[] {' '});
+
+                ushort[] data = new ushort[words.Length];
+                for (int i=0;i<words.Length;i++)
+                {
+                    if (words[i]!="")
+                    {
+                        data[i] = (ushort)Convert.ToInt16(words[i]);
+                    }
+                    
+                }
+                
+                masterSyncStruct.send_multi_message(data);
+            }
+           
         }
     }
 }
