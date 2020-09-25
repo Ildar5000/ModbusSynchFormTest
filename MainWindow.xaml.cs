@@ -1,7 +1,9 @@
 ﻿using ModbusSyncStructLIb;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -101,6 +103,25 @@ namespace ModbusSynchFormTest
             for(int i= 0;i<data.Length; i++)
             {
                 Console.WriteLine(data[i]);
+            }
+        }
+
+        private void button6_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox5.Text!="")
+            {
+                MetaClassForStructandtherdata metaClassFor = new MetaClassForStructandtherdata(textBox5.Text);
+
+                // создаем объект BinaryFormatter
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                var stream = new MemoryStream();
+
+                formatter.Serialize(stream, metaClassFor);
+
+                masterSyncStruct.send_multi_message(stream);
+
+                Console.WriteLine(stream);
             }
         }
     }

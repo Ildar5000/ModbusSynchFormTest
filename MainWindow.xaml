@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="509" Width="800">
+        Title="MainWindow" Height="651.5" Width="810.5">
     <Grid>
         <GroupBox x:Name="groupBox1" Header="Одиночное" HorizontalAlignment="Left" Height="154" Margin="20,79,0,0" VerticalAlignment="Top" Width="384">
             <Grid>
@@ -28,9 +28,9 @@
         </Button>
         <Button x:Name="button1" Content="Slave" HorizontalAlignment="Left" Margin="422,33,0,0" VerticalAlignment="Top" Width="168" Height="74" Click="button1_Click"/>
         <Button x:Name="button2" Content="Отправить одиночный сигнал по Master" HorizontalAlignment="Left" Margin="33,154,0,0" VerticalAlignment="Top" Width="318" Height="59" Click="button2_Click"/>
-        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="223" Margin="20,245,0,0" VerticalAlignment="Top" Width="384">
+        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="139" Margin="20,245,0,0" VerticalAlignment="Top" Width="384">
             <Grid>
-                <Button x:Name="button3" Content="Отправить несколько сигналов по Master" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="318" Height="62" Click="button3_Click"/>
+                <Button x:Name="button3" Content="Отправить несколько сигналов по Master" HorizontalAlignment="Left" Margin="0,52,0,0" VerticalAlignment="Top" Width="318" Height="62" Click="button3_Click"/>
                 <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="147"/>
                 <RadioButton x:Name="radioButton_us" Content="Ushort" HorizontalAlignment="Left" Margin="199,12,0,0" VerticalAlignment="Top"/>
                 <RadioButton x:Name="radioButton_str" Content="String" HorizontalAlignment="Left" Margin="199,32,0,0" VerticalAlignment="Top"/>
@@ -43,5 +43,11 @@
         <Label x:Name="label2" Content="Столбы" HorizontalAlignment="Left" Margin="419,150,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label3" Content="Строки" HorizontalAlignment="Left" Margin="422,184,0,0" VerticalAlignment="Top"/>
         <Button x:Name="button5" Content="Чтение" HorizontalAlignment="Left" Margin="220,33,0,0" VerticalAlignment="Top" Width="80" Height="41" Click="button5_Click"/>
+        <GroupBox x:Name="groupBox3" Header="С метоклассом" HorizontalAlignment="Left" Height="155" Margin="20,389,0,0" VerticalAlignment="Top" Width="384">
+            <Grid>
+                <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+                <Button x:Name="button6" Content="Отправить строку" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="124" Height="23" Click="button6_Click"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
