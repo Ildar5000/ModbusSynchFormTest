@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="509" Width="800">
     <Grid>
         <GroupBox x:Name="groupBox1" Header="Одиночное" HorizontalAlignment="Left" Height="154" Margin="20,79,0,0" VerticalAlignment="Top" Width="384">
             <Grid>
@@ -15,7 +15,7 @@
                 <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="136,26,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="groupBox" Header="Slave" HorizontalAlignment="Left" Height="399" Margin="409,10,0,0" VerticalAlignment="Top" Width="383"/>
+        <GroupBox x:Name="groupBox" Header="Slave" HorizontalAlignment="Left" Height="126" Margin="409,10,0,0" VerticalAlignment="Top" Width="383"/>
         <Button x:Name="button" Content="Master" HorizontalAlignment="Left" Margin="22,19,0,0" VerticalAlignment="Top" Width="156" RenderTransformOrigin="0.5,0.5" Height="56" Click="button_Click">
             <Button.RenderTransform>
                 <TransformGroup>
@@ -27,12 +27,21 @@
             </Button.RenderTransform>
         </Button>
         <Button x:Name="button1" Content="Slave" HorizontalAlignment="Left" Margin="422,33,0,0" VerticalAlignment="Top" Width="168" Height="74" Click="button1_Click"/>
-        <Button x:Name="button2" Content="Отправить одиночный сигнал по Master" HorizontalAlignment="Left" Margin="27,167,0,0" VerticalAlignment="Top" Width="318" Height="59" Click="button2_Click"/>
-        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="164" Margin="20,245,0,0" VerticalAlignment="Top" Width="384">
+        <Button x:Name="button2" Content="Отправить одиночный сигнал по Master" HorizontalAlignment="Left" Margin="33,154,0,0" VerticalAlignment="Top" Width="318" Height="59" Click="button2_Click"/>
+        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="223" Margin="20,245,0,0" VerticalAlignment="Top" Width="384">
             <Grid>
-                <Button x:Name="button3" Content="Отправить несколько сигналов по Master" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Width="318" Height="62" Click="button3_Click"/>
-                <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="10,29,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="352"/>
+                <Button x:Name="button3" Content="Отправить несколько сигналов по Master" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="318" Height="62" Click="button3_Click"/>
+                <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="147"/>
+                <RadioButton x:Name="radioButton_us" Content="Ushort" HorizontalAlignment="Left" Margin="199,12,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="radioButton_str" Content="String" HorizontalAlignment="Left" Margin="199,32,0,0" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="223" Margin="422,245,0,0" VerticalAlignment="Top" Width="360"/>
+        <Button x:Name="button4" Content="Создать" HorizontalAlignment="Left" Margin="666,183,0,0" VerticalAlignment="Top" Width="116" Height="50" Click="button4_Click"/>
+        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="489,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="textBox4" HorizontalAlignment="Left" Height="23" Margin="489,188,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label2" Content="Столбы" HorizontalAlignment="Left" Margin="419,150,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label3" Content="Строки" HorizontalAlignment="Left" Margin="422,184,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button5" Content="Чтение" HorizontalAlignment="Left" Margin="220,33,0,0" VerticalAlignment="Top" Width="80" Height="41" Click="button5_Click"/>
     </Grid>
 </Window>

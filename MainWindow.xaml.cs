@@ -62,21 +62,46 @@ namespace ModbusSynchFormTest
         {
             if (textBox2.Text!="")
             {
-                string[] words = textBox2.Text.Split(new char[] {' '});
-
-                ushort[] data = new ushort[words.Length];
-                for (int i=0;i<words.Length;i++)
+                if (radioButton_us.IsChecked==true)
                 {
-                    if (words[i]!="")
+                    string[] words = textBox2.Text.Split(new char[] { ' ' });
+
+                    ushort[] data = new ushort[words.Length];
+                    for (int i = 0; i < words.Length; i++)
                     {
-                        data[i] = (ushort)Convert.ToInt16(words[i]);
+                        if (words[i] != "")
+                        {
+                            data[i] = (ushort)Convert.ToInt16(words[i]);
+                        }
+
                     }
-                    
+
+                    masterSyncStruct.send_multi_message(data);
                 }
-                
-                masterSyncStruct.send_multi_message(data);
+
+                if (radioButton_str.IsChecked == true)
+                {
+                    ushort[] bytes = textBox2.Text.Select(c => (ushort)c).ToArray();
+                    masterSyncStruct.send_multi_message(bytes);
+                }
+
             }
            
+        }
+        //создание датагрида
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            ushort []data=masterSyncStruct.readHolding();
+
+            for(int i= 0;i<data.Length; i++)
+            {
+                Console.WriteLine(data[i]);
+            }
         }
     }
 }
