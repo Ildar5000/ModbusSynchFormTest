@@ -124,5 +124,12 @@ namespace ModbusSynchFormTest
                 Console.WriteLine(stream);
             }
         }
+
+        private void button7_Click(object sender, RoutedEventArgs e)
+        {
+            ushort status= masterSyncStruct.SendRequestforStatusSlave();
+
+            Console.WriteLine(status);
+        }
     }
 }
