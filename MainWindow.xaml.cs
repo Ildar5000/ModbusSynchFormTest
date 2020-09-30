@@ -33,8 +33,9 @@ namespace ModbusSynchFormTest
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            masterSyncStruct = new MasterSyncStruct();
-            masterSyncStruct.Open();
+            masterSyncStruct = new MasterSyncStruct(textBox6.Text);
+            Thread thread = new Thread(masterSyncStruct.Open);
+            thread.Start();
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
