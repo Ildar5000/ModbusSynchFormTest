@@ -51,6 +51,7 @@
             <Grid>
                 <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="button6" Content="Отправить строку" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="124" Height="23" Click="button6_Click"/>
+                <Button x:Name="button8" Content="Отправить структуру" HorizontalAlignment="Left" Margin="135,55,0,0" VerticalAlignment="Top" Width="124" Height="33" Click="button8_Click"/>
             </Grid>
         </GroupBox>
         <Button x:Name="button7" Content="Статус" HorizontalAlignment="Left" Margin="274,21,0,0" VerticalAlignment="Top" Width="120" Height="41" Click="button7_Click" Grid.RowSpan="2"/>

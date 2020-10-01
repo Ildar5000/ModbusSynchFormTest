@@ -102,6 +102,14 @@
       <Project>{519C448F-EB2F-46F5-9C30-8F2F1CAD80CF}</Project>
       <Name>ModbusSyncStructLIb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ModbusSyncStruct\ModbusSyncStruct.csproj">
+      <Project>{0849AECA-E6A7-4213-A4E8-2A8E149C1868}</Project>
+      <Name>ModbusSyncStruct</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StructAllforTest\StructAllforTest.csproj">
+      <Project>{16ccdd08-7631-4316-bb22-901c8dbd53a3}</Project>
+      <Name>StructAllforTest</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

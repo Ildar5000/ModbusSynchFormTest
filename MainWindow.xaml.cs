@@ -1,4 +1,5 @@
 ﻿using ModbusSyncStructLIb;
+using StructAllforTest;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,7 +112,13 @@ namespace ModbusSynchFormTest
         {
             if (textBox5.Text!="")
             {
-                MetaClassForStructandtherdata metaClassFor = new MetaClassForStructandtherdata(textBox5.Text);
+                TestSendStruct testSend;
+                testSend.name = textBox5.Text;
+                testSend.fre = textBox5.Text;
+                testSend.ab = textBox5.Text;
+                testSend.cd = textBox5.Text;
+
+                MetaClassForStructandtherdata metaClassFor = new MetaClassForStructandtherdata(testSend);
 
                 // создаем объект BinaryFormatter
                 BinaryFormatter formatter = new BinaryFormatter();
@@ -128,9 +135,22 @@ namespace ModbusSynchFormTest
 
         private void button7_Click(object sender, RoutedEventArgs e)
         {
-            ushort status= masterSyncStruct.SendRequestforStatusSlave();
+            try
+            {
+                ushort status = masterSyncStruct.SendRequestforStatusSlave();
 
-            Console.WriteLine(status);
+                Console.WriteLine(status);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
+        }
+
+        private void button8_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
