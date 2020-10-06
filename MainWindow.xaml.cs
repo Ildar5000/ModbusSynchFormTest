@@ -1,4 +1,6 @@
 ﻿using ModbusSyncStructLIb;
+using NLog;
+using NLog.Config;
 using StructAllforTest;
 using System;
 using System.Collections.Generic;
@@ -26,26 +28,83 @@ namespace ModbusSynchFormTest
     public partial class MainWindow : Window
     {
         MasterSyncStruct masterSyncStruct;
+        MetaClassForStructandtherdata metaClassFor;
+        SlaveSyncSruct slaveSyncSruct;
+        MMS ms;
+        private static Logger logger;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            var loggerconf = new XmlLoggingConfiguration("NLog.config");
+            logger = LogManager.GetCurrentClassLogger();
+
+
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            masterSyncStruct = new MasterSyncStruct(textBox6.Text);
-            Thread thread = new Thread(masterSyncStruct.Open);
-            thread.Start();
+            try
+            {
+                logger.Info("Создание мастера");
+                masterSyncStruct = new MasterSyncStruct(textBox6.Text);
+                Thread thread = new Thread(masterSyncStruct.Open);
+                thread.Start();
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+            }
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            SlaveSyncSruct slaveSyncSruct = new SlaveSyncSruct();
+            try
+            {
+                slaveSyncSruct = new SlaveSyncSruct();
+                slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
 
-            Thread thread = new Thread(slaveSyncSruct.Open);
-            thread.Start();
+                //Ловим при обработке (произвольная структура)
+                ms = new MMS();
+               
+                slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
+
+                Thread thread = new Thread(slaveSyncSruct.Open);
+                thread.Start();
+
+                //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             
+            
+        }
+
+        private void DisplayStruct(object meta)
+        {
+            try
+            {
+                metaClassFor = slaveSyncSruct.metaClass;
+                var strucDeserization = metaClassFor.struct_which_need_transfer;
+                Type type = strucDeserization.GetType();
+
+
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
+        }
+        
+        public void defenitionType(Type type)
+        {
+
         }
 
         //отправка данных по Master
@@ -112,24 +171,36 @@ namespace ModbusSynchFormTest
         {
             if (textBox5.Text!="")
             {
-                TestSendStruct testSend;
-                testSend.name = textBox5.Text;
-                testSend.fre = textBox5.Text;
-                testSend.ab = textBox5.Text;
-                testSend.cd = textBox5.Text;
+                try
+                {
+                    //Console.WriteLine("Запуск");
+                    logger.Trace("Запуск");
 
-                MetaClassForStructandtherdata metaClassFor = new MetaClassForStructandtherdata(testSend);
+                    TestSendStruct testSend;
+                    testSend.name = textBox5.Text;
+                    testSend.fre = textBox5.Text;
+                    testSend.ab = textBox5.Text;
+                    testSend.cd = textBox5.Text;
 
-                // создаем объект BinaryFormatter
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                var stream = new MemoryStream();
+                    metaClassFor = new MetaClassForStructandtherdata(testSend);
+                    // создаем объект BinaryFormatter
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    var stream = new MemoryStream();
 
-                formatter.Serialize(stream, metaClassFor);
+                    formatter.Serialize(stream, metaClassFor);
 
-                masterSyncStruct.send_multi_message(stream);
+                    //Console.WriteLine("Отправка данных");
+                    logger.Trace("Отправка данных");
 
-                Console.WriteLine(stream);
+                    masterSyncStruct.send_multi_message(stream);
+
+                    Console.WriteLine(stream);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
 
@@ -150,7 +221,40 @@ namespace ModbusSynchFormTest
 
         private void button8_Click(object sender, RoutedEventArgs e)
         {
+            if (textBox5.Text != "")
+            {
+                Test2SendStruct test2SendStruct;
+                test2SendStruct.name = textBox5.Text;
+                test2SendStruct.fre = textBox5.Text;
+                test2SendStruct.ab = textBox5.Text;
+                test2SendStruct.cd = textBox5.Text;
+                test2SendStruct.count = 1;
+                test2SendStruct.count2 = 2;
 
+                ms = new MMS(test2SendStruct);
+
+
+                try
+                {
+                    metaClassFor = new MetaClassForStructandtherdata(ms);
+
+                    // создаем объект BinaryFormatter
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    var stream = new MemoryStream();
+
+                    formatter.Serialize(stream, metaClassFor);
+
+                    masterSyncStruct.send_multi_message(stream);
+
+                    Console.WriteLine(stream);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+            }
         }
     }
 }
