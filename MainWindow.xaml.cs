@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ModbusSynchFormTest
 {
@@ -32,7 +33,9 @@ namespace ModbusSynchFormTest
         SlaveSyncSruct slaveSyncSruct;
         MMS ms;
         private static Logger logger;
-
+        
+        delegate void Message();
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -63,13 +66,13 @@ namespace ModbusSynchFormTest
             try
             {
                 slaveSyncSruct = new SlaveSyncSruct();
-                slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
+                
 
                 //Ловим при обработке (произвольная структура)
                 ms = new MMS();
                
                 slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
-
+                slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
                 Thread thread = new Thread(slaveSyncSruct.Open);
                 thread.Start();
 
@@ -88,12 +91,35 @@ namespace ModbusSynchFormTest
         {
             try
             {
+                Thread.Sleep(1000);
                 metaClassFor = slaveSyncSruct.metaClass;
                 var strucDeserization = metaClassFor.struct_which_need_transfer;
                 Type type = strucDeserization.GetType();
 
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (ThreadStart)delegate ()
+                        {
+                            if (ms.testSendStruct.ab != null)
+                            {
+                                richTextBox.AppendText("testSendStruct \r\n");
+                                richTextBox.AppendText(ms.testSendStruct.ab+ "\r\n");
+                                richTextBox.AppendText(ms.testSendStruct.cd + "\r\n");
+                                richTextBox.AppendText(ms.testSendStruct.fre + "\r\n");
+                                richTextBox.AppendText(ms.testSendStruct.name + "\r\n");
+                            }
+                            if (ms.test2SendStruct.ab != null)
+                            {
+                                richTextBox.AppendText("test2SendStruct \r\n");
+                                richTextBox.AppendText(ms.test2SendStruct.ab + "\r\n");
+                                richTextBox.AppendText(ms.test2SendStruct.cd + "\r\n");
+                                richTextBox.AppendText(ms.test2SendStruct.fre + "\r\n");
+                                richTextBox.AppendText(ms.test2SendStruct.name + "\r\n");
+                                richTextBox.AppendText(Convert.ToString(ms.test2SendStruct.count + "\r\n"));
+                                richTextBox.AppendText(Convert.ToString(ms.test2SendStruct.count2 + "\r\n"));
+                            }
 
-
+                        }
+                    );
             }
             catch(Exception ex)
             {
@@ -182,7 +208,9 @@ namespace ModbusSynchFormTest
                     testSend.ab = textBox5.Text;
                     testSend.cd = textBox5.Text;
 
-                    metaClassFor = new MetaClassForStructandtherdata(testSend);
+                    MMS ms1 = new MMS(testSend);
+
+                    metaClassFor = new MetaClassForStructandtherdata(ms1);
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -252,6 +280,7 @@ namespace ModbusSynchFormTest
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
+                    logger.Error(ex);
                 }
 
             }
