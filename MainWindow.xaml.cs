@@ -43,7 +43,6 @@ namespace ModbusSynchFormTest
             var loggerconf = new XmlLoggingConfiguration("NLog.config");
             logger = LogManager.GetCurrentClassLogger();
 
-
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -67,7 +66,6 @@ namespace ModbusSynchFormTest
             {
                 slaveSyncSruct = new SlaveSyncSruct();
                 
-
                 //Ловим при обработке (произвольная структура)
                 ms = new MMS();
                
@@ -81,7 +79,8 @@ namespace ModbusSynchFormTest
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.Error(ex);
+                //Console.WriteLine(ex);
             }
             
             
@@ -117,13 +116,13 @@ namespace ModbusSynchFormTest
                                 richTextBox.AppendText(Convert.ToString(ms.test2SendStruct.count + "\r\n"));
                                 richTextBox.AppendText(Convert.ToString(ms.test2SendStruct.count2 + "\r\n"));
                             }
-
                         }
                     );
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.Error(ex);
+                //Console.WriteLine(ex);
             }
             
         }
@@ -162,16 +161,15 @@ namespace ModbusSynchFormTest
                         {
                             data[i] = (ushort)Convert.ToInt16(words[i]);
                         }
-
                     }
 
-                    masterSyncStruct.send_multi_message(data);
+                    //masterSyncStruct.send_multi_message(data);
                 }
 
                 if (radioButton_str.IsChecked == true)
                 {
                     ushort[] bytes = textBox2.Text.Select(c => (ushort)c).ToArray();
-                    masterSyncStruct.send_multi_message(bytes);
+                    //masterSyncStruct.send_multi_message(bytes);
                 }
 
             }
@@ -228,6 +226,7 @@ namespace ModbusSynchFormTest
                 catch(Exception ex)
                 {
                     Console.WriteLine(ex);
+                    logger.Error(ex);
                 }
             }
         }
@@ -242,7 +241,8 @@ namespace ModbusSynchFormTest
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
+                logger.Error(ex);
             }
             
         }
@@ -261,7 +261,6 @@ namespace ModbusSynchFormTest
 
                 ms = new MMS(test2SendStruct);
 
-
                 try
                 {
                     metaClassFor = new MetaClassForStructandtherdata(ms);
@@ -279,11 +278,18 @@ namespace ModbusSynchFormTest
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    //Console.WriteLine(ex);
                     logger.Error(ex);
                 }
 
             }
+        }
+
+
+        //3 структура
+        private void button9_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

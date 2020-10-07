@@ -8,10 +8,9 @@
         Title="MainWindow" Height="651.5" Width="810.5">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32*"/>
-            <RowDefinition Height="589*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <GroupBox x:Name="groupBox1" Header="Одиночное" HorizontalAlignment="Left" Height="154" Margin="18,116.667,0,0" VerticalAlignment="Top" Width="384" Grid.Row="1">
+        <GroupBox x:Name="groupBox1" Header="Одиночное" HorizontalAlignment="Left" Height="154" Margin="18,149,0,0" VerticalAlignment="Top" Width="384">
             <Grid Margin="0,0,-2,-78">
                 <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,24,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
                 <Label x:Name="label" Content="Адрес" HorizontalAlignment="Left" Margin="16,0,0,0" VerticalAlignment="Top"/>
@@ -19,8 +18,8 @@
                 <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="136,26,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="groupBox" Header="Slave" HorizontalAlignment="Left" Height="126" Margin="409,10,0,0" VerticalAlignment="Top" Width="383" Grid.RowSpan="2"/>
-        <Button x:Name="button" Content="Master" HorizontalAlignment="Left" Margin="20,23,0,0" VerticalAlignment="Top" Width="156" RenderTransformOrigin="0.5,0.5" Height="56" Click="button_Click" Grid.Row="1">
+        <GroupBox x:Name="groupBox" Header="Slave" HorizontalAlignment="Left" Height="126" Margin="409,10,0,0" VerticalAlignment="Top" Width="383"/>
+        <Button x:Name="button" Content="Master" HorizontalAlignment="Left" Margin="20,55,0,0" VerticalAlignment="Top" Width="156" RenderTransformOrigin="0.5,0.5" Height="56" Click="button_Click">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -30,9 +29,9 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="button1" Content="Slave" HorizontalAlignment="Left" Margin="422,0.667,0,0" VerticalAlignment="Top" Width="168" Height="74" Click="button1_Click" Grid.Row="1"/>
-        <Button x:Name="button2" Content="Отправить одиночный сигнал по Master" HorizontalAlignment="Left" Margin="31,191.667,0,0" VerticalAlignment="Top" Width="318" Height="59" Click="button2_Click" Grid.Row="1"/>
-        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="139" Margin="20,277.667,0,0" VerticalAlignment="Top" Width="384" Grid.Row="1">
+        <Button x:Name="button1" Content="Slave" HorizontalAlignment="Left" Margin="422,33,0,0" VerticalAlignment="Top" Width="168" Height="74" Click="button1_Click"/>
+        <Button x:Name="button2" Content="Отправить одиночный сигнал по Master" HorizontalAlignment="Left" Margin="31,224,0,0" VerticalAlignment="Top" Width="318" Height="59" Click="button2_Click"/>
+        <GroupBox x:Name="groupBox2" Header="GroupBox" HorizontalAlignment="Left" Height="139" Margin="20,310,0,0" VerticalAlignment="Top" Width="384">
             <Grid>
                 <Button x:Name="button3" Content="Отправить несколько сигналов по Master" HorizontalAlignment="Left" Margin="0,52,0,0" VerticalAlignment="Top" Width="318" Height="62" Click="button3_Click"/>
                 <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="147"/>
@@ -40,26 +39,32 @@
                 <RadioButton x:Name="radioButton_str" Content="String" HorizontalAlignment="Left" Margin="199,32,0,0" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="223" Margin="422,212.667,0,0" VerticalAlignment="Top" Width="360" Grid.Row="1"/>
-        <Button x:Name="button4" Content="Создать" HorizontalAlignment="Left" Margin="666,150.667,0,0" VerticalAlignment="Top" Width="116" Height="50" Click="button4_Click" Grid.Row="1"/>
-        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="489,121.667,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
-        <TextBox x:Name="textBox4" HorizontalAlignment="Left" Height="23" Margin="489,155.667,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
-        <Label x:Name="label2" Content="Столбы" HorizontalAlignment="Left" Margin="419,117.667,0,0" VerticalAlignment="Top" Grid.Row="1"/>
-        <Label x:Name="label3" Content="Строки" HorizontalAlignment="Left" Margin="422,151.667,0,0" VerticalAlignment="Top" Grid.Row="1"/>
-        <Button x:Name="button5" Content="Чтение" HorizontalAlignment="Left" Margin="185,21,0,0" VerticalAlignment="Top" Width="80" Height="41" Click="button5_Click" Grid.RowSpan="2"/>
-        <GroupBox x:Name="groupBox3" Header="С метоклассом" HorizontalAlignment="Left" Height="155" Margin="20,421.667,0,0" VerticalAlignment="Top" Width="384" Grid.Row="1">
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="204" Margin="422,245,0,0" VerticalAlignment="Top" Width="360"/>
+        <Button x:Name="button4" Content="Создать" HorizontalAlignment="Left" Margin="666,183,0,0" VerticalAlignment="Top" Width="116" Height="50" Click="button4_Click"/>
+        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="23" Margin="489,154,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="textBox4" HorizontalAlignment="Left" Height="23" Margin="489,188,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label2" Content="Столбы" HorizontalAlignment="Left" Margin="419,150,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label3" Content="Строки" HorizontalAlignment="Left" Margin="422,184,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button5" Content="Чтение" HorizontalAlignment="Left" Margin="185,21,0,0" VerticalAlignment="Top" Width="80" Height="41" Click="button5_Click"/>
+        <GroupBox x:Name="groupBox3" Header="С метоклассом" HorizontalAlignment="Left" Height="155" Margin="20,454,0,0" VerticalAlignment="Top" Width="384">
             <Grid Margin="0,0,-12,0">
                 <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                <Button x:Name="button6" Content="Отправить строку" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="124" Height="23" Click="button6_Click"/>
-                <Button x:Name="button8" Content="Отправить структуру" HorizontalAlignment="Left" Margin="135,38,0,0" VerticalAlignment="Top" Width="124" Height="34" Click="button8_Click"/>
+                <Button x:Name="button6" Content="Отправить структуру 1" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="135" Height="23" Click="button6_Click"/>
+                <Button x:Name="button8" Content="Отправить структуру 2" HorizontalAlignment="Left" Margin="135,38,0,0" VerticalAlignment="Top" Width="135" Height="26" Click="button8_Click"/>
+                <Button x:Name="button9" Content="Отправить структуру 3" HorizontalAlignment="Left" Margin="135,69,0,0" VerticalAlignment="Top" Width="135" Click="button9_Click" Height="25"/>
+                <Grid>
+                    <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="button10" Content="Отправить структуру 1" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="135" Height="23" Click="button6_Click"/>
+                    <Button x:Name="button11" Content="Отправить структуру 2" HorizontalAlignment="Left" Margin="135,38,0,0" VerticalAlignment="Top" Width="135" Height="26" Click="button8_Click"/>
+                </Grid>
             </Grid>
         </GroupBox>
-        <Button x:Name="button7" Content="Статус" HorizontalAlignment="Left" Margin="274,21,0,0" VerticalAlignment="Top" Width="120" Height="41" Click="button7_Click" Grid.RowSpan="2"/>
-        <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="20,18,0,0" Grid.RowSpan="2" TextWrapping="Wrap" Text="COM2" VerticalAlignment="Top" Width="160"/>
-        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="125" Margin="422,452,0,0" Grid.Row="1" VerticalAlignment="Top" Width="360">
+        <Button x:Name="button7" Content="Статус" HorizontalAlignment="Left" Margin="274,21,0,0" VerticalAlignment="Top" Width="120" Height="41" Click="button7_Click"/>
+        <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="20,18,0,0" TextWrapping="Wrap" Text="COM2" VerticalAlignment="Top" Width="160"/>
+        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="145" Margin="422,464,0,0" VerticalAlignment="Top" Width="360">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text="RichTextBox"/>
+                    <Run Text=""/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
