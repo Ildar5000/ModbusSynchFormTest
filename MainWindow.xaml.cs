@@ -193,7 +193,7 @@ namespace ModbusSynchFormTest
 
         private void button6_Click(object sender, RoutedEventArgs e)
         {
-            if (textBox5.Text!="")
+            if (textBox7.Text!="")
             {
                 try
                 {
@@ -201,10 +201,10 @@ namespace ModbusSynchFormTest
                     logger.Trace("Запуск");
 
                     TestSendStruct testSend;
-                    testSend.name = textBox5.Text;
-                    testSend.fre = textBox5.Text;
-                    testSend.ab = textBox5.Text;
-                    testSend.cd = textBox5.Text;
+                    testSend.name = textBox7.Text;
+                    testSend.fre = textBox7.Text;
+                    testSend.ab = textBox7.Text;
+                    testSend.cd = textBox7.Text;
 
                     MMS ms1 = new MMS(testSend);
 
@@ -249,13 +249,13 @@ namespace ModbusSynchFormTest
 
         private void button8_Click(object sender, RoutedEventArgs e)
         {
-            if (textBox5.Text != "")
+            if (textBox7.Text != "")
             {
                 Test2SendStruct test2SendStruct;
-                test2SendStruct.name = textBox5.Text;
-                test2SendStruct.fre = textBox5.Text;
-                test2SendStruct.ab = textBox5.Text;
-                test2SendStruct.cd = textBox5.Text;
+                test2SendStruct.name = textBox7.Text;
+                test2SendStruct.fre = textBox7.Text;
+                test2SendStruct.ab = textBox7.Text;
+                test2SendStruct.cd = textBox7.Text;
                 test2SendStruct.count = 1;
                 test2SendStruct.count2 = 2;
 
