@@ -32,6 +32,7 @@ namespace ModbusSynchFormTest
         MetaClassForStructandtherdata metaClassFor;
         SlaveSyncSruct slaveSyncSruct;
         MMS ms;
+        VMS vc;
         private static Logger logger;
         
         delegate void Message();
@@ -68,8 +69,11 @@ namespace ModbusSynchFormTest
                 
                 //Ловим при обработке (произвольная структура)
                 ms = new MMS();
-               
+                vc = new VMS();
+
                 slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
+                slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
+
                 slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
                 Thread thread = new Thread(slaveSyncSruct.Open);
                 thread.Start();
@@ -289,6 +293,47 @@ namespace ModbusSynchFormTest
         //3 структура
         private void button9_Click(object sender, RoutedEventArgs e)
         {
+            if (textBox7.Text != "")
+            {
+                Test4SendStruct test4SendStruct;
+                test4SendStruct.name = textBox7.Text;
+                test4SendStruct.fre = textBox7.Text;
+                test4SendStruct.ab = textBox7.Text;
+                test4SendStruct.cd = textBox7.Text;
+                test4SendStruct.count2 = new int[10000];
+
+                int[] ab = new int[10000];
+
+                for(int i=0; i<1000;i++)
+                {
+                    Random rand = new Random();
+                    ab[i] = rand.Next(0, 1000);
+                }
+
+                vc = new VMS(test4SendStruct);
+
+                try
+                {
+                    metaClassFor = new MetaClassForStructandtherdata(vc);
+
+                    // создаем объект BinaryFormatter
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    var stream = new MemoryStream();
+
+                    formatter.Serialize(stream, metaClassFor);
+
+                    masterSyncStruct.send_multi_message(stream);
+
+                    Console.WriteLine(stream);
+                }
+                catch (Exception ex)
+                {
+                    //Console.WriteLine(ex);
+                    logger.Error(ex);
+                }
+
+            }
 
         }
     }
