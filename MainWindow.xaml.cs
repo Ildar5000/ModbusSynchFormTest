@@ -20,6 +20,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using SevenZip.Compression.LZMA;
+using SevenZip;
 
 namespace ModbusSynchFormTest
 {
@@ -36,7 +38,41 @@ namespace ModbusSynchFormTest
         private static Logger logger;
         
         delegate void Message();
-        
+
+        private static Int32 dictionary = 1 << 21; //No dictionary
+        private static Int32 posStateBits = 2;
+        private static Int32 litContextBits = 3;   // for normal files  // UInt32 litContextBits = 0; // for 32-bit data                                             
+        private static Int32 litPosBits = 0;       // UInt32 litPosBits = 2; // for 32-bit data
+        private static Int32 algorithm = 2;
+        private static Int32 numFastBytes = 128;
+        private static bool eos = false;
+        private static string mf = "bt4";
+
+        private static CoderPropID[] propIDs =
+        {
+            CoderPropID.DictionarySize,
+            CoderPropID.PosStateBits,
+            CoderPropID.LitContextBits,
+            CoderPropID.LitPosBits,
+            CoderPropID.Algorithm,
+            CoderPropID.NumFastBytes,
+            CoderPropID.MatchFinder,
+            CoderPropID.EndMarker
+        };
+
+        private static object[] properties =
+        {
+            (Int32)(dictionary),
+            (Int32)(posStateBits),
+            (Int32)(litContextBits),
+            (Int32)(litPosBits),
+            (Int32)(algorithm),
+            (Int32)(numFastBytes),
+            mf,
+            eos
+        };
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -336,5 +372,130 @@ namespace ModbusSynchFormTest
             }
 
         }
+
+
+        private void button12_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox7.Text != "")
+            {
+                Test4SendStruct test4SendStruct;
+                test4SendStruct.name = textBox7.Text;
+                test4SendStruct.fre = textBox7.Text;
+                test4SendStruct.ab = textBox7.Text;
+                test4SendStruct.cd = textBox7.Text;
+                test4SendStruct.count2 = new int[10000];
+
+                int[] ab = new int[10000];
+                Random rand = new Random();
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    ab[i] = rand.Next(1, 1000);
+                }
+                test4SendStruct.count2 = ab;
+                vc = new VMS(test4SendStruct);
+
+                try
+                {
+                    metaClassFor = new MetaClassForStructandtherdata(vc);
+                    metaClassFor.type_archv = 1;
+
+                    // создаем объект BinaryFormatter
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    var stream = new MemoryStream();
+                    var outStream = new MemoryStream();
+                    formatter.Serialize(stream, metaClassFor);
+
+
+                    //архивируем
+                    outStream = compress(stream, false);
+
+                    var sss=decompress(outStream, false);
+
+                    /*
+                    byte[] date = stream.ToArray();
+                    
+                    byte[] date2 = outStream.ToArray();
+
+                    byte[] date1 = sss.ToArray();
+                    */
+
+                    masterSyncStruct.send_multi_message(outStream);
+
+                    Console.WriteLine(stream);
+                }
+                catch (Exception ex)
+                {
+                    //Console.WriteLine(ex);
+                    logger.Error(ex);
+                }
+
+            }
+
+        }
+
+        #region 7zip 
+        public MemoryStream compress(MemoryStream inStream, bool closeInStream)
+        {
+            inStream.Position = 0;
+            Int64 fileSize = inStream.Length;
+            MemoryStream outStream = new MemoryStream();
+
+            SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
+            encoder.SetCoderProperties(propIDs, properties);
+            encoder.WriteCoderProperties(outStream);
+
+            if (BitConverter.IsLittleEndian)
+            {
+                byte[] LengthHeader = BitConverter.GetBytes(fileSize);
+                outStream.Write(LengthHeader, 0, LengthHeader.Length);
+            }
+
+            encoder.Code(inStream, outStream, -1, -1, null);
+
+            if (closeInStream)
+                inStream.Close();
+
+            return outStream;
+        }
+
+
+        public MemoryStream decompress(MemoryStream inStream, bool closeInStream)
+        {
+            inStream.Position = 0;
+            MemoryStream outStream = new MemoryStream();
+
+            byte[] properties = new byte[5];
+            if (inStream.Read(properties, 0, 5) != 5)
+                throw (new Exception("input .lzma is too short"));
+
+            SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();
+            decoder.SetDecoderProperties(properties);
+
+            long outSize = 0;
+
+            if (BitConverter.IsLittleEndian)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    int v = inStream.ReadByte();
+                    if (v < 0)
+                        throw (new Exception("Can't Read 1"));
+
+                    outSize |= ((long)(byte)v) << (8 * i);
+                }
+            }
+
+            long compressedSize = inStream.Length - inStream.Position;
+            decoder.Code(inStream, outStream, compressedSize, outSize, null);
+
+            if (closeInStream)
+                inStream.Close();
+
+            return outStream;
+        }
+
+        #endregion
     }
 }

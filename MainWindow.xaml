@@ -46,7 +46,7 @@
         <Label x:Name="label2" Content="Столбы" HorizontalAlignment="Left" Margin="419,150,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label3" Content="Строки" HorizontalAlignment="Left" Margin="422,184,0,0" VerticalAlignment="Top"/>
         <Button x:Name="button5" Content="Чтение" HorizontalAlignment="Left" Margin="185,21,0,0" VerticalAlignment="Top" Width="80" Height="41" Click="button5_Click"/>
-        <GroupBox x:Name="groupBox3" Header="С метоклассом" HorizontalAlignment="Left" Height="155" Margin="20,454,0,0" VerticalAlignment="Top" Width="384">
+        <GroupBox x:Name="groupBox3" Header="С метоклассом" HorizontalAlignment="Left" Height="155" Margin="20,454,0,0" VerticalAlignment="Top" Width="506">
             <Grid Margin="0,0,-12,0">
                 <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="button6" Content="Отправить структуру 1" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="135" Height="23" Click="button6_Click"/>
@@ -56,12 +56,13 @@
                     <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="button10" Content="Отправить структуру 1" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="135" Height="23" Click="button6_Click"/>
                     <Button x:Name="button11" Content="Отправить структуру 2" HorizontalAlignment="Left" Margin="135,38,0,0" VerticalAlignment="Top" Width="135" Height="26" Click="button8_Click"/>
+                    <Button x:Name="button12" Content="Отправить структуру 1 архив" HorizontalAlignment="Left" Margin="290,10,0,0" VerticalAlignment="Top" Width="153" Height="23" Click="button12_Click"/>
                 </Grid>
             </Grid>
         </GroupBox>
         <Button x:Name="button7" Content="Статус" HorizontalAlignment="Left" Margin="274,21,0,0" VerticalAlignment="Top" Width="120" Height="41" Click="button7_Click"/>
         <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="20,18,0,0" TextWrapping="Wrap" Text="COM2" VerticalAlignment="Top" Width="160"/>
-        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="145" Margin="422,464,0,0" VerticalAlignment="Top" Width="360">
+        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="145" Margin="531,464,0,0" VerticalAlignment="Top" Width="251">
             <FlowDocument>
                 <Paragraph>
                     <Run Text=""/>
