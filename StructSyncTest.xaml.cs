@@ -147,7 +147,12 @@ namespace ModbusSynchFormTest
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            if (textBox1.Text != ""&& textBox2.Text!=""&& textBox3.Text != ""&&textBox4.Text !="")
+            sendfirst_struct();
+        }
+
+        private void sendfirst_struct()
+        {
+            if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "")
             {
 
                 TestSendStruct testSendStruct;
@@ -158,12 +163,12 @@ namespace ModbusSynchFormTest
                 testSendStruct.name = textBox4.Text;
 
                 ms = new MMS(testSendStruct);
-                queueOf.master=masterSyncStruct;
+                queueOf.master = masterSyncStruct;
                 try
                 {
                     metaClassFor = new MetaClassForStructandtherdata(ms);
                     metaClassFor.type_archv = 1;
-                    
+
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -175,12 +180,13 @@ namespace ModbusSynchFormTest
                     outStream = masterSyncStruct.compress(stream, false);
 
                     // отправка данных 
-                    
+                    var sss = masterSyncStruct.decompress(outStream, false);
+
                     queueOf.add_queue(outStream);
 
-                    masterSyncStruct.send_multi_message(outStream);
+                    //masterSyncStruct.send_multi_message(outStream);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex);
                 }
@@ -193,6 +199,11 @@ namespace ModbusSynchFormTest
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            structsecond_struct();
+        }
+
+        private void structsecond_struct()
         {
             if (textBox5.Text != "" && textBox6.Text != "" && textBox7.Text != "" && textBox8.Text != "")
             {
@@ -231,6 +242,8 @@ namespace ModbusSynchFormTest
 
                     // отправка данных 
                     queueOf.add_queue(oustream);
+                    //masterSyncStruct.send_multi_message(oustream);
+
 
                 }
                 catch (Exception ex)
@@ -238,6 +251,18 @@ namespace ModbusSynchFormTest
                     logger.Error(ex);
                 }
             }
+        }
+
+        /// <summary>
+        /// Синхронизировать все
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            //sendfirst_struct();
+            structsecond_struct();
+            structsecond_struct();
         }
     }
 }
