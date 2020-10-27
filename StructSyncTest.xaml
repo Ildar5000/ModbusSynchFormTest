@@ -16,7 +16,8 @@
                 <Label x:Name="label" Content="Отключен" HorizontalAlignment="Left" Margin="286,11,0,0" VerticalAlignment="Top" Height="23" Width="145"/>
                 <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top"/>
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
-                <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="498,0,0,0" VerticalAlignment="Top" Width="75" Height="60"/>
+                <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="498,0,0,0" VerticalAlignment="Top" Width="75" Height="60" Click="button1_Click"/>
+                <Button x:Name="button4" Content="Стоп" HorizontalAlignment="Left" Margin="155,39,0,0" VerticalAlignment="Top" Width="126" Click="button4_Click"/>
             </Grid>
         </GroupBox>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="230" Margin="10,93,0,0" VerticalAlignment="Top" Width="772">

@@ -29,11 +29,11 @@ namespace ModbusSynchFormTest
     public partial class StructSyncTest : Window
     {
         private static Logger logger;
+        Thread thread;
 
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
         SlaveSyncSruct slaveSyncSruct;
-
         #endregion
 
         #region struct
@@ -61,12 +61,12 @@ namespace ModbusSynchFormTest
             
             if (radioButton.IsChecked==true)
             {
-                //master
+                //Master
                 try
                 {
                     logger.Info("Создание мастера");
                     masterSyncStruct = new MasterSyncStruct(textBox.Text);
-                    Thread thread = new Thread(masterSyncStruct.Open);
+                    thread = new Thread(masterSyncStruct.Open);
                     thread.Start();
                 }
                 catch (Exception ex)
@@ -75,9 +75,9 @@ namespace ModbusSynchFormTest
                 }
 
             }
-            //Slave
             if (radioButton1.IsChecked == true)
             {
+                //Slave
                 try
                 {
                     logger.Info("Создание Slave");
@@ -97,7 +97,7 @@ namespace ModbusSynchFormTest
 
                     //slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
 
-                    Thread thread = new Thread(slaveSyncSruct.Open);
+                    thread = new Thread(slaveSyncSruct.Open);
                     thread.Start();
 
                     //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
@@ -260,9 +260,22 @@ namespace ModbusSynchFormTest
         /// <param name="e"></param>
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            //sendfirst_struct();
+            sendfirst_struct();
             structsecond_struct();
-            structsecond_struct();
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            if (radioButton.IsChecked == true)
+            {
+                masterSyncStruct.close();
+
+            }
+
+            if (radioButton1.IsChecked == true)
+            {
+                slaveSyncSruct.close();
+            }
         }
     }
 }
