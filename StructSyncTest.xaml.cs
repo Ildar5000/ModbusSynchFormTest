@@ -277,5 +277,11 @@ namespace ModbusSynchFormTest
                 slaveSyncSruct.close();
             }
         }
+
+        private void btn_settings_modbus_Click(object sender, RoutedEventArgs e)
+        {
+            SettingModbusForm settingModbusForm = new SettingModbusForm();
+            settingModbusForm.Show();
+        }
     }
 }

@@ -46,6 +46,14 @@
     <Reference Include="NLogViewer, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\ModbusSyncStructLIb\packages\Sentinel.NLogViewer.1.3.3\lib\net461\NLogViewer.dll</HintPath>
     </Reference>
+    <Reference Include="NModbus4, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ModbusSyncStructLIb\dll\NModbus4.dll</HintPath>
+    </Reference>
+    <Reference Include="NModbus4.Serial, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ModbusSyncStructLIb\dll\NModbus4.Serial.dll</HintPath>
+    </Reference>
     <Reference Include="SevenZip, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\ModbusSyncStructLIb\packages\LZMA-SDK.19.0.0\lib\net20\SevenZip.dll</HintPath>
     </Reference>
@@ -103,6 +111,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SettingModbusForm.xaml.cs">
+      <DependentUpon>SettingModbusForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StructSyncTest.xaml.cs">
       <DependentUpon>StructSyncTest.xaml</DependentUpon>
     </Compile>
@@ -118,6 +129,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SettingModbusForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StructSyncTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
