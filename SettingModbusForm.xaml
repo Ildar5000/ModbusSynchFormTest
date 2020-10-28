@@ -8,11 +8,11 @@
         mc:Ignorable="d"
         Title="SettingModbusForm" Height="450" Width="416.258">
     <Grid>
-        <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="134,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="134,38,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="DataBits_lb_txb" HorizontalAlignment="Left" Height="23" Margin="134,66,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="ReadTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,166,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="WriteTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,194,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="134,10,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="134,38,0,0" TextWrapping="Wrap" Text="9600" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="DataBits_lb_txb" HorizontalAlignment="Left" Height="23" Margin="134,66,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="ReadTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,166,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="WriteTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,194,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="Com_name_lb" Content="Port" HorizontalAlignment="Left" Margin="25,7,0,0" VerticalAlignment="Top" Width="104"/>
         <Label x:Name="BaudRate_lb" Content="BaudRate" HorizontalAlignment="Left" Margin="25,35,0,0" VerticalAlignment="Top" Width="104"/>
         <Label x:Name="DataBits_lb" Content="DataBits" HorizontalAlignment="Left" Margin="25,66,0,0" VerticalAlignment="Top" Width="104"/>
