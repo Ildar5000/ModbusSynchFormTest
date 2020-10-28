@@ -58,16 +58,26 @@ namespace ModbusSynchFormTest
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            
+            var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
             if (radioButton.IsChecked==true)
             {
                 //Master
                 try
                 {
-                    logger.Info("Создание мастера");
-                    masterSyncStruct = new MasterSyncStruct(textBox.Text);
-                    thread = new Thread(masterSyncStruct.Open);
-                    thread.Start();
+                    if (File.Exists(path) == true)
+                    {
+                        logger.Info("Создание мастера");
+                        masterSyncStruct = new MasterSyncStruct(textBox.Text);
+                        thread = new Thread(masterSyncStruct.Open);
+                        thread.Start();
+                    }
+                    else
+                    {
+                        logger.Info("Настройки мастера");
+                        SettingModbusForm settingModbusForm = new SettingModbusForm();
+                        settingModbusForm.Show();
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -80,28 +90,38 @@ namespace ModbusSynchFormTest
                 //Slave
                 try
                 {
-                    logger.Info("Создание Slave");
-                    slaveSyncSruct = new SlaveSyncSruct();
+                    if (File.Exists(path) == true)
+                    {
+                        logger.Info("Создание Slave");
+                        slaveSyncSruct = new SlaveSyncSruct();
 
-                    //Ловим при обработке (произвольная структура)
-                    ms = new MMS();
-                    vc = new VMS();
+                        //Ловим при обработке (произвольная структура)
+                        ms = new MMS();
+                        vc = new VMS();
 
-                    logger.Info("Создание подписок");
-                    slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
-                    slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
+                        logger.Info("Создание подписок");
+                        slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
+                        slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
 
-                    ms.SignalFormedMetaClass += DisplayStruct;
-                    
-                    vc.SignalFormedMetaClass += DisplayStruct;
+                        ms.SignalFormedMetaClass += DisplayStruct;
 
-                    //slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
+                        vc.SignalFormedMetaClass += DisplayStruct;
 
-                    thread = new Thread(slaveSyncSruct.Open);
-                    thread.Start();
+                        //slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
 
-                    //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
-                    logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                        thread = new Thread(slaveSyncSruct.Open);
+                        thread.Start();
+
+                        //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                        logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                    }
+                    else
+                    {
+                        logger.Info("Настройки Slave");
+                        SettingModbusForm settingModbusForm = new SettingModbusForm();
+                        settingModbusForm.Show();
+                    }
+
                 }
                 catch (Exception ex)
                 {
