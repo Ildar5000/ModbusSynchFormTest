@@ -67,7 +67,7 @@ namespace ModbusSynchFormTest
                     if (File.Exists(path) == true)
                     {
                         logger.Info("Создание мастера");
-                        masterSyncStruct = new MasterSyncStruct(textBox.Text);
+                        masterSyncStruct = new MasterSyncStruct();
                         thread = new Thread(masterSyncStruct.Open);
                         thread.Start();
                     }
