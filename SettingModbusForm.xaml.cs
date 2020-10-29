@@ -108,7 +108,7 @@ namespace ModbusSynchFormTest
 
             string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
 
-            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text));
+            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Convert.ToInt32(Type_modbus_txt.Text), (byte)1);
             XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
             // получаем поток, куда будем записывать сериализованный объект
