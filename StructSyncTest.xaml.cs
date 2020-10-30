@@ -281,6 +281,7 @@ namespace ModbusSynchFormTest
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             sendfirst_struct();
+            Thread.Sleep(1000);
             structsecond_struct();
         }
 

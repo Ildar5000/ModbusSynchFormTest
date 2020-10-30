@@ -68,7 +68,11 @@ namespace ModbusSynchFormTest
                 DataBits_lb_txb.Text = settings.DataBits.ToString();
                 ReadTimeout_txt.Text = settings.ReadTimeout.ToString();
                 WriteTimeout_txt.Text = settings.WriteTimeout.ToString();
-                
+                IpAdressLb_txt.Text = settings.IP_client;
+                Port_lb_txt.Text = settings.port_IP_client.ToString();
+                Type_modbus_txt.Text = settings.typeModbus.ToString();
+                slaveID_txt.Text = settings.slaveID.ToString();
+
                 foreach (var pt in typeParitylist)
                 {
                     if (pt==settings.Party_type_str)
@@ -108,7 +112,7 @@ namespace ModbusSynchFormTest
 
             string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
 
-            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Convert.ToInt32(Type_modbus_txt.Text), (byte)1);
+            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Convert.ToInt32(Type_modbus_txt.Text), Convert.ToByte(slaveID_txt.Text));
             XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
             // получаем поток, куда будем записывать сериализованный объект
