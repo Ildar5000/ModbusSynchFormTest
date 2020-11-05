@@ -45,7 +45,6 @@ namespace ModbusSynchFormTest
             ListTypeStopbitsComboBox.ItemsSource = typeStopBitslist;
 
             loadSettings();
-
         }
 
         private void loadSettings()
@@ -105,9 +104,7 @@ namespace ModbusSynchFormTest
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Apply_btn_Click(object sender, RoutedEventArgs e)
-        {
-
-            
+        {       
             string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
 
             string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;

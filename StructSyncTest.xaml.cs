@@ -53,7 +53,7 @@ namespace ModbusSynchFormTest
             var loggerconf = new XmlLoggingConfiguration("NLog.config");
             logger = LogManager.GetCurrentClassLogger();
             queueOf = new QueueOfSentMessagesForSlave();
-
+            
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -70,6 +70,8 @@ namespace ModbusSynchFormTest
                         masterSyncStruct = new MasterSyncStruct();
                         thread = new Thread(masterSyncStruct.Open);
                         thread.Start();
+                        this.Title = "StructSyncTest -Master";
+                        label.Content = "Master";
                     }
                     else
                     {
@@ -111,6 +113,9 @@ namespace ModbusSynchFormTest
 
                         thread = new Thread(slaveSyncSruct.Open);
                         thread.Start();
+
+                        this.Title = "StructSyncTest-slave";
+                        label.Content = "Slave";
 
                         //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
                         logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
@@ -281,7 +286,7 @@ namespace ModbusSynchFormTest
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             sendfirst_struct();
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
             structsecond_struct();
         }
 
