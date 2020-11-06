@@ -22,6 +22,7 @@ using NLog;
 using NLog.Config;
 using StructAllforTest;
 using System.Xml.Serialization;
+using ModbusSyncStructLIb.Settings;
 
 namespace ModbusSynchFormTest
 {
@@ -62,6 +63,27 @@ namespace ModbusSynchFormTest
         {
             try
             {
+                var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
+                if (File.Exists(path) == true)
+                {
+                    using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Open))
+                    {
+                        XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
+                        var msload = (SettingsModbus)formatter.Deserialize(fs);
+                        if (msload.defaulttypemodbus==0)
+                        {
+                            radioButton.IsChecked = true;
+                        }
+                        if (msload.defaulttypemodbus == 1)
+                        {
+                            radioButton1.IsChecked = true;
+                        }
+                        Console.WriteLine("Объект десериализован");
+                    }
+                }
+
+
+
                 var pathVMS = System.IO.Path.GetFullPath(@"dataSaveStruct2.xml");
 
                 var pathMMS = System.IO.Path.GetFullPath(@"dataSaveStruct1.xml");
@@ -124,6 +146,7 @@ namespace ModbusSynchFormTest
                 //Master
                 try
                 {
+                    HideButtonsIfConnectionMaster();
                     if (File.Exists(path) == true)
                     {
                         logger.Info("Создание мастера");
@@ -131,12 +154,11 @@ namespace ModbusSynchFormTest
                         thread = new Thread(masterSyncStruct.Open);
                         thread.Start();
                         this.Title = "StructSyncTest -Master";
-                        label.Content = "Master";
                     }
                     else
                     {
                         logger.Info("Настройки мастера");
-                        SettingModbusForm settingModbusForm = new SettingModbusForm();
+                        SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                         settingModbusForm.Show();
                     }
                     
@@ -152,6 +174,7 @@ namespace ModbusSynchFormTest
                 //Slave
                 try
                 {
+                    HideButtonsIfConnectionSlave();
                     if (File.Exists(path) == true)
                     {
                         logger.Info("Создание Slave");
@@ -175,7 +198,6 @@ namespace ModbusSynchFormTest
                         thread.Start();
 
                         this.Title = "StructSyncTest-slave";
-                        label.Content = "Slave";
 
                         //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
                         //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
@@ -183,9 +205,11 @@ namespace ModbusSynchFormTest
                     else
                     {
                         logger.Info("Настройки Slave");
-                        SettingModbusForm settingModbusForm = new SettingModbusForm();
+                        SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                         settingModbusForm.Show();
                     }
+
+                    
 
                 }
                 catch (Exception ex)
@@ -195,6 +219,38 @@ namespace ModbusSynchFormTest
                 }
             }
 
+        }
+
+        private void HideButtonsIfConnectionMaster()
+        {
+            radioButton.IsEnabled = false;
+            radioButton1.IsEnabled = false;
+            btn_settings_modbus.IsEnabled = false;
+        }
+
+        private void HideButtonsIfConnectionSlave()
+        {
+            button1.Visibility = Visibility.Hidden;
+            radioButton.IsEnabled = false;
+            radioButton1.IsEnabled = false;
+            btn_settings_modbus.IsEnabled = false;
+            button2.Visibility = Visibility.Hidden;
+            button3.Visibility = Visibility.Hidden;
+        }
+
+        private void pessButtonStop()
+        {
+            button1.Visibility = Visibility.Visible;
+            radioButton.IsEnabled = true;
+            radioButton1.IsEnabled = true;
+            btn_settings_modbus.IsEnabled = true;
+            button2.Visibility = Visibility.Visible;
+            button3.Visibility = Visibility.Visible;
+        }
+
+        public void updateradio()
+        {
+            loadsetings();
         }
 
         private void DisplayStruct(VMS v1)
@@ -398,19 +454,39 @@ namespace ModbusSynchFormTest
             if (radioButton.IsChecked == true)
             {
                 masterSyncStruct.close();
-
+                pessButtonStop();
             }
 
             if (radioButton1.IsChecked == true)
             {
                 slaveSyncSruct.close();
+                pessButtonStop();
             }
         }
 
         private void btn_settings_modbus_Click(object sender, RoutedEventArgs e)
         {
-            SettingModbusForm settingModbusForm = new SettingModbusForm();
+            SettingModbusForm settingModbusForm = new SettingModbusForm(this);
             settingModbusForm.Show();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (radioButton.IsChecked == true)
+            {
+                masterSyncStruct.close();
+                pessButtonStop();
+            }
+
+            if (radioButton1.IsChecked == true)
+            {
+                slaveSyncSruct.close();
+                pessButtonStop();
+            }
+
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+
+
         }
     }
 }

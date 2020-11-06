@@ -7,13 +7,12 @@
         xmlns:WPFTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="StructSyncTest" Height="526" Width="800" Background="#FFA09393">
+        Title="StructSyncTest" Height="526" Width="800" Background="#FFA09393" Closed="Window_Closed">
     <Grid>
         <GroupBox x:Name="groupBox" Header="Подключение" HorizontalAlignment="Left" Height="83" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
             <Grid>
                 <Button x:Name="button" Content="Подключиться" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Width="125" Height="53" Click="button_Click"/>
-                <Label x:Name="label" Content="Отключен" HorizontalAlignment="Left" Margin="257,18,0,0" VerticalAlignment="Top" Height="23" Width="145"/>
-                <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="567,0,0,0" VerticalAlignment="Top" Width="75" Height="60" Click="button1_Click"/>
                 <Button x:Name="button4" Content="Стоп" HorizontalAlignment="Left" Margin="130,6,0,0" VerticalAlignment="Top" Width="122" Click="button4_Click" Height="52"/>
@@ -37,10 +36,10 @@
                     <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="10,66,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="textBox8" HorizontalAlignment="Left" Height="23" Margin="10,94,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="button3" Content="Применить" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top" Width="120" Height="42" Click="button3_Click"/>
-                    <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="23" Margin="163,10,0,0" VerticalAlignment="Top" Width="579">
+                    <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="107" Margin="163,10,0,0" VerticalAlignment="Top" Width="579">
                         <FlowDocument>
                             <Paragraph>
-                                <Run Text="RichTextBox"/>
+                                <Run Text=""/>
                             </Paragraph>
                         </FlowDocument>
                     </RichTextBox>

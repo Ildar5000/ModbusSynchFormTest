@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="SettingModbusForm" Height="450" Width="416.258">
     <Grid>
-        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,322,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
+        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
         <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top"/>
         <Label x:Name="slaveID_lb" Content="slaveID" HorizontalAlignment="Left" Margin="10,291,0,0" VerticalAlignment="Top" Width="104"/>
         <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="97,294,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
@@ -41,6 +41,8 @@
             </TabItem>
         </TabControl>
         <ComboBox x:Name="TypeModbuscB" HorizontalAlignment="Left" Margin="97,5,0,0" VerticalAlignment="Top" Width="120" MouseLeave="comboBox_MouseLeave"/>
+        <RadioButton x:Name="MasterRB" Content="Master" HorizontalAlignment="Left" Margin="22,322,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <RadioButton x:Name="SlaveRB" Content="Slave" HorizontalAlignment="Left" Margin="127,322,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

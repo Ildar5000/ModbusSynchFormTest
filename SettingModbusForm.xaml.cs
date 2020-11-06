@@ -26,10 +26,12 @@ namespace ModbusSynchFormTest
         List<string> typeStopBitslist;
 
         List<string> type_ModbusList;
+        StructSyncTest structSync;
 
-        public SettingModbusForm()
+        public SettingModbusForm(StructSyncTest structSync)
         {
             InitializeComponent();
+            this.structSync = structSync;
             typeParitylist = new List<string>();
             typeStopBitslist = new List<string>();
             type_ModbusList = new List<string>();
@@ -129,6 +131,14 @@ namespace ModbusSynchFormTest
                     }
                 }
 
+                if (settings.defaulttypemodbus == 0)
+                {
+                    MasterRB.IsChecked = true;
+                }
+                if (settings.defaulttypemodbus == 1)
+                {
+                    SlaveRB.IsChecked = true;
+                }
 
             }
             else
@@ -152,7 +162,17 @@ namespace ModbusSynchFormTest
 
             int Type_modbus_choose = (int)TypeModbuscB.SelectedIndex;
 
-            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3);
+            int defaulttypemodbus = 0;
+            if (MasterRB.IsChecked==true)
+            {
+                defaulttypemodbus = 0;
+            }
+            if (SlaveRB.IsChecked==true)
+            {
+                defaulttypemodbus = 1;
+            }
+
+            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus);
             XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
             // получаем поток, куда будем записывать сериализованный объект
@@ -163,6 +183,8 @@ namespace ModbusSynchFormTest
                 Console.WriteLine("Объект сериализован");
             }
             this.Hide();
+
+            structSync.updateradio();
         }
 
         private void comboBox_MouseLeave(object sender, MouseEventArgs e)
