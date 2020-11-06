@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dj="clr-namespace:DJ;assembly=NLogViewer"
+        xmlns:nlog ="clr-namespace:NlogViewer;assembly=NlogViewer"
         xmlns:WPFTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
@@ -11,13 +11,12 @@
     <Grid>
         <GroupBox x:Name="groupBox" Header="Подключение" HorizontalAlignment="Left" Height="83" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
             <Grid>
-                <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="4,11,0,0" TextWrapping="Wrap" Text="COM2" VerticalAlignment="Top" Width="146"/>
-                <Button x:Name="button" Content="Подключиться" HorizontalAlignment="Left" Margin="155,10,0,0" VerticalAlignment="Top" Width="126" Height="24" Click="button_Click"/>
-                <Label x:Name="label" Content="Отключен" HorizontalAlignment="Left" Margin="286,11,0,0" VerticalAlignment="Top" Height="23" Width="145"/>
+                <Button x:Name="button" Content="Подключиться" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Width="125" Height="53" Click="button_Click"/>
+                <Label x:Name="label" Content="Отключен" HorizontalAlignment="Left" Margin="257,18,0,0" VerticalAlignment="Top" Height="23" Width="145"/>
                 <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top"/>
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="567,0,0,0" VerticalAlignment="Top" Width="75" Height="60" Click="button1_Click"/>
-                <Button x:Name="button4" Content="Стоп" HorizontalAlignment="Left" Margin="155,39,0,0" VerticalAlignment="Top" Width="126" Click="button4_Click"/>
+                <Button x:Name="button4" Content="Стоп" HorizontalAlignment="Left" Margin="130,6,0,0" VerticalAlignment="Top" Width="122" Click="button4_Click" Height="52"/>
                 <Button x:Name="btn_settings_modbus" Content="Настройки" HorizontalAlignment="Left" Margin="480,0,0,0" VerticalAlignment="Top" Width="82" Height="59" Click="btn_settings_modbus_Click"/>
             </Grid>
         </GroupBox>
@@ -48,7 +47,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <dj:NLogViewer Margin="10,328,10,10"/>
+        <nlog:NlogViewer x:Name="logCtrl" Margin="10,328,10,10"/>
         <WPFTool:BusyIndicator Name="BusyIndicator" Margin="0,299,10,138">
             <Grid>
             </Grid>

@@ -15,11 +15,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Serialization;
 using ModbusSyncStructLIb;
 using ModbusSyncStructLIb.EvenBase;
 using NLog;
 using NLog.Config;
 using StructAllforTest;
+using System.Xml.Serialization;
 
 namespace ModbusSynchFormTest
 {
@@ -53,8 +55,57 @@ namespace ModbusSynchFormTest
             var loggerconf = new XmlLoggingConfiguration("NLog.config");
             logger = LogManager.GetCurrentClassLogger();
             queueOf = new QueueOfSentMessagesForSlave();
-            
+            loadsetings();
         }
+
+        private void loadsetings()
+        {
+            var pathVMS = System.IO.Path.GetFullPath(@"dataSaveStruct2.xml");
+
+            var pathMMS = System.IO.Path.GetFullPath(@"dataSaveStruct1.xml");
+
+            if (File.Exists(pathMMS) == true)
+            {
+                MMS msload;
+                // десериализация
+                using (FileStream fs = new FileStream("dataSaveStruct1.xml", FileMode.OpenOrCreate))
+                {
+                    XmlSerializer formatter = new XmlSerializer(typeof(MMS));
+                    msload = (MMS)formatter.Deserialize(fs);
+
+                    Console.WriteLine("Объект десериализован");
+                }
+
+                textBox1.Text = msload.testSendStruct.ab;
+                textBox2.Text = msload.testSendStruct.cd;
+                textBox3.Text = msload.testSendStruct.fre;
+                textBox4.Text = msload.testSendStruct.name;
+            }
+
+            if (File.Exists(pathVMS) == true)
+            {
+                VMS VMSload;
+                // десериализация
+                using (FileStream fs = new FileStream("dataSaveStruct2.xml", FileMode.OpenOrCreate))
+                {
+                    XmlSerializer formatter = new XmlSerializer(typeof(VMS));
+                    VMSload = (VMS)formatter.Deserialize(fs);
+
+                    Console.WriteLine("Объект десериализован");
+                }
+
+                textBox5.Text = VMSload.test4SendStruct.ab;
+                textBox6.Text = VMSload.test4SendStruct.cd;
+                textBox7.Text = VMSload.test4SendStruct.fre;
+                textBox8.Text = VMSload.test4SendStruct.name;
+
+                for (int i = 0; i < VMSload.test4SendStruct.count2.Length; i++)
+                {
+                    richTextBox.AppendText(VMSload.test4SendStruct.count2[i].ToString());
+                }
+            }
+        }
+
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -118,7 +169,7 @@ namespace ModbusSynchFormTest
                         label.Content = "Slave";
 
                         //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
-                        logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                        //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
                     }
                     else
                     {
@@ -153,6 +204,16 @@ namespace ModbusSynchFormTest
                         }
 
                     });
+
+            XmlSerializer XMLformatter = new XmlSerializer(typeof(VMS));
+
+            // получаем поток, куда будем записывать сериализованный объект
+            using (FileStream fs = new FileStream("dataSaveStruct2.xml", FileMode.OpenOrCreate))
+            {
+                XMLformatter.Serialize(fs, v1);
+
+                Console.WriteLine("Объект сериализован");
+            }
         }
 
         private void DisplayStruct(MMS m1)
@@ -166,6 +227,16 @@ namespace ModbusSynchFormTest
                         textBox4.Text = m1.testSendStruct.name;
 
                     });
+
+            XmlSerializer XMLformatter = new XmlSerializer(typeof(MMS));
+
+            // получаем поток, куда будем записывать сериализованный объект
+            using (FileStream fs = new FileStream("dataSaveStruct1.xml", FileMode.OpenOrCreate))
+            {
+                XMLformatter.Serialize(fs, m1);
+
+                Console.WriteLine("Объект сериализован");
+            }
         }
 
 
@@ -191,25 +262,38 @@ namespace ModbusSynchFormTest
                 queueOf.master = masterSyncStruct;
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(ms);
-                    metaClassFor.type_archv = 1;
+                    XmlSerializer XMLformatter = new XmlSerializer(typeof(MMS));
 
-                    // создаем объект BinaryFormatter
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    // получаем поток, куда будем записывать сериализованный объект
+                    using (FileStream fs = new FileStream("dataSaveStruct1.xml", FileMode.OpenOrCreate))
+                    {
+                        XMLformatter.Serialize(fs, ms);
 
-                    var stream = new MemoryStream();
-                    var outStream = new MemoryStream();
-                    formatter.Serialize(stream, metaClassFor);
+                        Console.WriteLine("Объект сериализован");
+                    }
 
-                    outStream = masterSyncStruct.compress(stream, false);
+                    if (masterSyncStruct != null)
+                    {
+                        metaClassFor = new MetaClassForStructandtherdata(ms);
+                        metaClassFor.type_archv = 1;
 
-                    // отправка данных 
-                    var sss = masterSyncStruct.decompress(outStream, false);
+                        // создаем объект BinaryFormatter
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
 
-                    queueOf.add_queue(outStream);
+                        var stream = new MemoryStream();
+                        var outStream = new MemoryStream();
+                        formatter.Serialize(stream, metaClassFor);
 
-                    //masterSyncStruct.send_multi_message(outStream);
+                        outStream = masterSyncStruct.compress(stream, false);
+
+                        // отправка данных 
+                        var sss = masterSyncStruct.decompress(outStream, false);
+
+                        queueOf.add_queue(outStream);
+
+                        //masterSyncStruct.send_multi_message(outStream);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -238,14 +322,14 @@ namespace ModbusSynchFormTest
                 testSendStruct.cd = textBox6.Text;
                 testSendStruct.fre = textBox7.Text;
                 testSendStruct.name = textBox8.Text;
-                testSendStruct.count2 = new int[10000];
+                testSendStruct.count2 = new int[100];
 
-                int[] ab = new int[10000];
+                int[] ab = new int[100];
+                Random rand = new Random();
 
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 100; i++)
                 {
-                    Random rand = new Random();
-                    ab[i] = rand.Next(0, 1000);
+                    ab[i] = rand.Next(0, 100);
                 }
 
                 testSendStruct.count2 = ab;
@@ -254,22 +338,32 @@ namespace ModbusSynchFormTest
                 queueOf.master = masterSyncStruct;
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(vc);
+                    XmlSerializer XMLformatter = new XmlSerializer(typeof(VMS));
 
-                    // создаем объект BinaryFormatter
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                    var stream = new MemoryStream();
+                    // получаем поток, куда будем записывать сериализованный объект
+                    using (FileStream fs = new FileStream("dataSaveStruct2.xml", FileMode.OpenOrCreate))
+                    {
+                        XMLformatter.Serialize(fs, vc);
 
-                    formatter.Serialize(stream, metaClassFor);
+                        Console.WriteLine("Объект сериализован");
+                    }
 
-                    var oustream = masterSyncStruct.compress(stream, false);
+                    if (masterSyncStruct!=null)
+                    {
+                        metaClassFor = new MetaClassForStructandtherdata(vc);
+                        // создаем объект BinaryFormatter
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                        var stream = new MemoryStream();
 
-                    // отправка данных 
-                    queueOf.add_queue(oustream);
-                    //masterSyncStruct.send_multi_message(oustream);
+                        formatter.Serialize(stream, metaClassFor);
 
+                        var oustream = masterSyncStruct.compress(stream, false);
 
+                        // отправка данных 
+                        queueOf.add_queue(oustream);
+                        //masterSyncStruct.send_multi_message(oustream);
+                    }
                 }
                 catch (Exception ex)
                 {

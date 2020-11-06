@@ -8,29 +8,39 @@
         mc:Ignorable="d"
         Title="SettingModbusForm" Height="450" Width="416.258">
     <Grid>
-        <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="134,10,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="134,38,0,0" TextWrapping="Wrap" Text="9600" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="DataBits_lb_txb" HorizontalAlignment="Left" Height="23" Margin="134,66,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="ReadTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,166,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="WriteTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="134,194,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="Com_name_lb" Content="Port" HorizontalAlignment="Left" Margin="25,7,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="BaudRate_lb" Content="BaudRate" HorizontalAlignment="Left" Margin="25,35,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="DataBits_lb" Content="DataBits" HorizontalAlignment="Left" Margin="25,66,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="ListTypeParty_lb" Content="TypeParty" HorizontalAlignment="Left" Margin="25,97,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="ListTypeStopbits_lb" Content="TypeStopbits" HorizontalAlignment="Left" Margin="25,130,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="ReadTimeout_lb" Content="ReadTimeout" HorizontalAlignment="Left" Margin="25,163,0,0" VerticalAlignment="Top" Width="104"/>
-        <Label x:Name="WriteTimeout_lb" Content="WriteTimeout" HorizontalAlignment="Left" Margin="25,190,0,0" VerticalAlignment="Top" Width="104"/>
-        <ComboBox x:Name="ListTypePartyComboBox" HorizontalAlignment="Left" Margin="134,101,0,0" VerticalAlignment="Top" Width="120"/>
-        <ComboBox x:Name="ListTypeStopbitsComboBox" HorizontalAlignment="Left" Margin="134,130,0,0" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="25,364,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
-        <TextBox x:Name="IpAdressLb_txt" HorizontalAlignment="Left" Height="23" Margin="134,222,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="IpAdress_Lb" Content="IpAdress" HorizontalAlignment="Left" Margin="25,222,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="Port_lb" Content="Port" HorizontalAlignment="Left" Margin="25,253,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Port_lb_txt" HorizontalAlignment="Left" Height="23" Margin="134,253,0,0" TextWrapping="Wrap" Text="502" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="25,284,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Type_modbus_txt" HorizontalAlignment="Left" Height="23" Margin="134,288,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="slaveID_lb" Content="slaveID" HorizontalAlignment="Left" Margin="25,315,0,0" VerticalAlignment="Top" Width="104"/>
-        <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="134,318,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,322,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
+        <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="slaveID_lb" Content="slaveID" HorizontalAlignment="Left" Margin="10,291,0,0" VerticalAlignment="Top" Width="104"/>
+        <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="97,294,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
+        <TabControl x:Name="TypeViewModbus" HorizontalAlignment="Left" Height="254" Margin="10,32,0,0" VerticalAlignment="Top" Width="364">
+            <TabItem Header="SerialModbus" Name="tab1">
+                <Grid Background="#FFE5E5E5">
+                    <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="119,11,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="119,39,0,0" TextWrapping="Wrap" Text="9600" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="DataBits_lb_txb" HorizontalAlignment="Left" Height="23" Margin="119,67,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="ReadTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="119,167,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="WriteTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="119,195,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="Com_name_lb" Content="Port" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="BaudRate_lb" Content="BaudRate" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="DataBits_lb" Content="DataBits" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="ListTypeParty_lb" Content="TypeParty" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="ListTypeStopbits_lb" Content="TypeStopbits" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="ReadTimeout_lb" Content="ReadTimeout" HorizontalAlignment="Left" Margin="10,164,0,0" VerticalAlignment="Top" Width="104"/>
+                    <Label x:Name="WriteTimeout_lb" Content="WriteTimeout" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" Width="104"/>
+                    <ComboBox x:Name="ListTypePartyComboBox" HorizontalAlignment="Left" Margin="119,102,0,0" VerticalAlignment="Top" Width="120"/>
+                    <ComboBox x:Name="ListTypeStopbitsComboBox" HorizontalAlignment="Left" Margin="119,131,0,0" VerticalAlignment="Top" Width="120"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="TCP Modbus" Name="tab2">
+                <Grid Background="#FFE5E5E5">
+                    <TextBox x:Name="IpAdressLb_txt" HorizontalAlignment="Left" Height="23" Margin="120,9,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="IpAdress_Lb" Content="IpAdress" HorizontalAlignment="Left" Margin="11,9,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="Port_lb" Content="Port" HorizontalAlignment="Left" Margin="11,40,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="Port_lb_txt" HorizontalAlignment="Left" Height="23" Margin="120,40,0,0" TextWrapping="Wrap" Text="502" VerticalAlignment="Top" Width="120"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <ComboBox x:Name="TypeModbuscB" HorizontalAlignment="Left" Margin="97,5,0,0" VerticalAlignment="Top" Width="120" MouseLeave="comboBox_MouseLeave"/>
 
     </Grid>
 </Window>
