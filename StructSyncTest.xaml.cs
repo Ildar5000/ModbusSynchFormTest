@@ -23,6 +23,7 @@ using NLog.Config;
 using StructAllforTest;
 using System.Xml.Serialization;
 using ModbusSyncStructLIb.Settings;
+using Microsoft.Win32;
 
 namespace ModbusSynchFormTest
 {
@@ -49,7 +50,7 @@ namespace ModbusSynchFormTest
         QueueOfSentMessagesForSlave queueOf;
         #endregion
 
-
+        #region init
         public StructSyncTest()
         {
             InitializeComponent();
@@ -137,6 +138,8 @@ namespace ModbusSynchFormTest
             
         }
 
+        #endregion
+
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -187,12 +190,13 @@ namespace ModbusSynchFormTest
                         logger.Info("Создание подписок");
                         slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
                         slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
-
+                        
+                        slaveSyncSruct.SignalFormedMetaClassAll += DisplayStruct;
                         ms.SignalFormedMetaClass += DisplayStruct;
 
                         vc.SignalFormedMetaClass += DisplayStruct;
 
-                        //slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
+                        
 
                         thread = new Thread(slaveSyncSruct.Open);
                         thread.Start();
@@ -221,6 +225,7 @@ namespace ModbusSynchFormTest
 
         }
 
+        #region buttonhideorview and update
         private void HideButtonsIfConnectionMaster()
         {
             radioButton.IsEnabled = false;
@@ -251,6 +256,35 @@ namespace ModbusSynchFormTest
         public void updateradio()
         {
             loadsetings();
+        }
+
+        #endregion
+
+
+        #region DisplayStruct
+        private void DisplayStruct(MetaClassForStructandtherdata metaobj)
+        {
+            check_folder();
+            string fullname = "innerfile/" + metaobj.name_file.ToString();
+
+            if (metaobj.this_is_file==true)
+            {
+                MemoryStream destination = new MemoryStream();
+
+                destination = (MemoryStream)metaobj.struct_which_need_transfer;
+
+                using (FileStream fs = new FileStream(fullname, FileMode.Create))
+                {
+                    destination.CopyTo(fs);
+
+
+
+                }
+
+            }
+
+
+
         }
 
         private void DisplayStruct(VMS v1)
@@ -304,6 +338,17 @@ namespace ModbusSynchFormTest
             }
         }
 
+        #endregion
+
+        public void check_folder()
+        {
+            var path = System.IO.Path.GetFullPath("innerfile");
+
+            if (!Directory.Exists("path")) 
+                Directory.CreateDirectory("innerfile");
+        }
+
+
 
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
@@ -311,6 +356,8 @@ namespace ModbusSynchFormTest
             sendfirst_struct();
         }
 
+
+        #region sendstruct
         private void sendfirst_struct()
         {
             if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "")
@@ -367,15 +414,6 @@ namespace ModbusSynchFormTest
             }
         }
 
-        /// <summary>
-        /// 2 структура
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button3_Click(object sender, RoutedEventArgs e)
-        {
-            structsecond_struct();
-        }
 
         private void structsecond_struct()
         {
@@ -413,7 +451,7 @@ namespace ModbusSynchFormTest
                         Console.WriteLine("Объект сериализован");
                     }
 
-                    if (masterSyncStruct!=null)
+                    if (masterSyncStruct != null)
                     {
                         metaClassFor = new MetaClassForStructandtherdata(vc);
                         // создаем объект BinaryFormatter
@@ -437,6 +475,21 @@ namespace ModbusSynchFormTest
             }
         }
 
+        #endregion
+
+
+        /// <summary>
+        /// 2 структура
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            structsecond_struct();
+        }
+
+        
+
         /// <summary>
         /// Синхронизировать все
         /// </summary>
@@ -451,13 +504,13 @@ namespace ModbusSynchFormTest
 
         private void button4_Click(object sender, RoutedEventArgs e)
         {
-            if (radioButton.IsChecked == true)
+            if (radioButton.IsChecked == true&& masterSyncStruct!=null)
             {
                 masterSyncStruct.close();
                 pessButtonStop();
             }
 
-            if (radioButton1.IsChecked == true)
+            if (radioButton1.IsChecked == true&& slaveSyncSruct!=null)
             {
                 slaveSyncSruct.close();
                 pessButtonStop();
@@ -485,6 +538,60 @@ namespace ModbusSynchFormTest
             }
 
             System.Diagnostics.Process.GetCurrentProcess().Kill();
+
+
+        }
+
+        private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
+        {
+            string name="nofile.txt";
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                PAth_lb_file.Content = openFileDialog.FileName;
+                name = openFileDialog.SafeFileName;
+            }
+
+            MemoryStream destination = new MemoryStream();
+
+            using (FileStream fs = new FileStream(PAth_lb_file.Content.ToString(), FileMode.Open))
+            {
+                try
+                {
+                    queueOf.master = masterSyncStruct;
+
+                    byte[] vs;
+                    
+                    fs.CopyTo(destination); 
+                }
+                catch(Exception ex)
+                {
+                    logger.Error(ex);
+                }
+
+
+            }
+            try
+            {
+                metaClassFor = new MetaClassForStructandtherdata(destination, true, name);
+                // создаем объект BinaryFormatter
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                var stream = new MemoryStream();
+
+                formatter.Serialize(stream, metaClassFor);
+
+                var oustream = masterSyncStruct.compress(stream, false);
+
+                // отправка данных 
+                queueOf.add_queue(oustream);
+                //masterSyncStruct.send_multi_message(oustream);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+
 
 
         }

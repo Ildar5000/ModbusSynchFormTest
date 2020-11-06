@@ -45,6 +45,14 @@
                     </RichTextBox>
                 </Grid>
             </TabItem>
+            <TabItem Header="Файл">
+                <Grid>
+                    <Label x:Name="Pathlb" Content="Путь" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="PAth_lb_file" Content="..." HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="OpenFiledialog" Content="Открыть" HorizontalAlignment="Left" Margin="50,41,0,0" VerticalAlignment="Top" Width="75" Click="OpenFiledialog_Click"/>
+
+                </Grid>
+            </TabItem>
         </TabControl>
         <nlog:NlogViewer x:Name="logCtrl" Margin="10,328,10,10"/>
         <WPFTool:BusyIndicator Name="BusyIndicator" Margin="0,299,10,138">
