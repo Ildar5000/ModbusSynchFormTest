@@ -73,7 +73,7 @@ namespace ModbusSynchFormTest
             {
                 SettingsModbus settings;
                 // десериализация
-                using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Open))
                 {
                     XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
                     settings = (SettingsModbus)formatter.Deserialize(fs);
@@ -156,7 +156,7 @@ namespace ModbusSynchFormTest
             XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
             // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
             {
                 formatter.Serialize(fs, settings);
 
