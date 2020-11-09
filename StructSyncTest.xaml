@@ -7,7 +7,7 @@
         xmlns:WPFTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="StructSyncTest" Height="526" Width="800" Background="#FFA09393" Closed="Window_Closed" VerticalAlignment="Center" HorizontalAlignment="Center" Activated="Window_Activated">
+        Title="StructSyncTest" Height="559.6" Width="800" Background="#FFA09393" Closed="Window_Closed" VerticalAlignment="Center" HorizontalAlignment="Center" Activated="Window_Activated">
     <Grid>
         <GroupBox x:Name="groupBox" Header="Подключение" HorizontalAlignment="Left" Height="83" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
             <Grid>
@@ -15,7 +15,6 @@
                 <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="567,0,0,0" VerticalAlignment="Top" Width="75" Height="60" Click="button1_Click"/>
-                <Button x:Name="button4" Content="Стоп" HorizontalAlignment="Left" Margin="130,6,0,0" VerticalAlignment="Top" Width="122" Click="button4_Click" Height="52"/>
                 <Button x:Name="btn_settings_modbus" Content="Настройки" HorizontalAlignment="Left" Margin="480,0,0,0" VerticalAlignment="Top" Width="82" Height="59" Click="btn_settings_modbus_Click"/>
                 <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click"/>
             </Grid>
@@ -53,15 +52,15 @@
                     <Label x:Name="PAth_lb_file" Content="..." HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="OpenFiledialog" Content="Открыть" HorizontalAlignment="Left" Margin="50,41,0,0" VerticalAlignment="Top" Width="75" Click="OpenFiledialog_Click"/>
                     <Button x:Name="OpenFiledialogSend" Content="Отправить" HorizontalAlignment="Left" Margin="50,66,0,0" VerticalAlignment="Top" Width="75" Click="OpenFiledialogSend_Click"/>
-                    <ProgressBar x:Name="ProgressSendFile"  HorizontalAlignment="Left" Height="37" Margin="10,130,0,0" VerticalAlignment="Top" Width="162"/>
 
                 </Grid>
             </TabItem>
         </TabControl>
-        <nlog:NlogViewer x:Name="logCtrl" Margin="10,328,10,10"/>
+        <nlog:NlogViewer x:Name="logCtrl" Margin="10,328,9.6,42.4"/>
         <WPFTool:BusyIndicator Name="BusyIndicator" Margin="0,299,10,138">
             <Grid>
             </Grid>
         </WPFTool:BusyIndicator>
+        <ProgressBar x:Name="ProgressSendFile"  HorizontalAlignment="Left" Height="27" Margin="10,493,0,0" VerticalAlignment="Top" Width="162"/>
     </Grid>
 </Window>

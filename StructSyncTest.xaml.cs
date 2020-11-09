@@ -24,6 +24,7 @@ using StructAllforTest;
 using System.Xml.Serialization;
 using ModbusSyncStructLIb.Settings;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace ModbusSynchFormTest
 {
@@ -34,6 +35,8 @@ namespace ModbusSynchFormTest
     {
         private static Logger logger;
         Thread thread;
+        Thread statusbar;
+        bool StopOrStart = false;
 
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
@@ -146,85 +149,114 @@ namespace ModbusSynchFormTest
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
-            if (radioButton.IsChecked==true)
+            if (StopOrStart == false)
             {
-                //Master
-                try
+                StopOrStart = true;
+                button.Content = "Стоп";
+                var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
+                if (radioButton.IsChecked == true)
                 {
-                    HideButtonsIfConnectionMaster();
-                    if (File.Exists(path) == true)
+                    //Master
+                    try
                     {
-                        logger.Info("Создание мастера");
-                        masterSyncStruct = new MasterSyncStruct();
-                        thread = new Thread(masterSyncStruct.Open);
-                        thread.Start();
-                        this.Title = "StructSyncTest -Master";
-                    }
-                    else
-                    {
-                        logger.Info("Настройки мастера");
-                        SettingModbusForm settingModbusForm = new SettingModbusForm(this);
-                        settingModbusForm.Show();
-                    }
-                    
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                }
+                        HideButtonsIfConnectionMaster();
+                        if (File.Exists(path) == true)
+                        {
+                            logger.Info("Создание мастера");
+                            masterSyncStruct = new MasterSyncStruct();
+                            thread = new Thread(masterSyncStruct.Open);
+                            thread.Start();
+                            this.Title = "StructSyncTest -Master";
+                        }
+                        else
+                        {
+                            logger.Info("Настройки мастера");
+                            SettingModbusForm settingModbusForm = new SettingModbusForm(this);
+                            settingModbusForm.Show();
+                        }
 
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex);
+                    }
+
+                }
+                if (radioButton1.IsChecked == true)
+                {
+                    statusbar = new Thread(timerprogressbarSlave);
+                    statusbar.Start();
+
+
+                    //Slave
+                    try
+                    {
+                        HideButtonsIfConnectionSlave();
+                        
+                        if (File.Exists(path) == true)
+                        {
+                            logger.Info("Создание Slave");
+                            slaveSyncSruct = new SlaveSyncSruct();
+
+                            //Ловим при обработке (произвольная структура)
+                            ms = new MMS();
+                            vc = new VMS();
+
+                            logger.Info("Создание подписок");
+                            slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
+                            slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
+
+                            slaveSyncSruct.SignalFormedMetaClassAll += DisplayStruct;
+                            ms.SignalFormedMetaClass += DisplayStruct;
+
+                            vc.SignalFormedMetaClass += DisplayStruct;
+
+
+
+                            thread = new Thread(slaveSyncSruct.Open);
+                            thread.Start();
+
+                            this.Title = "StructSyncTest-slave";
+
+                            //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                            //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+                        }
+                        else
+                        {
+                            logger.Info("Настройки Slave");
+                            SettingModbusForm settingModbusForm = new SettingModbusForm(this);
+                            settingModbusForm.Show();
+                        }
+
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex);
+                        //Console.WriteLine(ex);
+                    }
+                }
             }
-            if (radioButton1.IsChecked == true)
+
+            else
             {
-                //Slave
-                try
+                button.Content = "Пуск";
+                StopOrStart = false;
+                if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
-                    HideButtonsIfConnectionSlave();
-                    if (File.Exists(path) == true)
-                    {
-                        logger.Info("Создание Slave");
-                        slaveSyncSruct = new SlaveSyncSruct();
-
-                        //Ловим при обработке (произвольная структура)
-                        ms = new MMS();
-                        vc = new VMS();
-
-                        logger.Info("Создание подписок");
-                        slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
-                        slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
-                        
-                        slaveSyncSruct.SignalFormedMetaClassAll += DisplayStruct;
-                        ms.SignalFormedMetaClass += DisplayStruct;
-
-                        vc.SignalFormedMetaClass += DisplayStruct;
-
-                        
-
-                        thread = new Thread(slaveSyncSruct.Open);
-                        thread.Start();
-
-                        this.Title = "StructSyncTest-slave";
-
-                        //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
-                        //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
-                    }
-                    else
-                    {
-                        logger.Info("Настройки Slave");
-                        SettingModbusForm settingModbusForm = new SettingModbusForm(this);
-                        settingModbusForm.Show();
-                    }
-
-                    
-
+                    masterSyncStruct.close();
+                    pessButtonStop();
                 }
-                catch (Exception ex)
+
+                if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
-                    logger.Error(ex);
-                    //Console.WriteLine(ex);
+                    slaveSyncSruct.close();
+                    statusbar.Abort();
+                    pessButtonStop();
                 }
             }
+
 
         }
 
@@ -519,17 +551,7 @@ namespace ModbusSynchFormTest
 
         private void button4_Click(object sender, RoutedEventArgs e)
         {
-            if (radioButton.IsChecked == true&& masterSyncStruct!=null)
-            {
-                masterSyncStruct.close();
-                pessButtonStop();
-            }
-
-            if (radioButton1.IsChecked == true&& slaveSyncSruct!=null)
-            {
-                slaveSyncSruct.close();
-                pessButtonStop();
-            }
+            
         }
 
         private void btn_settings_modbus_Click(object sender, RoutedEventArgs e)
@@ -583,10 +605,56 @@ namespace ModbusSynchFormTest
             }
         }
 
+        private void timerprogressbar()
+        {
+            double value = 0;
+            while (value != 100)
+            {
+                if (masterSyncStruct!=null)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+                            value = ProgressSendFile.Value;
+                            ProgressSendFile.Value = masterSyncStruct.status_bar;
+                        }
+                        );
+                }
+                Thread.Sleep(500);
+            }
+        }
+
+        private void timerprogressbarSlave()
+        {
+            double value = 0;
+            while (true)
+            {
+                if (slaveSyncSruct != null)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+                            value = ProgressSendFile.Value;
+                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
+                        }
+                        );
+                }
+                Thread.Sleep(1000);
+            }
+
+
+        }
+
+
         private void OpenFiledialogSend_Click(object sender, RoutedEventArgs e)
         {
             MemoryStream destination = new MemoryStream();
             FileAttributes attributes=new FileAttributes();
+
+            
+            Thread porok= new Thread(timerprogressbar);
+            porok.Start();
+
             if (PAth_lb_file.Content.ToString()!="...")
             {
                 using (FileStream fs = new FileStream(PAth_lb_file.Content.ToString(), FileMode.Open))
@@ -624,6 +692,8 @@ namespace ModbusSynchFormTest
                     formatter.Serialize(stream, metaClassFor);
 
                     var oustream = masterSyncStruct.compress(stream, false);
+                    ProgressSendFile.Value = 10;
+
 
                     // отправка данных 
                     queueOf.add_queue(oustream);
