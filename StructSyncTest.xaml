@@ -45,7 +45,7 @@
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Файл">
+            <TabItem Header="Файл" x:Name="FileTab">
                 <Grid>
 
                     <Label x:Name="Pathlb" Content="Путь" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>

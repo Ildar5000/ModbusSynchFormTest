@@ -1,4 +1,5 @@
 ﻿using ModbusSyncStructLIb.Settings;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,7 @@ namespace ModbusSynchFormTest
 
         List<string> type_ModbusList;
         StructSyncTest structSync;
+        private static Logger logger;
 
         public SettingModbusForm(StructSyncTest structSync)
         {
@@ -92,6 +94,7 @@ namespace ModbusSynchFormTest
                 IpAdressLb_txt.Text = settings.IP_client;
                 Port_lb_txt.Text = settings.port_IP_client.ToString();
                 slaveID_txt.Text = settings.slaveID.ToString();
+                DeltaTime_txt.Text = settings.deltatime.ToString();
 
                 foreach (var pt in typeParitylist)
                 {
@@ -155,38 +158,45 @@ namespace ModbusSynchFormTest
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Apply_btn_Click(object sender, RoutedEventArgs e)
-        {       
-            string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
-
-            string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
-
-            string selectedItem3 = (string)TypeModbuscB.SelectedItem;
-
-            int Type_modbus_choose = (int)TypeModbuscB.SelectedIndex;
-
-            int defaulttypemodbus = 0;
-            if (MasterRB.IsChecked==true)
+        {     
+            try
             {
-                defaulttypemodbus = 0;
+                string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
+
+                string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
+
+                string selectedItem3 = (string)TypeModbuscB.SelectedItem;
+
+                int Type_modbus_choose = (int)TypeModbuscB.SelectedIndex;
+
+                int defaulttypemodbus = 0;
+                if (MasterRB.IsChecked == true)
+                {
+                    defaulttypemodbus = 0;
+                }
+                if (SlaveRB.IsChecked == true)
+                {
+                    defaulttypemodbus = 1;
+                }
+
+                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text));
+                XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
+
+                // получаем поток, куда будем записывать сериализованный объект
+                using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
+                {
+                    formatter.Serialize(fs, settings);
+
+                    Console.WriteLine("Объект сериализован");
+                }
+                this.Hide();
+
+                structSync.updateradio();
             }
-            if (SlaveRB.IsChecked==true)
+            catch(Exception ex)
             {
-                defaulttypemodbus = 1;
-            }
-
-            SettingsModbus settings = new SettingsModbus(Com_name_txb.Text,Convert.ToInt32(BaudRate_txb.Text),Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text),Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus);
-            XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
-
-            // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
-            {
-                formatter.Serialize(fs, settings);
-
-                Console.WriteLine("Объект сериализован");
-            }
-            this.Hide();
-
-            structSync.updateradio();
+                logger.Error(ex);
+            } 
         }
 
         private void comboBox_MouseLeave(object sender, MouseEventArgs e)

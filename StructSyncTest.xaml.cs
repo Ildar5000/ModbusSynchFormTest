@@ -270,6 +270,7 @@ namespace ModbusSynchFormTest
 
         private void HideButtonsIfConnectionSlave()
         {
+            FileTab.Visibility = Visibility.Hidden;
             button1.Visibility = Visibility.Hidden;
             radioButton.IsEnabled = false;
             radioButton1.IsEnabled = false;
@@ -280,6 +281,7 @@ namespace ModbusSynchFormTest
 
         private void pessButtonStop()
         {
+            FileTab.Visibility = Visibility.Visible;
             button1.Visibility = Visibility.Visible;
             radioButton.IsEnabled = true;
             radioButton1.IsEnabled = true;
