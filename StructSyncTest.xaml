@@ -7,7 +7,7 @@
         xmlns:WPFTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="StructSyncTest" Height="526" Width="800" Background="#FFA09393" Closed="Window_Closed">
+        Title="StructSyncTest" Height="526" Width="800" Background="#FFA09393" Closed="Window_Closed" VerticalAlignment="Center" HorizontalAlignment="Center" Activated="Window_Activated">
     <Grid>
         <GroupBox x:Name="groupBox" Header="Подключение" HorizontalAlignment="Left" Height="83" Margin="10,10,0,0" VerticalAlignment="Top" Width="772">
             <Grid>
@@ -47,9 +47,12 @@
             </TabItem>
             <TabItem Header="Файл">
                 <Grid>
+
                     <Label x:Name="Pathlb" Content="Путь" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="PAth_lb_file" Content="..." HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="OpenFiledialog" Content="Открыть" HorizontalAlignment="Left" Margin="50,41,0,0" VerticalAlignment="Top" Width="75" Click="OpenFiledialog_Click"/>
+                    <Button x:Name="OpenFiledialogSend" Content="Отправить" HorizontalAlignment="Left" Margin="50,66,0,0" VerticalAlignment="Top" Width="75" Click="OpenFiledialogSend_Click"/>
+                    <ProgressBar x:Name="ProgressSendFile"  HorizontalAlignment="Left" Height="37" Margin="10,130,0,0" VerticalAlignment="Top" Width="162"/>
 
                 </Grid>
             </TabItem>

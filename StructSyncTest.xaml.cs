@@ -48,6 +48,7 @@ namespace ModbusSynchFormTest
         #region metaclass
         MetaClassForStructandtherdata metaClassFor;
         QueueOfSentMessagesForSlave queueOf;
+        string nameFile;
         #endregion
 
         #region init
@@ -58,6 +59,8 @@ namespace ModbusSynchFormTest
             logger = LogManager.GetCurrentClassLogger();
             queueOf = new QueueOfSentMessagesForSlave();
             loadsetings();
+            this.WindowStartupLocation= System.Windows.WindowStartupLocation.CenterScreen;
+
         }
 
         private void loadsetings()
@@ -265,6 +268,7 @@ namespace ModbusSynchFormTest
         private void DisplayStruct(MetaClassForStructandtherdata metaobj)
         {
             check_folder();
+            FileAttributes attributes = new FileAttributes();
             string fullname = "innerfile/" + metaobj.name_file.ToString();
 
             if (metaobj.this_is_file==true)
@@ -272,15 +276,16 @@ namespace ModbusSynchFormTest
                 MemoryStream destination = new MemoryStream();
 
                 destination = (MemoryStream)metaobj.struct_which_need_transfer;
+                //attributes = (FileAttributes)metaobj.metattributes;
 
                 using (FileStream fs = new FileStream(fullname, FileMode.Create))
                 {
+                    destination.Position = 0;
                     destination.CopyTo(fs);
-
-
-
+                    
+                    
                 }
-
+                //File.SetAttributes(fullname, attributes);
             }
 
 
@@ -541,7 +546,8 @@ namespace ModbusSynchFormTest
                     if (masterSyncStruct != null)
                     {
                         slaveSyncSruct.close();
-                    }       
+                    }
+                        
                     pessButtonStop();
                 }
 
@@ -558,55 +564,70 @@ namespace ModbusSynchFormTest
 
         private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
         {
-            string name="nofile.txt";
+            nameFile="nofile.txt";
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
                 PAth_lb_file.Content = openFileDialog.FileName;
-                name = openFileDialog.SafeFileName;
+                nameFile = openFileDialog.SafeFileName;
             }
+        }
 
+        private void OpenFiledialogSend_Click(object sender, RoutedEventArgs e)
+        {
             MemoryStream destination = new MemoryStream();
-
-            using (FileStream fs = new FileStream(PAth_lb_file.Content.ToString(), FileMode.Open))
+            FileAttributes attributes=new FileAttributes();
+            if (PAth_lb_file.Content.ToString()!="...")
             {
+                using (FileStream fs = new FileStream(PAth_lb_file.Content.ToString(), FileMode.Open))
+                {
+                    try
+                    {
+                        queueOf.master = masterSyncStruct;
+
+                        byte[] vs;
+
+                        fs.CopyTo(destination);
+                        //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex);
+                    }
+
+
+                }
+
                 try
                 {
-                    queueOf.master = masterSyncStruct;
+                    metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile);
+                    // создаем объект BinaryFormatter
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                    var stream = new MemoryStream();
 
-                    byte[] vs;
-                    
-                    fs.CopyTo(destination); 
+                    formatter.Serialize(stream, metaClassFor);
+
+                    var oustream = masterSyncStruct.compress(stream, false);
+
+                    // отправка данных 
+                    queueOf.add_queue(oustream);
+                    //masterSyncStruct.send_multi_message(oustream);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex);
                 }
-
-
             }
-            try
+            else
             {
-                metaClassFor = new MetaClassForStructandtherdata(destination, true, name);
-                // создаем объект BinaryFormatter
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                var stream = new MemoryStream();
-
-                formatter.Serialize(stream, metaClassFor);
-
-                var oustream = masterSyncStruct.compress(stream, false);
-
-                // отправка данных 
-                queueOf.add_queue(oustream);
-                //masterSyncStruct.send_multi_message(oustream);
+                logger.Warn("откройте файл");
             }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
-            }
+            
+        }
 
-
+        private void Window_Activated(object sender, EventArgs e)
+        {
 
         }
     }

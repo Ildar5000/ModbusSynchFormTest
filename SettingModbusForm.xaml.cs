@@ -30,6 +30,8 @@ namespace ModbusSynchFormTest
 
         public SettingModbusForm(StructSyncTest structSync)
         {
+            this.WindowStartupLocation = structSync.WindowStartupLocation;
+
             InitializeComponent();
             this.structSync = structSync;
             typeParitylist = new List<string>();
@@ -48,7 +50,7 @@ namespace ModbusSynchFormTest
             typeStopBitslist.Add("Two");
 
             type_ModbusList.Add("RTU");
-            type_ModbusList.Add("ASCii");
+            type_ModbusList.Add("ASCII");
             type_ModbusList.Add("TCP");
 
             ListTypePartyComboBox.ItemsSource = typeParitylist;
