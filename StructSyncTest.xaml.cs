@@ -285,7 +285,17 @@ namespace ModbusSynchFormTest
                     
                     
                 }
-                //File.SetAttributes(fullname, attributes);
+                try
+                {
+                    File.SetAttributes(fullname, attributes);
+                    File.SetCreationTime(fullname, metaobj.CreationTime_file);
+                    File.SetLastWriteTime(fullname, metaobj.LastWriteTime);
+
+                }
+                catch(Exception ex)
+                {
+                    logger.Error(ex);
+                }
             }
 
 
@@ -600,7 +610,12 @@ namespace ModbusSynchFormTest
 
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile);
+                    attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+
+                    DateTime dtFirstCreate = File.GetCreationTime(PAth_lb_file.Content.ToString());
+                    DateTime dTLASTWRITE = File.GetLastWriteTime(PAth_lb_file.Content.ToString());
+
+                    metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
