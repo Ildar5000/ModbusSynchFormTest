@@ -525,19 +525,33 @@ namespace ModbusSynchFormTest
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (radioButton.IsChecked == true)
+            try
             {
-                masterSyncStruct.close();
-                pessButtonStop();
-            }
+                if (radioButton.IsChecked == true)
+                {
+                    if (masterSyncStruct!=null)
+                    {
+                        masterSyncStruct.close();
+                    }
+                    pessButtonStop();
+                }
 
-            if (radioButton1.IsChecked == true)
+                if (radioButton1.IsChecked == true)
+                {
+                    if (masterSyncStruct != null)
+                    {
+                        slaveSyncSruct.close();
+                    }       
+                    pessButtonStop();
+                }
+
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+            catch(Exception ex)
             {
-                slaveSyncSruct.close();
-                pessButtonStop();
+                logger.Error(ex);
             }
-
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
+            
 
 
         }
