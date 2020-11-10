@@ -38,6 +38,8 @@ namespace ModbusSynchFormTest
         Thread statusbar;
         bool StopOrStart = false;
 
+        List<string> pathFiles = new List<string>();
+
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
         SlaveSyncSruct slaveSyncSruct;
@@ -398,7 +400,6 @@ namespace ModbusSynchFormTest
         }
 
 
-
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
         {
@@ -599,12 +600,16 @@ namespace ModbusSynchFormTest
         private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
         {
             nameFile="nofile.txt";
+            lB_PathFileView.ItemsSource = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
                 PAth_lb_file.Content = openFileDialog.FileName;
                 nameFile = openFileDialog.SafeFileName;
+                pathFiles.Add(PAth_lb_file.Content.ToString());
             }
+            lB_PathFileView.Items.Add(PAth_lb_file.Content);
+
         }
 
         private void timerprogressbar()
@@ -650,16 +655,44 @@ namespace ModbusSynchFormTest
 
         private void OpenFiledialogSend_Click(object sender, RoutedEventArgs e)
         {
-            MemoryStream destination = new MemoryStream();
-            FileAttributes attributes=new FileAttributes();
+            send_files();
+        }
 
+        private void Window_Activated(object sender, EventArgs e)
+        {
+
+        }
+
+        private void StopTransfer_Click(object sender, RoutedEventArgs e)
+        {
+            queueOf.stoptransfer();
+            ProgressSendFile.Value = 0;
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
             
-            Thread porok= new Thread(timerprogressbar);
+            string selectedObject = (string)lB_PathFileView.SelectedItem;
+            if (selectedObject != null)
+            {
+                pathFiles.Remove(selectedObject);
+                lB_PathFileView.Items.Remove(selectedObject);
+
+            }
+        }
+
+        public void send_file(string path)
+        {
+            MemoryStream destination = new MemoryStream();
+            FileAttributes attributes = new FileAttributes();
+
+
+            Thread porok = new Thread(timerprogressbar);
             porok.Start();
 
-            if (PAth_lb_file.Content.ToString()!="...")
+            if (PAth_lb_file.Content.ToString() != "...")
             {
-                using (FileStream fs = new FileStream(PAth_lb_file.Content.ToString(), FileMode.Open))
+                using (FileStream fs = new FileStream(path, FileMode.Open))
                 {
                     try
                     {
@@ -710,18 +743,85 @@ namespace ModbusSynchFormTest
             {
                 logger.Warn("откройте файл");
             }
+        }
+
+        public void send_files()
+        {
+            MemoryStream destination = new MemoryStream();
+            FileAttributes attributes = new FileAttributes();
+
+
+            Thread porok = new Thread(timerprogressbar);
+            porok.Start();
+            foreach (var path in pathFiles)
+            {
+                if (path != ""|| path!=null)
+                {
+                    using (FileStream fs = new FileStream(path, FileMode.Open))
+                    {
+                        try
+                        {
+                            queueOf.master = masterSyncStruct;
+
+                            byte[] vs;
+
+                            fs.CopyTo(destination);
+                            //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex);
+                        }
+
+
+                    }
+
+                    try
+                    {
+                        attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+
+                        DateTime dtFirstCreate = File.GetCreationTime(PAth_lb_file.Content.ToString());
+                        DateTime dTLASTWRITE = File.GetLastWriteTime(PAth_lb_file.Content.ToString());
+
+                        metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
+                        // создаем объект BinaryFormatter
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                        var stream = new MemoryStream();
+
+                        formatter.Serialize(stream, metaClassFor);
+
+                        var oustream = masterSyncStruct.compress(stream, false);
+                        ProgressSendFile.Value = 10;
+
+
+                        // отправка данных 
+                        queueOf.add_queue(oustream);
+                        //masterSyncStruct.send_multi_message(oustream);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex);
+                    }
+                }
+                else
+                {
+                    logger.Warn("откройте файл");
+                }
+            }
             
         }
 
-        private void Window_Activated(object sender, EventArgs e)
-        {
 
-        }
 
-        private void StopTransfer_Click(object sender, RoutedEventArgs e)
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
-            queueOf.stoptransfer();
-            ProgressSendFile.Value = 0;
+            string selectedObject = (string)lB_PathFileView.SelectedItem;
+            if (selectedObject != null)
+            {
+                send_file(selectedObject);
+            }
         }
     }
 }
