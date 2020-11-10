@@ -721,6 +721,7 @@ namespace ModbusSynchFormTest
         private void StopTransfer_Click(object sender, RoutedEventArgs e)
         {
             queueOf.stoptransfer();
+            ProgressSendFile.Value = 0;
         }
     }
 }
