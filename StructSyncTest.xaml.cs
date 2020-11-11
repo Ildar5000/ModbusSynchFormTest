@@ -148,6 +148,8 @@ namespace ModbusSynchFormTest
 
         #endregion
 
+        Thread porok;
+
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -290,6 +292,107 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = true;
             button2.Visibility = Visibility.Visible;
             button3.Visibility = Visibility.Visible;
+        }
+
+        public void ifbuttonsendfile()
+        {
+            OpenFiledialog.IsEnabled = false;
+            lB_PathFileView.IsEnabled = false;
+            OpenFiledialogSend.IsEnabled = false;
+        }
+
+        public void ifbuttonsendfileend()
+        {
+            OpenFiledialog.IsEnabled = true;
+            lB_PathFileView.IsEnabled = true;
+            OpenFiledialogSend.IsEnabled = true;
+        }
+
+        private void timerprogressbar()
+        {
+            double value = 0;
+            double date_value = 0;
+            double sentpacket_value = 0;
+
+            double timetrasfer = 0;
+            //сколько осталось по времени
+            double timetrasferhave = 0;
+            
+            long ellapledTicks = DateTime.Now.Ticks;
+            TimeSpan elapsedSpan;
+
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (ThreadStart)delegate ()
+                {
+                    TickTimeLB.Content = "";
+                    ProgressSendFile.Value = 0;
+                    TickTimeShow.Text = "";
+                }
+                );
+
+            while (value != 100)
+            {
+                if (masterSyncStruct != null)
+                {
+                    if (masterSyncStruct.date != null && masterSyncStruct.sentpacket != null)
+                    {
+                        double speed = masterSyncStruct.sentpacket.Length;
+                        date_value = masterSyncStruct.date.Length;
+                        sentpacket_value += speed;
+                        value = masterSyncStruct.status_bar;
+
+                        timetrasfer = (date_value / sentpacket_value);
+                        //timetrasferhave = timetrasfer / date_value;
+                    }
+
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+                            //value = ProgressSendFile.Value;
+                            TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
+                            TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
+                            ProgressSendFile.Value = value;
+                        }
+                        );
+                }
+                Thread.Sleep(500);
+            }
+
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (ThreadStart)delegate ()
+                {
+                    ellapledTicks = DateTime.Now.Ticks - ellapledTicks;
+                    elapsedSpan = new TimeSpan(ellapledTicks);
+                    TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
+
+                    TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
+                    ifbuttonsendfileend();
+                }
+            );
+
+            return;
+            
+        }
+
+        private void timerprogressbarSlave()
+        {
+            double value = 0;
+            while (true)
+            {
+                if (slaveSyncSruct != null)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+                            value = ProgressSendFile.Value;
+                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
+                        }
+                        );
+                }
+                Thread.Sleep(300);
+            }
+
+
         }
 
         public void updateradio()
@@ -601,61 +704,33 @@ namespace ModbusSynchFormTest
         {
             nameFile="nofile.txt";
             lB_PathFileView.ItemsSource = null;
+            string filestr=null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                PAth_lb_file.Content = openFileDialog.FileName;
+                filestr = openFileDialog.FileName;
                 nameFile = openFileDialog.SafeFileName;
-                pathFiles.Add(PAth_lb_file.Content.ToString());
+                pathFiles.Add(filestr);
             }
-            lB_PathFileView.Items.Add(PAth_lb_file.Content);
+            lB_PathFileView.Items.Add(filestr);
 
         }
 
-        private void timerprogressbar()
-        {
-            double value = 0;
-            while (value != 100)
-            {
-                if (masterSyncStruct!=null)
-                {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (ThreadStart)delegate ()
-                        {
-                            value = ProgressSendFile.Value;
-                            ProgressSendFile.Value = masterSyncStruct.status_bar;
-                        }
-                        );
-                }
-                Thread.Sleep(500);
-            }
-        }
 
-        private void timerprogressbarSlave()
-        {
-            double value = 0;
-            while (true)
-            {
-                if (slaveSyncSruct != null)
-                {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (ThreadStart)delegate ()
-                        {
-                            value = ProgressSendFile.Value;
-                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
-                        }
-                        );
-                }
-                Thread.Sleep(1000);
-            }
-
-
-        }
 
 
         private void OpenFiledialogSend_Click(object sender, RoutedEventArgs e)
         {
-            send_files();
+            if (masterSyncStruct!=null)
+            {
+                send_files();
+            }
+            else
+            {
+                logger.Warn("Подключитите Master");
+            }
+            
+            
         }
 
         private void Window_Activated(object sender, EventArgs e)
@@ -667,8 +742,17 @@ namespace ModbusSynchFormTest
         {
             queueOf.stoptransfer();
             ProgressSendFile.Value = 0;
+            ifbuttonsendfileend();
+            
+            if (porok!=null)
+            {
+                porok.Abort();
+            }
+
+
         }
 
+        #region MenuItem Контекстное меню
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             
@@ -681,17 +765,37 @@ namespace ModbusSynchFormTest
             }
         }
 
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (masterSyncStruct != null)
+            {
+                string selectedObject = (string)lB_PathFileView.SelectedItem;
+                if (selectedObject != null)
+                {
+                    send_file(selectedObject);
+                }
+            }
+            else
+            {
+                logger.Warn("Подключите Master");
+            }
+        }
+
+        #endregion 
+
+        #region sendFile Отправка файло
+
         public void send_file(string path)
         {
             MemoryStream destination = new MemoryStream();
             FileAttributes attributes = new FileAttributes();
 
+            ifbuttonsendfile();
 
-            Thread porok = new Thread(timerprogressbar);
-            porok.Start();
-
-            if (PAth_lb_file.Content.ToString() != "...")
+            if (path!= "")
             {
+                porok = new Thread(timerprogressbar);
+
                 using (FileStream fs = new FileStream(path, FileMode.Open))
                 {
                     try
@@ -706,6 +810,7 @@ namespace ModbusSynchFormTest
                     catch (Exception ex)
                     {
                         logger.Error(ex);
+                        porok.Abort();
                     }
 
 
@@ -713,10 +818,10 @@ namespace ModbusSynchFormTest
 
                 try
                 {
-                    attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                    attributes = File.GetAttributes(path);
 
-                    DateTime dtFirstCreate = File.GetCreationTime(PAth_lb_file.Content.ToString());
-                    DateTime dTLASTWRITE = File.GetLastWriteTime(PAth_lb_file.Content.ToString());
+                    DateTime dtFirstCreate = File.GetCreationTime(path);
+                    DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
                     metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
                     // создаем объект BinaryFormatter
@@ -727,16 +832,16 @@ namespace ModbusSynchFormTest
                     formatter.Serialize(stream, metaClassFor);
 
                     var oustream = masterSyncStruct.compress(stream, false);
-                    ProgressSendFile.Value = 10;
-
 
                     // отправка данных 
                     queueOf.add_queue(oustream);
+                    porok.Start();
                     //masterSyncStruct.send_multi_message(oustream);
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex);
+                    porok.Abort();
                 }
             }
             else
@@ -747,62 +852,17 @@ namespace ModbusSynchFormTest
 
         public void send_files()
         {
-            MemoryStream destination = new MemoryStream();
-            FileAttributes attributes = new FileAttributes();
+            if (pathFiles.Count==0)
+            {
+                return;
+            }
 
-
-            Thread porok = new Thread(timerprogressbar);
-            porok.Start();
             foreach (var path in pathFiles)
             {
+
                 if (path != ""|| path!=null)
                 {
-                    using (FileStream fs = new FileStream(path, FileMode.Open))
-                    {
-                        try
-                        {
-                            queueOf.master = masterSyncStruct;
-
-                            byte[] vs;
-
-                            fs.CopyTo(destination);
-                            //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error(ex);
-                        }
-
-
-                    }
-
-                    try
-                    {
-                        attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
-
-                        DateTime dtFirstCreate = File.GetCreationTime(PAth_lb_file.Content.ToString());
-                        DateTime dTLASTWRITE = File.GetLastWriteTime(PAth_lb_file.Content.ToString());
-
-                        metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
-                        // создаем объект BinaryFormatter
-                        BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                        var stream = new MemoryStream();
-
-                        formatter.Serialize(stream, metaClassFor);
-
-                        var oustream = masterSyncStruct.compress(stream, false);
-                        ProgressSendFile.Value = 10;
-
-
-                        // отправка данных 
-                        queueOf.add_queue(oustream);
-                        //masterSyncStruct.send_multi_message(oustream);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex);
-                    }
+                    send_file(path);
                 }
                 else
                 {
@@ -812,16 +872,7 @@ namespace ModbusSynchFormTest
             
         }
 
+        #endregion
 
-
-
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            string selectedObject = (string)lB_PathFileView.SelectedItem;
-            if (selectedObject != null)
-            {
-                send_file(selectedObject);
-            }
-        }
     }
 }
