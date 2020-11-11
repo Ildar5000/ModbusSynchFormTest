@@ -247,6 +247,7 @@ namespace ModbusSynchFormTest
             {
                 button.Content = "Пуск";
                 StopOrStart = false;
+
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.close();
@@ -281,10 +282,12 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = false;
             button2.Visibility = Visibility.Hidden;
             button3.Visibility = Visibility.Hidden;
+            StopTransfer.Visibility = Visibility.Hidden;
         }
 
         private void pessButtonStop()
         {
+            StopTransfer.Visibility = Visibility.Visible;
             FileTab.Visibility = Visibility.Visible;
             button1.Visibility = Visibility.Visible;
             radioButton.IsEnabled = true;
@@ -317,7 +320,7 @@ namespace ModbusSynchFormTest
             double timetrasfer = 0;
             //сколько осталось по времени
             double timetrasferhave = 0;
-            
+
             long ellapledTicks = DateTime.Now.Ticks;
             TimeSpan elapsedSpan;
 
@@ -330,31 +333,25 @@ namespace ModbusSynchFormTest
                 }
                 );
 
-            while (value != 100)
+            while (value != 100 && masterSyncStruct.falltransfer == false&& masterSyncStruct!=null)
             {
-                if (masterSyncStruct != null)
-                {
-                    if (masterSyncStruct.date != null && masterSyncStruct.sentpacket != null)
+                double alltranferendpacket = masterSyncStruct.getdatatrasferreal();
+                date_value = masterSyncStruct.getdatatrasfer();
+                sentpacket_value = alltranferendpacket;
+                value = masterSyncStruct.status_bar;
+                
+                timetrasfer = (date_value- sentpacket_value) / 1200;
+                //timetrasferhave = timetrasfer / date_value;
+                
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (ThreadStart)delegate ()
                     {
-                        double speed = masterSyncStruct.sentpacket.Length;
-                        date_value = masterSyncStruct.date.Length;
-                        sentpacket_value += speed;
-                        value = masterSyncStruct.status_bar;
-
-                        timetrasfer = (date_value / sentpacket_value);
-                        //timetrasferhave = timetrasfer / date_value;
-                    }
-
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (ThreadStart)delegate ()
-                        {
-                            //value = ProgressSendFile.Value;
-                            TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
-                            TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
-                            ProgressSendFile.Value = value;
+                        //value = ProgressSendFile.Value;
+                        TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
+                        TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
+                        ProgressSendFile.Value = value;
                         }
-                        );
-                }
+                    );
                 Thread.Sleep(500);
             }
 
@@ -377,6 +374,10 @@ namespace ModbusSynchFormTest
         private void timerprogressbarSlave()
         {
             double value = 0;
+
+            long ellapledTicks = DateTime.Now.Ticks;
+            TimeSpan elapsedSpan;
+
             while (true)
             {
                 if (slaveSyncSruct != null)
@@ -384,12 +385,29 @@ namespace ModbusSynchFormTest
                     this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (ThreadStart)delegate ()
                         {
+                            
                             value = ProgressSendFile.Value;
+                            TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
+
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
                         }
                         );
+
+                    if (value>=95)
+                    {
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (ThreadStart)delegate ()
+                        {
+                            value = ProgressSendFile.Value;
+                            TickTimeLB.Content = "Передано" + Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3) + "кб";
+
+                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
+                        }
+                        );
+                    }
+
                 }
-                Thread.Sleep(300);
+                Thread.Sleep(500);
             }
 
 
@@ -689,6 +707,10 @@ namespace ModbusSynchFormTest
                     pessButtonStop();
                 }
 
+                if (statusbar!=null)
+                {
+                    statusbar.Abort();
+                }
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             catch(Exception ex)
