@@ -247,7 +247,7 @@ namespace ModbusSynchFormTest
             {
                 button.Content = "Пуск";
                 StopOrStart = false;
-
+                pessButtonStop();
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.close();
