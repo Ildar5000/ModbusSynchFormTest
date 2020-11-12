@@ -25,6 +25,7 @@ using System.Xml.Serialization;
 using ModbusSyncStructLIb.Settings;
 using Microsoft.Win32;
 using System.Diagnostics;
+using ModbusSyncStructLIb.CheckConnect;
 
 namespace ModbusSynchFormTest
 {
@@ -43,6 +44,10 @@ namespace ModbusSynchFormTest
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
         SlaveSyncSruct slaveSyncSruct;
+
+        ManagerConnectionModbus managerConnectionModbus;
+
+
         #endregion
 
         #region struct
@@ -149,7 +154,7 @@ namespace ModbusSynchFormTest
         #endregion
 
         Thread porok;
-
+        Thread managerConnection;
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -168,8 +173,21 @@ namespace ModbusSynchFormTest
                         {
                             logger.Info("Создание мастера");
                             masterSyncStruct = new MasterSyncStruct();
-                            thread = new Thread(masterSyncStruct.Open);
-                            thread.Start();
+
+
+
+
+                            //masterSyncStruct.Open();
+
+                            //thread = new Thread(masterSyncStruct.Open);
+                            //thread.Start();
+
+
+                            managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
+                            managerConnection = new Thread(managerConnectionModbus.start);
+                            managerConnection.Start();
+
+
                             this.Title = "StructSyncTest -Master";
                         }
                         else
@@ -215,13 +233,13 @@ namespace ModbusSynchFormTest
 
                             vc.SignalFormedMetaClass += DisplayStruct;
 
+                            managerConnectionModbus = new ManagerConnectionModbus(slaveSyncSruct);
+                            managerConnection = new Thread(managerConnectionModbus.start);
+                            managerConnection.Start();
 
-
-                            thread = new Thread(slaveSyncSruct.Open);
-                            thread.Start();
-
+                            //thread = new Thread(slaveSyncSruct.Open);
+                            //thread.Start();
                             this.Title = "StructSyncTest-slave";
-
                             //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
                             //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
                         }
@@ -242,24 +260,35 @@ namespace ModbusSynchFormTest
                     }
                 }
             }
-
+            ///стоп
             else
             {
                 button.Content = "Пуск";
                 StopOrStart = false;
                 pessButtonStop();
+
+                
+                
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.close();
+                    managerConnectionModbus.closeManager();
+                    
+                    managerConnection.Abort();
                     pessButtonStop();
+                    
+                    
                 }
 
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
                     slaveSyncSruct.close();
-                    statusbar.Abort();
+                    managerConnectionModbus.closeManager();
+                    managerConnection.Abort();
+
                     pessButtonStop();
                 }
+                managerConnection.Abort();
             }
 
 
@@ -711,6 +740,7 @@ namespace ModbusSynchFormTest
                 {
                     statusbar.Abort();
                 }
+                Environment.Exit(0);
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             catch(Exception ex)

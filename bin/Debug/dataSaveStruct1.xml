@@ -3,8 +3,8 @@
   <testSendStruct>
     <name>2</name>
     <fre>2</fre>
-    <ab>2</ab>
-    <cd>2</cd>
+    <ab>21</ab>
+    <cd>21</cd>
   </testSendStruct>
   <test2SendStruct>
     <count>0</count>
