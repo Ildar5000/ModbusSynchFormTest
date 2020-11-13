@@ -379,6 +379,17 @@ namespace ModbusSynchFormTest
                         TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
                         TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
                         ProgressSendFile.Value = value;
+
+                        if (managerConnectionModbus.have_connection==true)
+                        {
+                            
+                        }
+                        else
+                        {
+                            
+                        }
+
+                        
                         }
                     );
                 Thread.Sleep(500);
