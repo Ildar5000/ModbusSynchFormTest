@@ -16,4 +16,5 @@
   <slaveID>1</slaveID>
   <defaulttypemodbus>1</defaulttypemodbus>
   <deltatime>300</deltatime>
+  <try_reboot_connection>true</try_reboot_connection>
 </SettingsModbus>

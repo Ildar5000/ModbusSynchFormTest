@@ -75,6 +75,16 @@ namespace ModbusSynchFormTest
 
             tab2.Visibility = Visibility.Hidden;
             loadSettings();
+
+            if (structSync.radioButton.IsChecked==true)
+            {
+                MasterRB.IsChecked = true;
+            }
+            if (structSync.radioButton1.IsChecked == true)
+            {
+                SlaveRB.IsChecked = true;
+            }
+
         }
 
         private void loadSettings()
@@ -83,72 +93,81 @@ namespace ModbusSynchFormTest
 
             if (File.Exists(path)==true)
             {
-                SettingsModbus settings;
-                // десериализация
-                using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Open))
+                try
                 {
-                    XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
-                    settings = (SettingsModbus)formatter.Deserialize(fs);
-
-                    Console.WriteLine("Объект десериализован");
-                }
-                Com_name_txb.Text = settings.ComName;
-                BaudRate_txb.Text = settings.BoudRate.ToString();
-                DataBits_lb_txb.Text = settings.DataBits.ToString();
-                ReadTimeout_txt.Text = settings.ReadTimeout.ToString();
-                WriteTimeout_txt.Text = settings.WriteTimeout.ToString();
-                IpAdressLb_txt.Text = settings.IP_client;
-                Port_lb_txt.Text = settings.port_IP_client.ToString();
-                slaveID_txt.Text = settings.slaveID.ToString();
-                DeltaTime_txt.Text = settings.deltatime.ToString();
-
-                foreach (var pt in typeParitylist)
-                {
-                    if (pt==settings.Party_type_str)
+                    SettingsModbus settings;
+                    // десериализация
+                    using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Open))
                     {
-                        int index = typeParitylist.IndexOf(pt);
-                        ListTypePartyComboBox.SelectedIndex = index;
+                        XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
+                        settings = (SettingsModbus)formatter.Deserialize(fs);
+
+                        Console.WriteLine("Объект десериализован");
                     }
-                }
+                    Com_name_txb.Text = settings.ComName;
+                    BaudRate_txb.Text = settings.BoudRate.ToString();
+                    DataBits_lb_txb.Text = settings.DataBits.ToString();
+                    ReadTimeout_txt.Text = settings.ReadTimeout.ToString();
+                    WriteTimeout_txt.Text = settings.WriteTimeout.ToString();
+                    IpAdressLb_txt.Text = settings.IP_client;
+                    Port_lb_txt.Text = settings.port_IP_client.ToString();
+                    slaveID_txt.Text = settings.slaveID.ToString();
+                    DeltaTime_txt.Text = settings.deltatime.ToString();
 
-                foreach (var pt in typeStopBitslist)
-                {
-                    if (pt == settings.StopBits_type_str)
-                    {
-                        int index = typeStopBitslist.IndexOf(pt);
-                        ListTypeStopbitsComboBox.SelectedIndex = index;
-                    }
-                }
+                    try_reboot_connection_сh.IsChecked = settings.try_reboot_connection;
 
-                foreach (var pt in type_ModbusList)
-                {
-                    if (pt == settings.typeModbusSTR)
+                    foreach (var pt in typeParitylist)
                     {
-                        int index = type_ModbusList.IndexOf(pt);
-                        TypeModbuscB.SelectedIndex = index;
-                        
-                        if (index == 2)
+                        if (pt == settings.Party_type_str)
                         {
-                            tab1.Visibility = Visibility.Hidden;
-                            tab2.Visibility = Visibility.Visible;
-                            TypeViewModbus.SelectedIndex = 1;
-                        }
-                        else
-                        {
-                            tab2.Visibility = Visibility.Hidden;
-                            tab1.Visibility = Visibility.Visible;
-                            TypeViewModbus.SelectedIndex = 0;
+                            int index = typeParitylist.IndexOf(pt);
+                            ListTypePartyComboBox.SelectedIndex = index;
                         }
                     }
-                }
 
-                if (settings.defaulttypemodbus == 0)
-                {
-                    MasterRB.IsChecked = true;
+                    foreach (var pt in typeStopBitslist)
+                    {
+                        if (pt == settings.StopBits_type_str)
+                        {
+                            int index = typeStopBitslist.IndexOf(pt);
+                            ListTypeStopbitsComboBox.SelectedIndex = index;
+                        }
+                    }
+
+                    foreach (var pt in type_ModbusList)
+                    {
+                        if (pt == settings.typeModbusSTR)
+                        {
+                            int index = type_ModbusList.IndexOf(pt);
+                            TypeModbuscB.SelectedIndex = index;
+
+                            if (index == 2)
+                            {
+                                tab1.Visibility = Visibility.Hidden;
+                                tab2.Visibility = Visibility.Visible;
+                                TypeViewModbus.SelectedIndex = 1;
+                            }
+                            else
+                            {
+                                tab2.Visibility = Visibility.Hidden;
+                                tab1.Visibility = Visibility.Visible;
+                                TypeViewModbus.SelectedIndex = 0;
+                            }
+                        }
+                    }
+
+                    if (settings.defaulttypemodbus == 0)
+                    {
+                        MasterRB.IsChecked = true;
+                    }
+                    if (settings.defaulttypemodbus == 1)
+                    {
+                        SlaveRB.IsChecked = true;
+                    }
                 }
-                if (settings.defaulttypemodbus == 1)
+                catch(Exception ex)
                 {
-                    SlaveRB.IsChecked = true;
+                    logger.Error(ex);
                 }
 
             }
@@ -300,7 +319,7 @@ namespace ModbusSynchFormTest
                     defaulttypemodbus = 1;
                 }
 
-                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text));
+                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), try_reboot_connection_сh.IsChecked.Value);
                 XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
                 // получаем поток, куда будем записывать сериализованный объект
