@@ -1,5 +1,6 @@
 ﻿using ModbusSyncStructLIb.Settings;
 using NLog;
+using NLog.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,6 +33,10 @@ namespace ModbusSynchFormTest
 
         public SettingModbusForm(StructSyncTest structSync)
         {
+            var loggerconf = new XmlLoggingConfiguration("NLog.config");
+            logger = LogManager.GetCurrentClassLogger();
+
+
             this.WindowStartupLocation = structSync.WindowStartupLocation;
 
             InitializeComponent();
