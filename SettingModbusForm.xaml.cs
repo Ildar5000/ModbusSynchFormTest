@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -166,6 +167,121 @@ namespace ModbusSynchFormTest
         {     
             try
             {
+                string regexCOM = @"Com\d";
+
+                string regex_decre = @"\d";
+
+                string regex_double = @"\d";
+
+                //string iprex = @"\d{3}.";
+                Regex iprex = new Regex(@"[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9]");
+
+
+                if (Regex.IsMatch(Com_name_txb.Text, regexCOM, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    Console.WriteLine("Введите правильный Com");
+                    logger.Warn("Введите правильный Com");
+                    return;
+                }
+
+                if (Regex.IsMatch(BaudRate_txb.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+                    
+                }
+                else
+                {
+                    Console.WriteLine("ВВ");
+                    logger.Warn("Введите Цифры в BaudRate");
+                    return;
+                }
+
+                if (Regex.IsMatch(DataBits_lb_txb.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+                    
+                }
+                else
+                {
+                    Console.WriteLine("ВВ");
+                    logger.Warn("Введите правильный DataBits");
+                    return;
+                }
+
+
+                if (Regex.IsMatch(ReadTimeout_txt.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    logger.Warn("Введите цифры");
+                    return;
+                }
+
+                if (Regex.IsMatch(WriteTimeout_txt.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    logger.Warn("Введите цифры");
+                    return;
+                }
+
+                if (Regex.IsMatch(slaveID_txt.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    logger.Warn("Введите цифры");
+                    return;
+                }
+
+                if (Regex.IsMatch(DeltaTime_txt.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    logger.Warn("Введите цифры");
+                    return;
+                }
+
+                if (Regex.IsMatch(Port_lb_txt.Text, regex_decre, RegexOptions.IgnoreCase))
+                {
+
+                }
+                else
+                {
+                    logger.Warn("Введите цифры");
+                    return;
+                }
+
+
+                try
+                {
+                    string[] words = IpAdressLb_txt.Text.Split('.');
+                    foreach (var word in words)
+                    {
+                        if (Convert.ToInt32(word) > 255)
+                        {
+                            logger.Warn("Введите правильный ip");
+                            return;
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    logger.Warn("Введите правильный ip");
+                    return;
+                }
+                
+
+
                 string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
 
                 string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
@@ -218,6 +334,16 @@ namespace ModbusSynchFormTest
                 tab1.Visibility = Visibility.Visible;
                 tab2.Visibility = Visibility.Hidden;
             }
+        }
+
+        private void Com_name_txb_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void BaudRate_txb_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

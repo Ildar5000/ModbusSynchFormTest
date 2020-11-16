@@ -356,9 +356,9 @@ namespace ModbusSynchFormTest
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (ThreadStart)delegate ()
                 {
-                    TickTimeLB.Content = "";
+                    //TickTimeLB.Content = "";
                     ProgressSendFile.Value = 0;
-                    TickTimeShow.Text = "";
+                    //TickTimeShow.Text = "";
                 }
                 );
 
@@ -376,8 +376,8 @@ namespace ModbusSynchFormTest
                     (ThreadStart)delegate ()
                     {
                         //value = ProgressSendFile.Value;
-                        TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
-                        TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
+                        //TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
+                        //TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
                         ProgressSendFile.Value = value;
 
                         if (managerConnectionModbus.have_connection==true)
@@ -400,9 +400,9 @@ namespace ModbusSynchFormTest
                 {
                     ellapledTicks = DateTime.Now.Ticks - ellapledTicks;
                     elapsedSpan = new TimeSpan(ellapledTicks);
-                    TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
+                    //TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
 
-                    TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
+                    //TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
                     ifbuttonsendfileend();
                 }
             );
@@ -427,7 +427,7 @@ namespace ModbusSynchFormTest
                         {
                             
                             value = ProgressSendFile.Value;
-                            TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
+                            //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
                         }
@@ -439,7 +439,7 @@ namespace ModbusSynchFormTest
                         (ThreadStart)delegate ()
                         {
                             value = ProgressSendFile.Value;
-                            TickTimeLB.Content = "Передано" + Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3) + "кб";
+                            //TickTimeLB.Content = "Передано" + Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3) + "кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
                         }

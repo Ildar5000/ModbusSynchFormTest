@@ -6,17 +6,17 @@
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib" xmlns:local1="clr-namespace:System.IO.Ports;assembly=System"
         mc:Ignorable="d"
-        Title="SettingModbusForm" Height="585.6" Width="416.258">
+        Title="SettingModbusForm" Height="585.6" Width="416.258" ResizeMode="NoResize">
     <Grid>
         <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,400,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
         <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="slaveID_lb" Content="slaveID" HorizontalAlignment="Left" Margin="10,291,0,0" VerticalAlignment="Top" Width="104"/>
-        <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="97,294,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="slaveID_lb" Content="modbusId" HorizontalAlignment="Left" Margin="10,291,0,0" VerticalAlignment="Top" Width="104"/>
+        <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="135,294,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
         <TabControl x:Name="TypeViewModbus" HorizontalAlignment="Left" Height="254" Margin="10,32,0,0" VerticalAlignment="Top" Width="364">
             <TabItem Header="SerialModbus" Name="tab1">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="119,11,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="119,39,0,0" TextWrapping="Wrap" Text="9600" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="Com_name_txb" HorizontalAlignment="Left" Height="23" Margin="119,11,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" Width="120" TextChanged="Com_name_txb_TextChanged"/>
+                    <TextBox x:Name="BaudRate_txb" HorizontalAlignment="Left" Height="23" Margin="119,39,0,0" TextWrapping="Wrap" Text="9600" VerticalAlignment="Top" Width="120" PreviewKeyDown="BaudRate_txb_PreviewKeyDown"/>
                     <TextBox x:Name="DataBits_lb_txb" HorizontalAlignment="Left" Height="23" Margin="119,67,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="ReadTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="119,167,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="WriteTimeout_txt" HorizontalAlignment="Left" Height="23" Margin="119,195,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="120"/>
@@ -43,8 +43,8 @@
         <ComboBox x:Name="TypeModbuscB" HorizontalAlignment="Left" Margin="97,5,0,0" VerticalAlignment="Top" Width="120" MouseLeave="comboBox_MouseLeave"/>
         <RadioButton x:Name="MasterRB" Content="Master" HorizontalAlignment="Left" Margin="22,362,0,0" VerticalAlignment="Top" IsChecked="True"/>
         <RadioButton x:Name="SlaveRB" Content="Slave" HorizontalAlignment="Left" Margin="127,362,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="DeltaTime_lb" Content="Дельта времени" HorizontalAlignment="Left" Margin="4,322,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="DeltaTime_txt" HorizontalAlignment="Left" Height="24" Margin="97,323,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="DeltaTime_lb" Content="Разница времени, мс" HorizontalAlignment="Left" Margin="4,322,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="DeltaTime_txt" HorizontalAlignment="Left" Height="24" Margin="135,324,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
 
     </Grid>
 </Window>
