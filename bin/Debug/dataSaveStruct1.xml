@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <MMS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <testSendStruct>
-    <name>2</name>
-    <fre>2</fre>
+    <name>222</name>
+    <fre>222</fre>
     <ab>2123</ab>
-    <cd>21</cd>
+    <cd>2122</cd>
   </testSendStruct>
   <test2SendStruct>
     <count>0</count>
