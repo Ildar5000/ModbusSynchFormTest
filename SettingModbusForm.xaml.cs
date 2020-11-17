@@ -190,8 +190,6 @@ namespace ModbusSynchFormTest
 
                 string regex_decre = @"\d";
 
-                string regex_double = @"\d";
-
                 //string iprex = @"\d{3}.";
                 Regex iprex = new Regex(@"[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9]");
 

@@ -21,11 +21,11 @@ using ModbusSyncStructLIb.EvenBase;
 using NLog;
 using NLog.Config;
 using StructAllforTest;
-using System.Xml.Serialization;
 using ModbusSyncStructLIb.Settings;
 using Microsoft.Win32;
 using System.Diagnostics;
 using ModbusSyncStructLIb.CheckConnect;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace ModbusSynchFormTest
 {
@@ -35,11 +35,16 @@ namespace ModbusSynchFormTest
     public partial class StructSyncTest : Window
     {
         private static Logger logger;
-        Thread thread;
         Thread statusbar;
+
+        Thread diagnostik_show;
+
         bool StopOrStart = false;
 
         List<string> pathFiles = new List<string>();
+
+        List<string> pathFolder = new List<string>();
+
 
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
@@ -163,25 +168,26 @@ namespace ModbusSynchFormTest
                 StopOrStart = true;
                 button.Content = "Стоп";
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
+                diagnostik_show = new Thread(CheckConnection);
+                diagnostik_show.Start();
                 if (radioButton.IsChecked == true)
                 {
                     //Master
                     try
                     {
                         HideButtonsIfConnectionMaster();
+                        
+                        
+
                         if (File.Exists(path) == true)
                         {
                             logger.Info("Создание мастера");
                             masterSyncStruct = new MasterSyncStruct();
 
-
-
-
                             //masterSyncStruct.Open();
 
                             //thread = new Thread(masterSyncStruct.Open);
                             //thread.Start();
-
 
                             managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
                             managerConnection = new Thread(managerConnectionModbus.start);
@@ -266,12 +272,11 @@ namespace ModbusSynchFormTest
                 button.Content = "Пуск";
                 StopOrStart = false;
                 pessButtonStop();
+                diagnostik_show.Abort();
 
-                
-                
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
-                    masterSyncStruct.close();
+                    masterSyncStruct.Close();
                     managerConnectionModbus.closeManager();
                     
                     managerConnection.Abort();
@@ -282,7 +287,7 @@ namespace ModbusSynchFormTest
 
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
-                    slaveSyncSruct.close();
+                    slaveSyncSruct.Close();
                     managerConnectionModbus.closeManager();
                     managerConnection.Abort();
 
@@ -366,14 +371,22 @@ namespace ModbusSynchFormTest
 
             while (value != 100 && masterSyncStruct.falltransfer == false&& masterSyncStruct!=null)
             {
-                double alltranferendpacket = masterSyncStruct.getdatatrasferreal();
-                date_value = masterSyncStruct.getdatatrasfer();
-                sentpacket_value = alltranferendpacket;
-                value = masterSyncStruct.status_bar;
-                
-                timetrasfer = (date_value- sentpacket_value) / 1200;
-                //timetrasferhave = timetrasfer / date_value;
-                
+                try
+                {
+                    double alltranferendpacket = masterSyncStruct.getdatatrasferreal();
+                    date_value = masterSyncStruct.getdatatrasfer();
+                    sentpacket_value = alltranferendpacket;
+                    value = masterSyncStruct.status_bar;
+
+                    timetrasfer = (date_value - sentpacket_value) / 1200;
+                    //timetrasferhave = timetrasfer / date_value;
+                }
+                catch(Exception ex)
+                {
+                    logger.Error(ex);
+                }
+
+
                 this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
                     {
@@ -459,6 +472,39 @@ namespace ModbusSynchFormTest
         {
             loadsetings();
         }
+
+        public void CheckConnection()
+        {
+            while (true)
+            {
+                if (managerConnection != null)
+                {
+                    if (managerConnectionModbus.have_connection == true)
+                    {
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (ThreadStart)delegate ()
+                            {
+                                HaveConnectionlbSignal.Fill = Brushes.Green;
+                                HaveConnectionlb.Content = "На связи Master и Slave";
+                            }
+                        );
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (ThreadStart)delegate ()
+                            {
+                                HaveConnectionlbSignal.Fill = Brushes.Red;
+                                HaveConnectionlb.Content = "Связь не найдена между Master и Slave";
+                            }
+                        );
+                    }
+
+                }
+                Thread.Sleep(1000);
+            }
+        }
+
 
         #endregion
 
@@ -562,7 +608,6 @@ namespace ModbusSynchFormTest
                 Directory.CreateDirectory("innerfile");
         }
 
-
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
         {
@@ -615,7 +660,7 @@ namespace ModbusSynchFormTest
                         // отправка данных 
                         var sss = masterSyncStruct.decompress(outStream, false);
 
-                        queueOf.add_queue(outStream);
+                        queueOf.AddQueue(outStream);
 
                         //masterSyncStruct.send_multi_message(outStream);
                     }
@@ -677,7 +722,7 @@ namespace ModbusSynchFormTest
                         var oustream = masterSyncStruct.compress(stream, false);
 
                         // отправка данных 
-                        queueOf.add_queue(oustream);
+                        queueOf.AddQueue(oustream);
                         //masterSyncStruct.send_multi_message(oustream);
                     }
                 }
@@ -734,7 +779,7 @@ namespace ModbusSynchFormTest
                 {
                     if (masterSyncStruct!=null)
                     {
-                        masterSyncStruct.close();
+                        masterSyncStruct.Close();
                     }
                     pessButtonStop();
                 }
@@ -743,7 +788,7 @@ namespace ModbusSynchFormTest
                 {
                     if (masterSyncStruct != null)
                     {
-                        slaveSyncSruct.close();
+                        slaveSyncSruct.Close();
                     }
                         
                     pessButtonStop();
@@ -807,9 +852,10 @@ namespace ModbusSynchFormTest
         {
             if (masterSyncStruct!=null)
             {
-                queueOf.stoptransfer();
+                queueOf.StopTransfer();
                 ProgressSendFile.Value = 0;
                 ifbuttonsendfileend();
+                Thread.Sleep(100);
             }
             
             if (porok!=null)
@@ -819,7 +865,9 @@ namespace ModbusSynchFormTest
 
             if (slaveSyncSruct != null)
             {
+
                 slaveSyncSruct.stoptransfer();
+                Thread.Sleep(100);
                 //queueOf.stoptransfer();
                 ProgressSendFile.Value = 0;
                 
@@ -889,15 +937,18 @@ namespace ModbusSynchFormTest
                             logger.Error(ex);
                             porok.Abort();
                         }
-
-
                     }
+
+                    try
+                    {
+                        string[] words = path.Split('\\');
+
                         attributes = File.GetAttributes(path);
 
                         DateTime dtFirstCreate = File.GetCreationTime(path);
                         DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
-                        metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
+                        metaClassFor = new MetaClassForStructandtherdata(destination, true, words[words.Length-1], attributes, dtFirstCreate, dTLASTWRITE);
                         // создаем объект BinaryFormatter
                         BinaryFormatter formatter = new BinaryFormatter();
                         formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -908,8 +959,18 @@ namespace ModbusSynchFormTest
                         var oustream = masterSyncStruct.compress(stream, false);
 
                         // отправка данных 
-                        queueOf.add_queue(oustream);
+                        queueOf.AddQueue(oustream);
                         porok.Start();
+
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //logger.Warn("Введите правильный ip");
+                        return;
+                    }
+
                         //masterSyncStruct.send_multi_message(oustream);
                 }
                 else
@@ -926,10 +987,6 @@ namespace ModbusSynchFormTest
 
         public void send_files()
         {
-            if (pathFiles.Count==0)
-            {
-                return;
-            }
 
             foreach (var path in pathFiles)
             {
@@ -943,10 +1000,72 @@ namespace ModbusSynchFormTest
                     logger.Warn("откройте файл");
                 }
             }
-            
+
+            foreach (var path in pathFolder)
+            {
+                if (path != "" || path != null)
+                {
+                    DirectoryInfo dir = new DirectoryInfo(path);
+
+                    string[] file_list = Directory.GetFiles(path);
+                    foreach (var item in file_list)
+                    {
+                        send_file(item);
+                    }
+
+
+                }
+                else
+                {
+                    logger.Warn("откройте файл");
+                }
+            }
+
         }
 
         #endregion
 
+        private void ClearSelectbr_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> listpath = new List<string>();
+            foreach(var path in lB_PathFileView.SelectedItems)
+            {
+                listpath.Add((string)path);
+            }
+
+            foreach (var path in listpath)
+            {
+                if (path!=""&& path!=null)
+                {
+                    lB_PathFileView.Items.Remove(path);
+                    pathFolder.Remove(path);
+                    pathFiles.Remove(path);
+                }
+                
+
+            }
+
+        }
+
+        private void clearAllBT_Click(object sender, RoutedEventArgs e)
+        {
+            lB_PathFileView.Items.Clear();
+            pathFiles.Clear();
+            pathFolder.Clear();
+
+        }
+
+        private void OpenFiledialog_folder_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Users";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                //MessageBox.Show("You selected: " + dialog.FileName);
+                pathFolder.Add(dialog.FileName);
+                lB_PathFileView.Items.Add(dialog.FileName);
+            }
+        }
     }
 }

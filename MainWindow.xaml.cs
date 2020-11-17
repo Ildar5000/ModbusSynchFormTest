@@ -181,7 +181,7 @@ namespace ModbusSynchFormTest
                 
                 ushort value = (ushort)Convert.ToInt16(textBox1.Text);
                 
-                masterSyncStruct.send_single_message(value, address);
+                masterSyncStruct.SendSingleMessage(value, address);
             }
             
         }
@@ -259,7 +259,7 @@ namespace ModbusSynchFormTest
                     //Console.WriteLine("Отправка данных");
                     logger.Trace("Отправка данных");
 
-                    masterSyncStruct.send_multi_message(stream);
+                    masterSyncStruct.SendMultiMessage(stream);
 
                     Console.WriteLine(stream);
                 }
@@ -312,7 +312,7 @@ namespace ModbusSynchFormTest
 
                     formatter.Serialize(stream, metaClassFor);
 
-                    masterSyncStruct.send_multi_message(stream);
+                    masterSyncStruct.SendMultiMessage(stream);
 
                     Console.WriteLine(stream);
                 }
@@ -359,7 +359,7 @@ namespace ModbusSynchFormTest
 
                     formatter.Serialize(stream, metaClassFor);
 
-                    masterSyncStruct.send_multi_message(stream);
+                    masterSyncStruct.SendMultiMessage(stream);
 
                     Console.WriteLine(stream);
                 }
@@ -421,7 +421,7 @@ namespace ModbusSynchFormTest
                     byte[] date1 = sss.ToArray();
                     */
 
-                    masterSyncStruct.send_multi_message(outStream);
+                    masterSyncStruct.SendMultiMessage(outStream);
 
                     Console.WriteLine(stream);
                 }
