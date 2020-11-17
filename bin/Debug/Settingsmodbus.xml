@@ -9,7 +9,7 @@
   <StopBits_type_str>One</StopBits_type_str>
   <Party_type_int>1</Party_type_int>
   <StopBits_type_int>0</StopBits_type_int>
-  <IP_client>127.0.0.1</IP_client>
+  <IP_client>192.168.100.10</IP_client>
   <port_IP_client>502</port_IP_client>
   <typeModbus>2</typeModbus>
   <typeModbusSTR>TCP</typeModbusSTR>

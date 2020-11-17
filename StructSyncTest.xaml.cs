@@ -300,6 +300,7 @@ namespace ModbusSynchFormTest
             radioButton.IsEnabled = false;
             radioButton1.IsEnabled = false;
             btn_settings_modbus.IsEnabled = false;
+            StopTransfer.Visibility = Visibility.Visible;
         }
 
         private void HideButtonsIfConnectionSlave()
@@ -311,12 +312,12 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = false;
             button2.Visibility = Visibility.Hidden;
             button3.Visibility = Visibility.Hidden;
-            StopTransfer.Visibility = Visibility.Hidden;
+           StopTransfer.Visibility = Visibility.Visible;
         }
 
         private void pessButtonStop()
         {
-            StopTransfer.Visibility = Visibility.Visible;
+            //StopTransfer.Visibility = Visibility.Visible;
             FileTab.Visibility = Visibility.Visible;
             button1.Visibility = Visibility.Visible;
             radioButton.IsEnabled = true;
@@ -324,6 +325,7 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = true;
             button2.Visibility = Visibility.Visible;
             button3.Visibility = Visibility.Visible;
+            StopTransfer.Visibility = Visibility.Hidden;
         }
 
         public void ifbuttonsendfile()
@@ -803,15 +805,25 @@ namespace ModbusSynchFormTest
 
         private void StopTransfer_Click(object sender, RoutedEventArgs e)
         {
-            queueOf.stoptransfer();
-            ProgressSendFile.Value = 0;
-            ifbuttonsendfileend();
+            if (masterSyncStruct!=null)
+            {
+                queueOf.stoptransfer();
+                ProgressSendFile.Value = 0;
+                ifbuttonsendfileend();
+            }
             
             if (porok!=null)
             {
                 porok.Abort();
             }
 
+            if (slaveSyncSruct != null)
+            {
+                slaveSyncSruct.stoptransfer();
+                //queueOf.stoptransfer();
+                ProgressSendFile.Value = 0;
+                
+            }
 
         }
 
@@ -850,67 +862,66 @@ namespace ModbusSynchFormTest
 
         public void send_file(string path)
         {
-            MemoryStream destination = new MemoryStream();
-            FileAttributes attributes = new FileAttributes();
-
-            ifbuttonsendfile();
-
-            if (path!= "")
+            try
             {
-                porok = new Thread(timerprogressbar);
+                MemoryStream destination = new MemoryStream();
+                FileAttributes attributes = new FileAttributes();
 
-                using (FileStream fs = new FileStream(path, FileMode.Open))
+                ifbuttonsendfile();
+
+                if (path != "")
                 {
-                    try
+                    porok = new Thread(timerprogressbar);
+
+                    using (FileStream fs = new FileStream(path, FileMode.Open))
                     {
-                        queueOf.master = masterSyncStruct;
+                        try
+                        {
+                            queueOf.master = masterSyncStruct;
 
-                        byte[] vs;
+                            byte[] vs;
 
-                        fs.CopyTo(destination);
-                        //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                            fs.CopyTo(destination);
+                            //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex);
+                            porok.Abort();
+                        }
+
+
                     }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex);
-                        porok.Abort();
-                    }
+                        attributes = File.GetAttributes(path);
 
+                        DateTime dtFirstCreate = File.GetCreationTime(path);
+                        DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
+                        metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
+                        // создаем объект BinaryFormatter
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                        var stream = new MemoryStream();
+
+                        formatter.Serialize(stream, metaClassFor);
+
+                        var oustream = masterSyncStruct.compress(stream, false);
+
+                        // отправка данных 
+                        queueOf.add_queue(oustream);
+                        porok.Start();
+                        //masterSyncStruct.send_multi_message(oustream);
                 }
-
-                try
+                else
                 {
-                    attributes = File.GetAttributes(path);
-
-                    DateTime dtFirstCreate = File.GetCreationTime(path);
-                    DateTime dTLASTWRITE = File.GetLastWriteTime(path);
-
-                    metaClassFor = new MetaClassForStructandtherdata(destination, true, nameFile, attributes, dtFirstCreate, dTLASTWRITE);
-                    // создаем объект BinaryFormatter
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                    var stream = new MemoryStream();
-
-                    formatter.Serialize(stream, metaClassFor);
-
-                    var oustream = masterSyncStruct.compress(stream, false);
-
-                    // отправка данных 
-                    queueOf.add_queue(oustream);
-                    porok.Start();
-                    //masterSyncStruct.send_multi_message(oustream);
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    porok.Abort();
+                    logger.Warn("откройте файл");
                 }
             }
-            else
+            catch(Exception ex)
             {
-                logger.Warn("откройте файл");
+                logger.Error(ex);
             }
+            
         }
 
         public void send_files()

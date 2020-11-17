@@ -16,7 +16,7 @@
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="button1" Content="Синхр. все" HorizontalAlignment="Left" Margin="567,0,0,0" VerticalAlignment="Top" Width="75" Height="60" Click="button1_Click"/>
                 <Button x:Name="btn_settings_modbus" Content="Настройки" HorizontalAlignment="Left" Margin="480,0,0,0" VerticalAlignment="Top" Width="82" Height="59" Click="btn_settings_modbus_Click"/>
-                <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click"/>
+                <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click" Visibility="Hidden"/>
             </Grid>
         </GroupBox>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="230" Margin="10,93,0,0" VerticalAlignment="Top" Width="772">
