@@ -41,10 +41,10 @@
             </TabItem>
         </TabControl>
         <ComboBox x:Name="TypeModbuscB" HorizontalAlignment="Left" Margin="97,5,0,0" VerticalAlignment="Top" Width="120" MouseLeave="comboBox_MouseLeave"/>
-        <RadioButton x:Name="MasterRB" Content="Master" HorizontalAlignment="Left" Margin="22,362,0,0" VerticalAlignment="Top" IsChecked="True"/>
-        <RadioButton x:Name="SlaveRB" Content="Slave" HorizontalAlignment="Left" Margin="127,362,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="MasterRB" Content="Master" HorizontalAlignment="Left" Margin="22,362,0,0" VerticalAlignment="Top" IsChecked="True" Checked="MasterRB_Checked"/>
+        <RadioButton x:Name="SlaveRB" Content="Slave" HorizontalAlignment="Left" Margin="127,362,0,0" VerticalAlignment="Top" Checked="SlaveRB_Checked"/>
         <Label x:Name="DeltaTime_lb" Content="Разница времени, мс" HorizontalAlignment="Left" Margin="4,322,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="DeltaTime_txt" HorizontalAlignment="Left" Height="24" Margin="135,324,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="DeltaTime_txt" HorizontalAlignment="Left" Height="24" Margin="135,324,0,0" TextWrapping="Wrap" Text="300" VerticalAlignment="Top" Width="120"/>
         <CheckBox x:Name="try_reboot_connection_сh" Content="Восстанавливать соеднение" HorizontalAlignment="Left" Margin="22,394,0,0" VerticalAlignment="Top" IsChecked="True"/>
 
     </Grid>

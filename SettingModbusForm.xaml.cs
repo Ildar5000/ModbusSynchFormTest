@@ -297,8 +297,6 @@ namespace ModbusSynchFormTest
                     return;
                 }
                 
-
-
                 string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
 
                 string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
@@ -361,6 +359,16 @@ namespace ModbusSynchFormTest
         private void BaudRate_txb_PreviewKeyDown(object sender, KeyEventArgs e)
         {
 
+        }
+
+        private void MasterRB_Checked(object sender, RoutedEventArgs e)
+        {
+            IpAdress_Lb.Content = "IP Adress Slave";
+        }
+
+        private void SlaveRB_Checked(object sender, RoutedEventArgs e)
+        {
+            IpAdress_Lb.Content = "IP Adress Slave";
         }
     }
 }

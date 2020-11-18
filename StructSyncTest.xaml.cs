@@ -61,7 +61,7 @@ namespace ModbusSynchFormTest
         #endregion
 
         #region metaclass
-        MetaClassForStructandtherdata metaClassFor;
+        MetaClassForStructAndtherData metaClassFor;
         QueueOfSentMessagesForSlave queueOf;
         string nameFile;
         #endregion
@@ -77,6 +77,7 @@ namespace ModbusSynchFormTest
             this.WindowStartupLocation= System.Windows.WindowStartupLocation.CenterScreen;
 
         }
+
 
         private void loadsetings()
         {
@@ -156,6 +157,12 @@ namespace ModbusSynchFormTest
             
         }
 
+        private void loadlogger()
+        {
+           
+        }
+
+
         #endregion
 
         Thread porok;
@@ -176,9 +183,6 @@ namespace ModbusSynchFormTest
                     try
                     {
                         HideButtonsIfConnectionMaster();
-                        
-                        
-
                         if (File.Exists(path) == true)
                         {
                             logger.Info("Создание мастера");
@@ -190,7 +194,7 @@ namespace ModbusSynchFormTest
                             //thread.Start();
 
                             managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
-                            managerConnection = new Thread(managerConnectionModbus.start);
+                            managerConnection = new Thread(managerConnectionModbus.Start);
                             managerConnection.Start();
 
 
@@ -198,6 +202,8 @@ namespace ModbusSynchFormTest
                         }
                         else
                         {
+                            MessageBoxResult result = MessageBox.Show("Создайте файл конфигурацию", "My App", MessageBoxButton.OK);
+
                             logger.Info("Настройки мастера");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
@@ -214,8 +220,6 @@ namespace ModbusSynchFormTest
                 {
                     statusbar = new Thread(timerprogressbarSlave);
                     statusbar.Start();
-
-
                     //Slave
                     try
                     {
@@ -231,8 +235,8 @@ namespace ModbusSynchFormTest
                             vc = new VMS();
 
                             logger.Info("Создание подписок");
-                            slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
-                            slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
+                            slaveSyncSruct.SignalFormedMetaClass += ms.ExecutionProcessingReguest;
+                            slaveSyncSruct.SignalFormedMetaClass += vc.ExecutionProcessingReguest;
 
                             slaveSyncSruct.SignalFormedMetaClassAll += DisplayStruct;
                             ms.SignalFormedMetaClass += DisplayStruct;
@@ -240,7 +244,7 @@ namespace ModbusSynchFormTest
                             vc.SignalFormedMetaClass += DisplayStruct;
 
                             managerConnectionModbus = new ManagerConnectionModbus(slaveSyncSruct);
-                            managerConnection = new Thread(managerConnectionModbus.start);
+                            managerConnection = new Thread(managerConnectionModbus.Start);
                             managerConnection.Start();
 
                             //thread = new Thread(slaveSyncSruct.Open);
@@ -251,6 +255,7 @@ namespace ModbusSynchFormTest
                         }
                         else
                         {
+                            MessageBoxResult result = MessageBox.Show("Создайте файл конфигурацию", "My App", MessageBoxButton.OK);
                             logger.Info("Настройки Slave");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
@@ -277,7 +282,7 @@ namespace ModbusSynchFormTest
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.Close();
-                    managerConnectionModbus.closeManager();
+                    managerConnectionModbus.CloseManager();
                     
                     managerConnection.Abort();
                     pessButtonStop();
@@ -288,12 +293,11 @@ namespace ModbusSynchFormTest
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
                     slaveSyncSruct.Close();
-                    managerConnectionModbus.closeManager();
+                    managerConnectionModbus.CloseManager();
                     managerConnection.Abort();
 
                     pessButtonStop();
                 }
-                managerConnection.Abort();
             }
 
 
@@ -338,6 +342,10 @@ namespace ModbusSynchFormTest
             OpenFiledialog.IsEnabled = false;
             lB_PathFileView.IsEnabled = false;
             OpenFiledialogSend.IsEnabled = false;
+            OpenFiledialog_folder.IsEnabled = false;
+            clearAllBT.IsEnabled = false;
+            ClearSelectbr.IsEnabled = false;
+
         }
 
         public void ifbuttonsendfileend()
@@ -345,6 +353,9 @@ namespace ModbusSynchFormTest
             OpenFiledialog.IsEnabled = true;
             lB_PathFileView.IsEnabled = true;
             OpenFiledialogSend.IsEnabled = true;
+            OpenFiledialog_folder.IsEnabled = true;
+            clearAllBT.IsEnabled = true;
+            ClearSelectbr.IsEnabled = true;
         }
 
         private void timerprogressbar()
@@ -373,8 +384,8 @@ namespace ModbusSynchFormTest
             {
                 try
                 {
-                    double alltranferendpacket = masterSyncStruct.getdatatrasferreal();
-                    date_value = masterSyncStruct.getdatatrasfer();
+                    double alltranferendpacket = masterSyncStruct.GetDataTrasferNow();
+                    date_value = masterSyncStruct.GetDataTrasfer();
                     sentpacket_value = alltranferendpacket;
                     value = masterSyncStruct.status_bar;
 
@@ -510,7 +521,7 @@ namespace ModbusSynchFormTest
 
 
         #region DisplayStruct
-        private void DisplayStruct(MetaClassForStructandtherdata metaobj)
+        private void DisplayStruct(MetaClassForStructAndtherData metaobj)
         {
             check_folder();
             FileAttributes attributes = new FileAttributes();
@@ -644,7 +655,7 @@ namespace ModbusSynchFormTest
 
                     if (masterSyncStruct != null)
                     {
-                        metaClassFor = new MetaClassForStructandtherdata(ms);
+                        metaClassFor = new MetaClassForStructAndtherData(ms);
                         metaClassFor.type_archv = 1;
 
                         // создаем объект BinaryFormatter
@@ -655,10 +666,10 @@ namespace ModbusSynchFormTest
                         var outStream = new MemoryStream();
                         formatter.Serialize(stream, metaClassFor);
 
-                        outStream = masterSyncStruct.compress(stream, false);
+                        outStream = masterSyncStruct.Compress(stream, false);
 
                         // отправка данных 
-                        var sss = masterSyncStruct.decompress(outStream, false);
+                       
 
                         queueOf.AddQueue(outStream);
 
@@ -711,7 +722,7 @@ namespace ModbusSynchFormTest
 
                     if (masterSyncStruct != null)
                     {
-                        metaClassFor = new MetaClassForStructandtherdata(vc);
+                        metaClassFor = new MetaClassForStructAndtherData(vc);
                         // создаем объект BinaryFormatter
                         BinaryFormatter formatter = new BinaryFormatter();
                         formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -719,7 +730,7 @@ namespace ModbusSynchFormTest
 
                         formatter.Serialize(stream, metaClassFor);
 
-                        var oustream = masterSyncStruct.compress(stream, false);
+                        var oustream = masterSyncStruct.Compress(stream, false);
 
                         // отправка данных 
                         queueOf.AddQueue(oustream);
@@ -810,25 +821,6 @@ namespace ModbusSynchFormTest
 
         }
 
-        private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
-        {
-            nameFile="nofile.txt";
-            lB_PathFileView.ItemsSource = null;
-            string filestr=null;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                filestr = openFileDialog.FileName;
-                nameFile = openFileDialog.SafeFileName;
-                pathFiles.Add(filestr);
-            }
-            lB_PathFileView.Items.Add(filestr);
-
-        }
-
-
-
-
         private void OpenFiledialogSend_Click(object sender, RoutedEventArgs e)
         {
             if (masterSyncStruct!=null)
@@ -866,7 +858,7 @@ namespace ModbusSynchFormTest
             if (slaveSyncSruct != null)
             {
 
-                slaveSyncSruct.stoptransfer();
+                slaveSyncSruct.StopTransfer();
                 Thread.Sleep(100);
                 //queueOf.stoptransfer();
                 ProgressSendFile.Value = 0;
@@ -908,6 +900,22 @@ namespace ModbusSynchFormTest
 
         #region sendFile Отправка файло
 
+        private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
+        {
+            nameFile = "nofile.txt";
+            lB_PathFileView.ItemsSource = null;
+            string filestr = null;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                filestr = openFileDialog.FileName;
+                nameFile = openFileDialog.SafeFileName;
+                pathFiles.Add(filestr);
+            }
+            lB_PathFileView.Items.Add(filestr);
+
+        }
+
         public void send_file(string path)
         {
             try
@@ -948,7 +956,7 @@ namespace ModbusSynchFormTest
                         DateTime dtFirstCreate = File.GetCreationTime(path);
                         DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
-                        metaClassFor = new MetaClassForStructandtherdata(destination, true, words[words.Length-1], attributes, dtFirstCreate, dTLASTWRITE);
+                        metaClassFor = new MetaClassForStructAndtherData(destination, true, words[words.Length-1], attributes, dtFirstCreate, dTLASTWRITE);
                         // создаем объект BinaryFormatter
                         BinaryFormatter formatter = new BinaryFormatter();
                         formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -956,7 +964,7 @@ namespace ModbusSynchFormTest
 
                         formatter.Serialize(stream, metaClassFor);
 
-                        var oustream = masterSyncStruct.compress(stream, false);
+                        var oustream = masterSyncStruct.Compress(stream, false);
 
                         // отправка данных 
                         queueOf.AddQueue(oustream);
@@ -1023,7 +1031,6 @@ namespace ModbusSynchFormTest
 
         }
 
-        #endregion
 
         private void ClearSelectbr_Click(object sender, RoutedEventArgs e)
         {
@@ -1067,5 +1074,7 @@ namespace ModbusSynchFormTest
                 lB_PathFileView.Items.Add(dialog.FileName);
             }
         }
+
+        #endregion
     }
 }

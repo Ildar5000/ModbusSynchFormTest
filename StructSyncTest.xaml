@@ -53,7 +53,6 @@
             </TabItem>
             <TabItem Header="Файл" x:Name="FileTab">
                 <Grid>
-
                     <Label x:Name="Pathlb" Content="Пути к файлам" HorizontalAlignment="Left" Margin="152,10,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="OpenFiledialog" Content="Открыть файл" HorizontalAlignment="Left" Margin="18,41,0,0" VerticalAlignment="Top" Width="129" Click="OpenFiledialog_Click" Height="36"/>
                     <Button x:Name="OpenFiledialogSend" Content="Отправить" HorizontalAlignment="Left" Margin="18,142,0,0" VerticalAlignment="Top" Width="129" Click="OpenFiledialogSend_Click" Height="36"/>
@@ -67,15 +66,10 @@
                     <Button x:Name="OpenFiledialog_folder" Content="Открыть папку" HorizontalAlignment="Left" Margin="152,41,0,0" VerticalAlignment="Top" Width="129" Click="OpenFiledialog_folder_Click" Height="36"/>
                     <Button x:Name="ClearSelectbr" Content="Очистить выбранное" HorizontalAlignment="Left" Margin="18,82,0,0" VerticalAlignment="Top" Width="129" Click="ClearSelectbr_Click" Height="36"/>
                     <Button x:Name="clearAllBT" Content="Очистить все" HorizontalAlignment="Left" Margin="152,82,0,0" VerticalAlignment="Top" Width="129" Click="clearAllBT_Click" Height="36"/>
-
                 </Grid>
             </TabItem>
         </TabControl>
         <nlog:NlogViewer x:Name="logCtrl" Margin="10,328,9.6,42.4"/>
-        <WPFTool:BusyIndicator Name="BusyIndicator" Margin="0,299,10,138">
-            <Grid>
-            </Grid>
-        </WPFTool:BusyIndicator>
         <ProgressBar x:Name="ProgressSendFile"  HorizontalAlignment="Left" Height="27" Margin="10,493,0,0" VerticalAlignment="Top" Width="574"/>
     </Grid>
 </Window>

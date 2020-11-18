@@ -31,7 +31,7 @@ namespace ModbusSynchFormTest
     public partial class MainWindow : Window
     {
         MasterSyncStruct masterSyncStruct;
-        MetaClassForStructandtherdata metaClassFor;
+        MetaClassForStructAndtherData metaClassFor;
         SlaveSyncSruct slaveSyncSruct;
         MMS ms;
         VMS vc;
@@ -107,8 +107,8 @@ namespace ModbusSynchFormTest
                 ms = new MMS();
                 vc = new VMS();
 
-                slaveSyncSruct.SignalFormedMetaClass += ms.execution_processing_reguest;
-                slaveSyncSruct.SignalFormedMetaClass += vc.execution_processing_reguest;
+                slaveSyncSruct.SignalFormedMetaClass += ms.ExecutionProcessingReguest;
+                slaveSyncSruct.SignalFormedMetaClass += vc.ExecutionProcessingReguest;
 
                 slaveSyncSruct.SignalFormedMetaClass += DisplayStruct;
                 Thread thread = new Thread(slaveSyncSruct.Open);
@@ -223,7 +223,7 @@ namespace ModbusSynchFormTest
 
         private void button5_Click(object sender, RoutedEventArgs e)
         {
-            ushort []data=masterSyncStruct.readHolding();
+            ushort []data=masterSyncStruct.ReadHolding();
 
             for(int i= 0;i<data.Length; i++)
             {
@@ -248,7 +248,7 @@ namespace ModbusSynchFormTest
 
                     MMS ms1 = new MMS(testSend);
 
-                    metaClassFor = new MetaClassForStructandtherdata(ms1);
+                    metaClassFor = new MetaClassForStructAndtherData(ms1);
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
@@ -275,7 +275,7 @@ namespace ModbusSynchFormTest
         {
             try
             {
-                ushort status = masterSyncStruct.SendRequestforStatusSlave();
+                ushort status = masterSyncStruct.SendRequestForStatusSlave();
 
                 Console.WriteLine(status);
             }
@@ -303,7 +303,7 @@ namespace ModbusSynchFormTest
 
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(ms);
+                    metaClassFor = new MetaClassForStructAndtherData(ms);
 
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
@@ -350,7 +350,7 @@ namespace ModbusSynchFormTest
 
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(vc);
+                    metaClassFor = new MetaClassForStructAndtherData(vc);
 
                     // создаем объект BinaryFormatter
                     BinaryFormatter formatter = new BinaryFormatter();
@@ -397,7 +397,7 @@ namespace ModbusSynchFormTest
 
                 try
                 {
-                    metaClassFor = new MetaClassForStructandtherdata(vc);
+                    metaClassFor = new MetaClassForStructAndtherData(vc);
                     metaClassFor.type_archv = 1;
 
                     // создаем объект BinaryFormatter
