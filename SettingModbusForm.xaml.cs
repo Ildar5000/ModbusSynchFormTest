@@ -200,6 +200,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите правильный Com", "My App", MessageBoxButton.OK);
                     Console.WriteLine("Введите правильный Com");
                     logger.Warn("Введите правильный Com");
                     return;
@@ -211,7 +212,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
-                    Console.WriteLine("ВВ");
+                    MessageBoxResult result = MessageBox.Show("Введите Цифры в BaudRate", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите Цифры в BaudRate");
                     return;
                 }
@@ -222,7 +223,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
-                    Console.WriteLine("ВВ");
+                    MessageBoxResult result = MessageBox.Show("Введите Цифры в DataBits", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите правильный DataBits");
                     return;
                 }
@@ -234,6 +235,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите цифры", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите цифры");
                     return;
                 }
@@ -244,6 +246,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите цифры", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите цифры");
                     return;
                 }
@@ -254,6 +257,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите цифры", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите цифры");
                     return;
                 }
@@ -264,6 +268,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите цифры", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите цифры");
                     return;
                 }
@@ -274,6 +279,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите цифры", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите цифры");
                     return;
                 }
@@ -286,6 +292,7 @@ namespace ModbusSynchFormTest
                     {
                         if (Convert.ToInt32(word) > 255)
                         {
+                            MessageBoxResult result = MessageBox.Show("Введите правильный ip", "My App", MessageBoxButton.OK);
                             logger.Warn("Введите правильный ip");
                             return;
                         }
@@ -293,6 +300,7 @@ namespace ModbusSynchFormTest
                 }
                 catch(Exception ex)
                 {
+                    MessageBoxResult result = MessageBox.Show("Введите правильный ip", "My App", MessageBoxButton.OK);
                     logger.Warn("Введите правильный ip");
                     return;
                 }
@@ -323,7 +331,7 @@ namespace ModbusSynchFormTest
                 {
                     formatter.Serialize(fs, settings);
 
-                    Console.WriteLine("Объект сериализован");
+                    logger.Info("Кофигурация создана");
                 }
                 this.Hide();
 

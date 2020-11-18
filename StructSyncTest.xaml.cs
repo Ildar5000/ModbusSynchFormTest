@@ -157,10 +157,6 @@ namespace ModbusSynchFormTest
             
         }
 
-        private void loadlogger()
-        {
-           
-        }
 
 
         #endregion

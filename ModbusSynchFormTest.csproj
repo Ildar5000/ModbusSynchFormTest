@@ -51,7 +51,8 @@
       <HintPath>..\ModbusSyncStructLIb\packages\NLog.4.7.5\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NlogViewer, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\ModbusSyncStructLIb\packages\NlogViewer.0.7.0\lib\net40\NlogViewer.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\NlogViewer.dll</HintPath>
     </Reference>
     <Reference Include="NModbus4, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
