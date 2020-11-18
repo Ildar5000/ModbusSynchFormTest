@@ -18,7 +18,7 @@
                 <Button x:Name="btn_settings_modbus" Content="Настройки" HorizontalAlignment="Left" Margin="480,0,0,0" VerticalAlignment="Top" Width="82" Height="59" Click="btn_settings_modbus_Click"/>
                 <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click" Visibility="Hidden"/>
                 <Ellipse x:Name="HaveConnectionlbSignal" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="10" Margin="581,474,0,-423.2" Stroke="Black" VerticalAlignment="Top" Width="11"/>
-                <Label x:Name="HaveConnectionlb" Content="Label" HorizontalAlignment="Left" Margin="597,469,-4,-436.2" VerticalAlignment="Top" Height="28" Width="167" FontSize="8"/>
+                <Label x:Name="HaveConnectionlb" Content="" HorizontalAlignment="Left" Margin="597,469,-4,-436.2" VerticalAlignment="Top" Height="28" Width="167" FontSize="8"/>
             </Grid>
         </GroupBox>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="230" Margin="10,93,0,0" VerticalAlignment="Top" Width="772">
