@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="SettingModbusForm" Height="585.6" Width="416.258" ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,447,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
+        <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,473,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click"/>
         <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top"/>
         <Label x:Name="slaveID_lb" Content="modbusId" HorizontalAlignment="Left" Margin="10,291,0,0" VerticalAlignment="Top" Width="104"/>
         <TextBox x:Name="slaveID_txt" HorizontalAlignment="Left" Height="23" Margin="135,294,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
@@ -46,6 +46,16 @@
         <Label x:Name="DeltaTime_lb" Content="Разница времени, мс" HorizontalAlignment="Left" Margin="4,322,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="DeltaTime_txt" HorizontalAlignment="Left" Height="24" Margin="135,324,0,0" TextWrapping="Wrap" Text="300" VerticalAlignment="Top" Width="120"/>
         <CheckBox x:Name="try_reboot_connection_сh" Content="Восстанавливать соеднение" HorizontalAlignment="Left" Margin="22,394,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <Label x:Name="deltatimeManager_lb" Content="Проверять соединение через" HorizontalAlignment="Left" Margin="10,423,0,0" VerticalAlignment="Top"/>
+        <GroupBox x:Name="groupBox" Header="" HorizontalAlignment="Left" Height="97" Margin="188,409,0,0" VerticalAlignment="Top" Width="212" BorderBrush="White">
+            <Grid>
+                <RadioButton x:Name="onesecrb" Content="1Cек" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="twoesecrb" Content="2Сек" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                <RadioButton x:Name="fivesecrb" Content="5Сек" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="tensecrb" Content="10сек" HorizontalAlignment="Left" Margin="105,30,0,0" VerticalAlignment="Top"/>
+
+            </Grid>
+        </GroupBox>
 
     </Grid>
 </Window>

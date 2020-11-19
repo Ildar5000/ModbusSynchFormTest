@@ -2,6 +2,7 @@
 <SettingsModbus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ReadTimeout>1000</ReadTimeout>
   <WriteTimeout>1000</WriteTimeout>
+  <deltatimeManager>4000</deltatimeManager>
   <ComName>Com1</ComName>
   <BoudRate>9600</BoudRate>
   <DataBits>8</DataBits>
@@ -14,7 +15,7 @@
   <typeModbus>2</typeModbus>
   <typeModbusSTR>TCP</typeModbusSTR>
   <slaveID>1</slaveID>
-  <defaulttypemodbus>0</defaulttypemodbus>
+  <defaulttypemodbus>1</defaulttypemodbus>
   <deltatime>300</deltatime>
   <try_reboot_connection>true</try_reboot_connection>
 </SettingsModbus>

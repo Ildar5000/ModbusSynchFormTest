@@ -305,6 +305,7 @@ namespace ModbusSynchFormTest
                     return;
                 }
                 
+
                 string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
 
                 string selectedItem2 = (string)ListTypeStopbitsComboBox.SelectedItem;
@@ -323,7 +324,30 @@ namespace ModbusSynchFormTest
                     defaulttypemodbus = 1;
                 }
 
-                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), try_reboot_connection_сh.IsChecked.Value);
+                int timedelta = 2 * 1000;
+                //check manager
+                #region check manager
+                if (onesecrb.IsChecked==true)
+                {
+                    timedelta = 1 * 100;
+                }
+                if (twoesecrb.IsChecked == true)
+                {
+                    timedelta = 2 * 100;
+                }
+
+                if (fivesecrb.IsChecked == true)
+                {
+                    timedelta = 5 * 100;
+                }
+                if (tensecrb.IsChecked == true)
+                {
+                    timedelta = 10 * 100;
+                }
+
+                #endregion
+
+                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), try_reboot_connection_сh.IsChecked.Value, Convert.ToInt32(timedelta));
                 XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
                 // получаем поток, куда будем записывать сериализованный объект

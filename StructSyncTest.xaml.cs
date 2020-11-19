@@ -75,6 +75,10 @@ namespace ModbusSynchFormTest
             queueOf = new QueueOfSentMessagesForSlave();
             loadsetings();
             this.WindowStartupLocation= System.Windows.WindowStartupLocation.CenterScreen;
+            HaveConnectionlbSignal.Fill = Brushes.Red;
+
+            logCtrl.LevelWidth = 50;
+            logCtrl.MessageWidth = 500;
 
         }
 
@@ -98,7 +102,7 @@ namespace ModbusSynchFormTest
                         {
                             radioButton1.IsChecked = true;
                         }
-                        Console.WriteLine("Объект десериализован");
+                        logger.Info("Данные загружены");
                     }
                 }
 
@@ -117,7 +121,7 @@ namespace ModbusSynchFormTest
                         XmlSerializer formatter = new XmlSerializer(typeof(MMS));
                         msload = (MMS)formatter.Deserialize(fs);
 
-                        Console.WriteLine("Объект десериализован");
+                        logger.Info("Данные загружены");
                     }
 
                     textBox1.Text = msload.testSendStruct.ab;
@@ -135,7 +139,7 @@ namespace ModbusSynchFormTest
                         XmlSerializer formatter = new XmlSerializer(typeof(VMS));
                         VMSload = (VMS)formatter.Deserialize(fs);
 
-                        Console.WriteLine("Объект десериализован");
+                        logger.Info("Данные загружены");
                     }
 
                     textBox5.Text = VMSload.test4SendStruct.ab;
@@ -278,9 +282,11 @@ namespace ModbusSynchFormTest
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.Close();
-                    managerConnectionModbus.CloseManager();
-                    
-                    managerConnection.Abort();
+                    if (managerConnectionModbus != null)
+                    {
+                        managerConnectionModbus.CloseManager();
+                        managerConnection.Abort();
+                    }
                     pessButtonStop();
                     
                     
@@ -289,8 +295,13 @@ namespace ModbusSynchFormTest
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
                     slaveSyncSruct.Close();
-                    managerConnectionModbus.CloseManager();
-                    managerConnection.Abort();
+                    if(managerConnectionModbus!=null)
+                    {
+                        managerConnectionModbus.CloseManager();
+                        managerConnection.Abort();
+                    }
+                    
+                    
 
                     pessButtonStop();
                 }
@@ -311,7 +322,6 @@ namespace ModbusSynchFormTest
         private void HideButtonsIfConnectionSlave()
         {
             FileTab.Visibility = Visibility.Hidden;
-            button1.Visibility = Visibility.Hidden;
             radioButton.IsEnabled = false;
             radioButton1.IsEnabled = false;
             btn_settings_modbus.IsEnabled = false;
@@ -324,13 +334,13 @@ namespace ModbusSynchFormTest
         {
             //StopTransfer.Visibility = Visibility.Visible;
             FileTab.Visibility = Visibility.Visible;
-            button1.Visibility = Visibility.Visible;
             radioButton.IsEnabled = true;
             radioButton1.IsEnabled = true;
             btn_settings_modbus.IsEnabled = true;
             button2.Visibility = Visibility.Visible;
             button3.Visibility = Visibility.Visible;
             StopTransfer.Visibility = Visibility.Hidden;
+            HaveConnectionlbSignal.Fill = Brushes.Red;
         }
 
         public void ifbuttonsendfile()
@@ -492,19 +502,29 @@ namespace ModbusSynchFormTest
                             (ThreadStart)delegate ()
                             {
                                 HaveConnectionlbSignal.Fill = Brushes.Green;
-                                HaveConnectionlb.Content = "На связи Master и Slave";
                             }
                         );
                     }
                     else
                     {
-                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        if (managerConnectionModbus.master!=null)
+                        {
+                            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (ThreadStart)delegate ()
+                                {
+                                    HaveConnectionlbSignal.Fill = Brushes.Red;
+                                }
+                            );
+                        }
+                        else
+                        {
+                            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                             (ThreadStart)delegate ()
                             {
-                                HaveConnectionlbSignal.Fill = Brushes.Red;
-                                HaveConnectionlb.Content = "Связь не найдена между Master и Slave";
+                                HaveConnectionlbSignal.Fill = Brushes.Yellow;
                             }
-                        );
+                            );
+                        }
                     }
 
                 }
@@ -646,7 +666,7 @@ namespace ModbusSynchFormTest
                     {
                         XMLformatter.Serialize(fs, ms);
 
-                        Console.WriteLine("Объект сериализован");
+                        logger.Info("Данные примены");
                     }
 
                     if (masterSyncStruct != null)
@@ -668,7 +688,7 @@ namespace ModbusSynchFormTest
                        
 
                         queueOf.AddQueue(outStream);
-
+                        logger.Info("Данные добавлены в очереди");
                         //masterSyncStruct.send_multi_message(outStream);
                     }
                 }
@@ -920,6 +940,7 @@ namespace ModbusSynchFormTest
                 FileAttributes attributes = new FileAttributes();
 
                 ifbuttonsendfile();
+                double valuefile = 0;
 
                 if (path != "")
                 {
@@ -934,6 +955,7 @@ namespace ModbusSynchFormTest
                             byte[] vs;
 
                             fs.CopyTo(destination);
+                            valuefile = fs.Length;
                             //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
                         }
                         catch (Exception ex)
@@ -948,7 +970,6 @@ namespace ModbusSynchFormTest
                         string[] words = path.Split('\\');
 
                         attributes = File.GetAttributes(path);
-
                         DateTime dtFirstCreate = File.GetCreationTime(path);
                         DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
@@ -961,6 +982,8 @@ namespace ModbusSynchFormTest
                         formatter.Serialize(stream, metaClassFor);
 
                         var oustream = masterSyncStruct.Compress(stream, false);
+
+                        logger.Info("Будет отправлен следущий файл " + words[words.Length - 1] + "(" + valuefile + "байт)");
 
                         // отправка данных 
                         queueOf.AddQueue(oustream);
