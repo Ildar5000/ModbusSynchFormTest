@@ -77,6 +77,8 @@ namespace ModbusSynchFormTest
             this.WindowStartupLocation= System.Windows.WindowStartupLocation.CenterScreen;
             HaveConnectionlbSignal.Fill = Brushes.Red;
 
+            StopTransfer.Visibility = Visibility.Hidden;
+
             logCtrl.LevelWidth = 50;
             logCtrl.MessageWidth = 500;
 
@@ -316,7 +318,7 @@ namespace ModbusSynchFormTest
             radioButton.IsEnabled = false;
             radioButton1.IsEnabled = false;
             btn_settings_modbus.IsEnabled = false;
-            StopTransfer.Visibility = Visibility.Visible;
+            //StopTransfer.Visibility = Visibility.Visible;
         }
 
         private void HideButtonsIfConnectionSlave()
@@ -327,7 +329,7 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = false;
             button2.Visibility = Visibility.Hidden;
             button3.Visibility = Visibility.Hidden;
-           StopTransfer.Visibility = Visibility.Visible;
+           //StopTransfer.Visibility = Visibility.Visible;
         }
 
         private void pessButtonStop()
@@ -382,8 +384,9 @@ namespace ModbusSynchFormTest
                 (ThreadStart)delegate ()
                 {
                     //TickTimeLB.Content = "";
-                    ProgressSendFile.Value = 0;
+                    //ProgressSendFile.Value = 0;
                     //TickTimeShow.Text = "";
+                    StopTransfer.Visibility = Visibility.Visible;
                 }
                 );
 
@@ -421,6 +424,14 @@ namespace ModbusSynchFormTest
                             ifbuttonsendfile();
                         }
 
+                        if (masterSyncStruct.havetrasfer==true)
+                        {
+                            StopTransfer.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            StopTransfer.Visibility = Visibility.Hidden;
+                        }
 
                     }
 
@@ -437,6 +448,15 @@ namespace ModbusSynchFormTest
                     //TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
 
                     //TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
+
+                    if (masterSyncStruct.havetrasfer == true)
+                    {
+                        StopTransfer.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        StopTransfer.Visibility = Visibility.Hidden;
+                    }
 
                     ifbuttonsendfileend();
 
@@ -465,7 +485,19 @@ namespace ModbusSynchFormTest
                             value = ProgressSendFile.Value;
                             //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
 
+
+
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
+
+                            if (slaveSyncSruct.have_trasfer==true)
+                            {
+                                StopTransfer.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                StopTransfer.Visibility = Visibility.Hidden;
+                            }
+
                         }
                         );
 
@@ -478,6 +510,16 @@ namespace ModbusSynchFormTest
                             //TickTimeLB.Content = "Передано" + Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3) + "кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
+
+                            if (slaveSyncSruct.have_trasfer == true)
+                            {
+                                StopTransfer.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                StopTransfer.Visibility = Visibility.Hidden;
+                            }
+
                         }
                         );
                     }
@@ -868,6 +910,7 @@ namespace ModbusSynchFormTest
                 ProgressSendFile.Value = 0;
                 ifbuttonsendfileend();
                 Thread.Sleep(100);
+                
             }
             
             if (porok!=null)
@@ -884,7 +927,7 @@ namespace ModbusSynchFormTest
                 ProgressSendFile.Value = 0;
                 
             }
-
+            StopTransfer.Visibility = Visibility.Hidden;
         }
 
         #region MenuItem Контекстное меню

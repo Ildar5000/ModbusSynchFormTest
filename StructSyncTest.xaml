@@ -15,7 +15,7 @@
                 <RadioButton x:Name="radioButton" Content="Master" HorizontalAlignment="Left" Margin="420,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
                 <RadioButton x:Name="radioButton1" Content="Slave" HorizontalAlignment="Left" Margin="420,30,0,0" VerticalAlignment="Top"/>
                 <Button x:Name="btn_settings_modbus" Content="Настройки" HorizontalAlignment="Left" Margin="480,0,0,0" VerticalAlignment="Top" Width="82" Height="59" Click="btn_settings_modbus_Click"/>
-                <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click" Visibility="Hidden"/>
+                <Button x:Name="StopTransfer" Content="Остановить передачу" HorizontalAlignment="Left" Margin="257,6,0,0" VerticalAlignment="Top" Width="142" Height="52" Click="StopTransfer_Click" Visibility="Visible"/>
                 <Ellipse x:Name="HaveConnectionlbSignal" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="28" Margin="130,5,0,0" Stroke="Black" VerticalAlignment="Top" Width="30"/>
             </Grid>
         </GroupBox>
