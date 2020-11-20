@@ -28,6 +28,8 @@ namespace ModbusSynchFormTest
         List<string> typeParitylist;
         List<string> typeStopBitslist;
 
+        List<string> Listtime_check_connection;
+
         List<string> type_ModbusList;
         StructSyncTest structSync;
         private static Logger logger;
@@ -52,7 +54,7 @@ namespace ModbusSynchFormTest
             typeParitylist.Add("Odd");
             typeParitylist.Add("Space");
 
-            typeStopBitslist.Add("None");
+            //typeStopBitslist.Add("None");
             typeStopBitslist.Add("One");
             typeStopBitslist.Add("OnePointFive");
             typeStopBitslist.Add("Two");
@@ -60,6 +62,16 @@ namespace ModbusSynchFormTest
             type_ModbusList.Add("RTU");
             type_ModbusList.Add("ASCII");
             type_ModbusList.Add("TCP");
+
+            Listtime_check_connection = new List<string>();
+            Listtime_check_connection.Add("Никогда");
+            Listtime_check_connection.Add("1 секунда");
+            Listtime_check_connection.Add("2 секунуды");
+            Listtime_check_connection.Add("5 секунуд");
+            Listtime_check_connection.Add("10 секунуд");
+            TimeDeltacheckCH.SelectedIndex = 2;
+
+            TimeDeltacheckCH.ItemsSource = Listtime_check_connection;
 
             ListTypePartyComboBox.ItemsSource = typeParitylist;
             ListTypeStopbitsComboBox.ItemsSource = typeStopBitslist;
@@ -72,7 +84,7 @@ namespace ModbusSynchFormTest
             ListTypeStopbitsComboBox.SelectedIndex = 0;
 
             TypeViewModbus.SelectedIndex = 0;
-
+            
             tab2.Visibility = Visibility.Hidden;
             loadSettings();
 
@@ -114,7 +126,7 @@ namespace ModbusSynchFormTest
                     slaveID_txt.Text = settings.slaveID.ToString();
                     DeltaTime_txt.Text = settings.deltatime.ToString();
 
-                    try_reboot_connection_сh.IsChecked = settings.try_reboot_connection;
+                    
 
                     foreach (var pt in typeParitylist)
                     {
@@ -164,6 +176,45 @@ namespace ModbusSynchFormTest
                     {
                         SlaveRB.IsChecked = true;
                     }
+
+
+                    int selectedtimecheck = settings.deltatimeManager;
+
+                    try_reboot_connection_сh.IsChecked = settings.try_reboot_connection;
+                    bool check_connection= settings.try_reboot_connection;
+                    switch (selectedtimecheck)
+                    {
+                        case 0:
+                            TimeDeltacheckCH.SelectedIndex = 0;
+                            break;
+
+                        case 1000:
+                            TimeDeltacheckCH.SelectedIndex = 1;
+                            break;
+
+                        case 2000:
+                            if (check_connection==false)
+                            {
+                                TimeDeltacheckCH.SelectedIndex = 0;
+                            }
+                            
+                            break;
+                        case 5000:
+                            TimeDeltacheckCH.SelectedIndex = 3;
+                            break;
+                        case 10000:
+                            TimeDeltacheckCH.SelectedIndex = 4;
+                            break;
+
+                        default:
+                            TimeDeltacheckCH.SelectedIndex = 2;
+                            break;
+                    }
+
+
+
+
+
                 }
                 catch(Exception ex)
                 {
@@ -186,6 +237,8 @@ namespace ModbusSynchFormTest
         {     
             try
             {
+
+                #region checkuserwrite
                 string regexCOM = @"Com\d";
 
                 string regex_decre = @"\d";
@@ -284,7 +337,7 @@ namespace ModbusSynchFormTest
                     return;
                 }
 
-
+                
                 try
                 {
                     string[] words = IpAdressLb_txt.Text.Split('.');
@@ -304,7 +357,7 @@ namespace ModbusSynchFormTest
                     logger.Warn("Введите правильный ip");
                     return;
                 }
-                
+                #endregion
 
                 string selectedItem = (string)ListTypePartyComboBox.SelectedItem;
 
@@ -327,27 +380,54 @@ namespace ModbusSynchFormTest
                 int timedelta = 2 * 1000;
                 //check manager
                 #region check manager
-                if (onesecrb.IsChecked==true)
+                /*
+                Listtime_check_connection.Add("Никогда");
+                Listtime_check_connection.Add("1 секунда");
+                Listtime_check_connection.Add("2 секунуды");
+                Listtime_check_connection.Add("5 секунуд");
+                Listtime_check_connection.Add("10 секунуд");
+                */
+
+                bool check_connection = true;
+
+                string selectedtimecheck = (string)TimeDeltacheckCH.SelectedItem;
+
+                switch (selectedtimecheck)
                 {
-                    timedelta = 1 * 100;
-                }
-                if (twoesecrb.IsChecked == true)
-                {
-                    timedelta = 2 * 100;
+                    case "Никогда":
+                        check_connection = false;
+                        timedelta = 2 * 1000;
+                        break;
+
+                    case "1 секунда":
+                        check_connection = true;
+                        timedelta = 1 * 1000;
+                        break;
+
+                    case "2 секунуды":
+                        check_connection = true;
+                        timedelta = 2 * 1000;
+                        break;
+                    case "5 секунуд":
+                        check_connection = true;
+                        timedelta = 5 * 1000;
+                        break;
+                    case "10 секунуд":
+                        check_connection = true;
+                        timedelta = 10 * 1000;
+                        break;
+
+                    default:
+                        check_connection = true;
+                        timedelta = 2 * 1000;
+                        break;
                 }
 
-                if (fivesecrb.IsChecked == true)
-                {
-                    timedelta = 5 * 100;
-                }
-                if (tensecrb.IsChecked == true)
-                {
-                    timedelta = 10 * 100;
-                }
+
 
                 #endregion
 
-                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), try_reboot_connection_сh.IsChecked.Value, Convert.ToInt32(timedelta));
+                    SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), check_connection, Convert.ToInt32(timedelta));
                 XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
                 // получаем поток, куда будем записывать сериализованный объект
