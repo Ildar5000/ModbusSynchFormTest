@@ -376,6 +376,7 @@ namespace ModbusSynchFormTest
 
             long ellapledTicks = DateTime.Now.Ticks;
             TimeSpan elapsedSpan;
+            bool enable_button = false;
 
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (ThreadStart)delegate ()
@@ -386,7 +387,7 @@ namespace ModbusSynchFormTest
                 }
                 );
 
-            while (value != 100 && masterSyncStruct.falltransfer == false&& masterSyncStruct!=null)
+            while (value != 100 && masterSyncStruct.stoptransfer_signal == false&& masterSyncStruct!=null)
             {
                 try
                 {
@@ -396,13 +397,13 @@ namespace ModbusSynchFormTest
                     value = masterSyncStruct.status_bar;
 
                     timetrasfer = (date_value - sentpacket_value) / 1200;
+
                     //timetrasferhave = timetrasfer / date_value;
                 }
                 catch(Exception ex)
                 {
                     logger.Error(ex);
                 }
-
 
                 this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
@@ -411,22 +412,23 @@ namespace ModbusSynchFormTest
                         //TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
                         //TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
                         ProgressSendFile.Value = value;
-
-                        if (managerConnectionModbus.have_connection==true)
+                        if (value == 0)
                         {
-                            
+                            ifbuttonsendfileend();
                         }
                         else
                         {
-                            
+                            ifbuttonsendfile();
                         }
 
+
+                    }
+
                         
-                        }
                     );
                 Thread.Sleep(500);
             }
-
+                
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (ThreadStart)delegate ()
                 {
@@ -435,7 +437,9 @@ namespace ModbusSynchFormTest
                     //TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
 
                     //TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
+
                     ifbuttonsendfileend();
+
                 }
             );
 
@@ -984,7 +988,7 @@ namespace ModbusSynchFormTest
                         var oustream = masterSyncStruct.Compress(stream, false);
 
                         logger.Info("Будет отправлен следущий файл " + words[words.Length - 1] + "(" + valuefile + "байт)");
-
+                         
                         // отправка данных 
                         queueOf.AddQueue(oustream);
                         porok.Start();
