@@ -80,7 +80,6 @@ namespace ModbusSynchFormTest
             HaveConnectionlbSignal.Fill = Brushes.Red;
 
             StopTransfer.Visibility = Visibility.Hidden;
-            imageloadIM.Visibility = Visibility.Hidden;
             logCtrl.LevelWidth = 50;
             logCtrl.MessageWidth = 500;
 

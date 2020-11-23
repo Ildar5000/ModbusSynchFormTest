@@ -196,11 +196,5 @@
       <Name>StructAllforTest</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Без названия.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="4dc11d17f5292fd463a60aa2bbb41f6a_w200.gif" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
