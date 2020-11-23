@@ -38,6 +38,7 @@ namespace ModbusSynchFormTest
         Thread statusbar;
 
         Thread diagnostik_show;
+        Task sendfile;
 
         bool StopOrStart = false;
 
@@ -45,6 +46,7 @@ namespace ModbusSynchFormTest
 
         List<string> pathFolder = new List<string>();
 
+        bool timeprocessing_file = false;
 
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
@@ -175,6 +177,7 @@ namespace ModbusSynchFormTest
             if (StopOrStart == false)
             {
                 StopOrStart = true;
+                stoptransfer = false;
                 button.Content = "Стоп";
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
                 diagnostik_show = new Thread(CheckConnection);
@@ -277,6 +280,9 @@ namespace ModbusSynchFormTest
             else
             {
                 button.Content = "Пуск";
+
+                stoptransfer = true;
+                
                 StopOrStart = false;
                 pessButtonStop();
                 diagnostik_show.Abort();
@@ -289,6 +295,7 @@ namespace ModbusSynchFormTest
                         managerConnectionModbus.CloseManager();
                         managerConnection.Abort();
                     }
+
                     pessButtonStop();
                     
                     
@@ -311,6 +318,8 @@ namespace ModbusSynchFormTest
 
 
         }
+
+        public bool stoptransfer;
 
         #region buttonhideorview and update
         private void HideButtonsIfConnectionMaster()
@@ -540,7 +549,7 @@ namespace ModbusSynchFormTest
 
         }
 
-        public void updateradio()
+        public void UpdateRadio()
         {
             loadsetings();
         }
@@ -587,7 +596,7 @@ namespace ModbusSynchFormTest
             }
         }
 
-
+        
         #endregion
 
 
@@ -918,9 +927,10 @@ namespace ModbusSynchFormTest
             {
                 queueOf.StopTransfer();
                 ProgressSendFile.Value = 0;
+               
                 ifbuttonsendfileend();
                 Thread.Sleep(100);
-                
+                stoptransfer = true;
             }
             
             if (porok!=null)
@@ -993,52 +1003,27 @@ namespace ModbusSynchFormTest
         {
             try
             {
-                MemoryStream destination = new MemoryStream();
-                
-
-                ifbuttonsendfile();
-                double valuefile = 0;
-
-                if (path != "")
+                if (masterSyncStruct!=null)
                 {
-                    porok = new Thread(timerprogressbar);
+                    MemoryStream destination = new MemoryStream();
+                    ifbuttonsendfile();
 
-                    //new Thread(() => fileread(path, destination, valuefile)).Start();
-                    
-                    
-                    Task t = Task.Run(() => fileread(path, destination, valuefile));
-                    //Task send = Task.Run(() => filereadsend(path, destination, valuefile,t));
+                    double valuefile = 0;
 
-
-
-                    //int result = await t;
-
-                    //t.Wait();
-
-                    /*
-                    using (FileStream fs = new FileStream(path, FileMode.Open))
+                    if (path != "")
                     {
-                        try
-                        {
-                            queueOf.master = masterSyncStruct;
+                        porok = new Thread(timerprogressbar);
 
-                            byte[] vs;
+                        //new Thread(() => fileread(path, destination, valuefile)).Start();
 
-                            fs.CopyTo(destination);
-                            valuefile = fs.Length;
-                            //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error(ex);
-                            porok.Abort();
-                        }
+                        sendfile = Task.Run(() => fileread(path, destination, valuefile));
+
                     }
-                    */
-                }
-                else
-                {
-                    logger.Warn("откройте файл");
+                    else
+                    {
+                        logger.Warn("откройте файл");
+                    }
+
                 }
             }
             catch(Exception ex)
@@ -1088,10 +1073,26 @@ namespace ModbusSynchFormTest
 
         public void fileread(string path, MemoryStream destination, double valuefile)
         {
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                try
+                {
+                    queueOf.master = masterSyncStruct;
 
-            Task t = Task.Run(() => filereadsend(path, destination, valuefile));
+                    byte[] vs;
 
-            t.Wait();
+                    fs.CopyTo(destination);
+                    valuefile = fs.Length;
+                    //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    porok.Abort();
+                }
+            }
+
+
             FileAttributes attributes = new FileAttributes();
             try
             {
@@ -1116,13 +1117,10 @@ namespace ModbusSynchFormTest
                 // отправка данных 
                 queueOf.AddQueue(oustream);
                 porok.Start();
-
-
-
             }
             catch (Exception ex)
             {
-                //logger.Warn("Введите правильный ip");
+                timeprocessing_file = false;
                 return;
             }
 
@@ -1130,45 +1128,6 @@ namespace ModbusSynchFormTest
 
 
         }
-
-        public void filereadsend(string path, MemoryStream destination, double valuefile)
-        {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            (ThreadStart)delegate ()
-                {
-                imageloadIM.Visibility = Visibility.Visible;
-                }
-            );
-
-            using (FileStream fs = new FileStream(path, FileMode.Open))
-            {
-                try
-                {
-                    queueOf.master = masterSyncStruct;
-
-                    byte[] vs;
-
-                    fs.CopyTo(destination);
-                    valuefile = fs.Length;
-                    //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    porok.Abort();
-                }
-            }
-
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    imageloadIM.Visibility = Visibility.Hidden;
-                }
-                );
-
-
-        }
-
 
         private void ClearSelectbr_Click(object sender, RoutedEventArgs e)
         {

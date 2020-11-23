@@ -439,7 +439,7 @@ namespace ModbusSynchFormTest
                 }
                 this.Hide();
 
-                structSync.updateradio();
+                structSync.UpdateRadio();
             }
             catch(Exception ex)
             {
