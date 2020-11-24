@@ -414,7 +414,7 @@ namespace ModbusSynchFormTest
                 }
                 );
 
-            while (value != 100 && masterSyncStruct.stoptransfer_signal == false&& masterSyncStruct!=null)
+            while (true)
             {
                 try
                 {
@@ -464,7 +464,7 @@ namespace ModbusSynchFormTest
                     );
                 Thread.Sleep(500);
             }
-                
+            /*    
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (ThreadStart)delegate ()
                 {
@@ -482,11 +482,12 @@ namespace ModbusSynchFormTest
                     {
                         StopTransfer.Visibility = Visibility.Hidden;
                     }
-
+                    ProgressSendFile.Value = 0;
                     ifbuttonsendfileend();
 
                 }
             );
+            */
 
             return;
             
@@ -933,6 +934,7 @@ namespace ModbusSynchFormTest
             if (masterSyncStruct!=null)
             {
                 queueOf.StopTransfer();
+                queueOf.ClearQueue();
                 ProgressSendFile.Value = 0;
                
                 ifbuttonsendfileend();
@@ -992,18 +994,24 @@ namespace ModbusSynchFormTest
 
         private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
         {
-            nameFile = "nofile.txt";
-            lB_PathFileView.ItemsSource = null;
-            string filestr = null;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                filestr = openFileDialog.FileName;
-                nameFile = openFileDialog.SafeFileName;
-                pathFiles.Add(filestr);
+                nameFile = "nofile.txt";
+                lB_PathFileView.ItemsSource = null;
+                string filestr = null;
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    filestr = openFileDialog.FileName;
+                    nameFile = openFileDialog.SafeFileName;
+                    pathFiles.Add(filestr);
+                }
+                lB_PathFileView.Items.Add(filestr);
             }
-            lB_PathFileView.Items.Add(filestr);
-
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+            }
         }
 
         public void send_file(string path)
@@ -1080,34 +1088,37 @@ namespace ModbusSynchFormTest
 
         public void fileread(string path, MemoryStream destination, double valuefile)
         {
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            FileAttributes attributes = new FileAttributes();
+            DateTime dtFirstCreate=DateTime.Now;
+            DateTime dTLASTWRITE = DateTime.Now;
+
+            try
             {
-                try
+
+                using (FileStream fs = new FileStream(path, FileMode.Open))
                 {
+                
                     queueOf.master = masterSyncStruct;
 
                     byte[] vs;
 
                     fs.CopyTo(destination);
-                    valuefile = fs.Length;
-                    //attributes = File.GetAttributes(PAth_lb_file.Content.ToString());
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
-                    porok.Abort();
+                    valuefile = fs.Length;                    
+                    attributes = File.GetAttributes(path);
+                    dtFirstCreate = File.GetCreationTime(path);
+                    dTLASTWRITE = File.GetLastWriteTime(path);
                 }
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                porok.Abort();
+            }
 
-
-            FileAttributes attributes = new FileAttributes();
+            
             try
             {
                 string[] words = path.Split('\\');
-
-                attributes = File.GetAttributes(path);
-                DateTime dtFirstCreate = File.GetCreationTime(path);
-                DateTime dTLASTWRITE = File.GetLastWriteTime(path);
 
                 metaClassFor = new MetaClassForStructAndtherData(destination, true, words[words.Length - 1], attributes, dtFirstCreate, dTLASTWRITE);
                 // создаем объект BinaryFormatter
@@ -1123,7 +1134,9 @@ namespace ModbusSynchFormTest
 
                 // отправка данных 
                 queueOf.AddQueue(oustream);
+                
                 porok.Start();
+              
             }
             catch (Exception ex)
             {
@@ -1168,15 +1181,23 @@ namespace ModbusSynchFormTest
 
         private void OpenFiledialog_folder_Click(object sender, RoutedEventArgs e)
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = "C:\\Users";
-            dialog.IsFolderPicker = true;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            try
             {
-                //MessageBox.Show("You selected: " + dialog.FileName);
-                pathFolder.Add(dialog.FileName);
-                lB_PathFileView.Items.Add(dialog.FileName);
+                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+                dialog.InitialDirectory = "C:\\Users";
+                dialog.IsFolderPicker = true;
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    //MessageBox.Show("You selected: " + dialog.FileName);
+                    pathFolder.Add(dialog.FileName);
+                    lB_PathFileView.Items.Add(dialog.FileName);
+                }
             }
+            catch(Exception ex)
+            {
+                logger.Error(ex);
+            }
+
         }
 
         #endregion
