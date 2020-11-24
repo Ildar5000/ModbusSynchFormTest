@@ -31,6 +31,9 @@ namespace ModbusSynchFormTest
         List<string> Listtime_check_connection;
 
         List<string> type_ModbusList;
+
+        List<string> time_rebootaftercrash = new List<string>();
+
         StructSyncTest structSync;
         private static Logger logger;
 
@@ -48,44 +51,53 @@ namespace ModbusSynchFormTest
             typeStopBitslist = new List<string>();
             type_ModbusList = new List<string>();
 
+            //Parity
             typeParitylist.Add("None");
             typeParitylist.Add("Even");
             typeParitylist.Add("Mark");
             typeParitylist.Add("Odd");
             typeParitylist.Add("Space");
+            ListTypePartyComboBox.ItemsSource = typeParitylist;
+            ListTypePartyComboBox.SelectedIndex = 0;
+
 
             //typeStopBitslist.Add("None");
             typeStopBitslist.Add("One");
             typeStopBitslist.Add("OnePointFive");
             typeStopBitslist.Add("Two");
 
+
+            //type modbus
             type_ModbusList.Add("RTU");
             type_ModbusList.Add("ASCII");
             type_ModbusList.Add("TCP");
+            TypeModbuscB.ItemsSource = type_ModbusList;
+            TypeModbuscB.SelectedIndex = 0;
+            TypeViewModbus.SelectedIndex = 0;
+            ListTypeStopbitsComboBox.ItemsSource = typeStopBitslist;
+            ListTypeStopbitsComboBox.SelectedIndex = 0;
+            tab2.Visibility = Visibility.Hidden;
 
+            // время опрооса
             Listtime_check_connection = new List<string>();
             Listtime_check_connection.Add("Никогда");
             Listtime_check_connection.Add("1 секунда");
             Listtime_check_connection.Add("2 секунуды");
             Listtime_check_connection.Add("5 секунуд");
             Listtime_check_connection.Add("10 секунуд");
-            TimeDeltacheckCH.SelectedIndex = 2;
-
             TimeDeltacheckCH.ItemsSource = Listtime_check_connection;
+            TimeDeltacheckCH.SelectedIndex = 2;
+            ///
 
-            ListTypePartyComboBox.ItemsSource = typeParitylist;
-            ListTypeStopbitsComboBox.ItemsSource = typeStopBitslist;
+            time_rebootaftercrash = new List<string>();
 
-            TypeModbuscB.ItemsSource = type_ModbusList;
+            time_rebootaftercrash.Add("30 секунд");
+            time_rebootaftercrash.Add("1 минута");
+            time_rebootaftercrash.Add("2 минуты");
+            time_rebootaftercrash.Add("5 минут");
+            RebootConnection_after_crash_cb.ItemsSource = time_rebootaftercrash;
+            RebootConnection_after_crash_cb.SelectedIndex = 0;
 
-            TypeModbuscB.SelectedIndex = 0;
-
-            ListTypePartyComboBox.SelectedIndex = 0;
-            ListTypeStopbitsComboBox.SelectedIndex = 0;
-
-            TypeViewModbus.SelectedIndex = 0;
-            
-            tab2.Visibility = Visibility.Hidden;
             loadSettings();
 
             if (structSync.radioButton.IsChecked==true)
@@ -96,6 +108,9 @@ namespace ModbusSynchFormTest
             {
                 SlaveRB.IsChecked = true;
             }
+
+
+
 
         }
 
@@ -212,7 +227,32 @@ namespace ModbusSynchFormTest
                     }
 
 
+                    int selectedtimecheckaftercrash_int = settings.tryconnectionaftercrash;
 
+                    //time_rebootaftercrash.Add("30 секунд");
+                    //time_rebootaftercrash.Add("1 минута");
+                    //time_rebootaftercrash.Add("2 минуты");
+                    //time_rebootaftercrash.Add("5 минут");
+
+                    
+                    switch (selectedtimecheckaftercrash_int)
+                    {
+                        case 3 * 1000:
+                            RebootConnection_after_crash_cb.SelectedIndex = 0;
+                            break;
+                        case 60 * 1000:
+                            RebootConnection_after_crash_cb.SelectedIndex = 1;
+                            break;
+                        case 2 * 60 * 1000:
+                            RebootConnection_after_crash_cb.SelectedIndex = 2;
+                            break;
+                        case 5 * 60 * 1000:
+                            RebootConnection_after_crash_cb.SelectedIndex = 3;
+                            break;
+                        default:
+                            RebootConnection_after_crash_cb.SelectedIndex = 0;
+                            break;
+                    }
 
 
                 }
@@ -380,13 +420,6 @@ namespace ModbusSynchFormTest
                 int timedelta = 2 * 1000;
                 //check manager
                 #region check manager
-                /*
-                Listtime_check_connection.Add("Никогда");
-                Listtime_check_connection.Add("1 секунда");
-                Listtime_check_connection.Add("2 секунуды");
-                Listtime_check_connection.Add("5 секунуд");
-                Listtime_check_connection.Add("10 секунуд");
-                */
 
                 bool check_connection = true;
 
@@ -422,12 +455,45 @@ namespace ModbusSynchFormTest
                         timedelta = 2 * 1000;
                         break;
                 }
-
-
-
                 #endregion
 
-                    SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), check_connection, Convert.ToInt32(timedelta));
+                //time_rebootaftercrash.Add("30 секунд");
+                //time_rebootaftercrash.Add("1 минута");
+                //time_rebootaftercrash.Add("2 минута");
+                //time_rebootaftercrash.Add("5 минут");
+
+                string selectedtimecheckaftercrash = (string)RebootConnection_after_crash_cb.SelectedItem;
+                int selectedtimecheckaftercrash_int=3000;
+                switch (selectedtimecheckaftercrash)
+                {
+                    case "30 секунд":
+                        selectedtimecheckaftercrash_int = 3 * 1000;
+                        break;
+                    case "1 минута":
+                        selectedtimecheckaftercrash_int = 60 * 1000;
+                        break;
+                    case "2 минуты":
+                        selectedtimecheckaftercrash_int = 2*60 * 1000;
+                        break;
+                    case "5 минут":
+                        selectedtimecheckaftercrash_int = 5 * 60 * 1000;
+                        break;
+                    default:
+                        selectedtimecheckaftercrash_int = 3 * 1000;
+                        break;
+                }
+
+
+
+                SettingsModbus settings = new SettingsModbus(Com_name_txb.Text, Convert.ToInt32(BaudRate_txb.Text), 
+                    Convert.ToInt32(DataBits_lb_txb.Text), selectedItem, selectedItem2, 
+                    Convert.ToInt32(ReadTimeout_txt.Text), Convert.ToInt32(WriteTimeout_txt.Text), 
+                    IpAdressLb_txt.Text, Convert.ToInt32(Port_lb_txt.Text), 
+                    Type_modbus_choose, Convert.ToByte(slaveID_txt.Text), 
+                    selectedItem3, defaulttypemodbus, Convert.ToDouble(DeltaTime_txt.Text), 
+                    check_connection, Convert.ToInt32(timedelta),
+                    selectedtimecheckaftercrash_int
+                    );
                 XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
 
                 // получаем поток, куда будем записывать сериализованный объект

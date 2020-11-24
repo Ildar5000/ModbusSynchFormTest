@@ -68,6 +68,12 @@ namespace ModbusSynchFormTest
         string nameFile;
         #endregion
 
+        #region settings
+
+        int timecheckconnection = 2000;
+        #endregion
+
+
         #region init
         public StructSyncTest()
         {
@@ -105,6 +111,8 @@ namespace ModbusSynchFormTest
                         {
                             radioButton1.IsChecked = true;
                         }
+                        timecheckconnection = msload.deltatimeManager;
+
                         logger.Info("Данные загружены");
                     }
                 }
@@ -489,7 +497,6 @@ namespace ModbusSynchFormTest
             double value = 0;
 
             long ellapledTicks = DateTime.Now.Ticks;
-            TimeSpan elapsedSpan;
 
             while (true)
             {
@@ -501,8 +508,6 @@ namespace ModbusSynchFormTest
                             
                             value = ProgressSendFile.Value;
                             //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
-
-
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
 
@@ -534,6 +539,7 @@ namespace ModbusSynchFormTest
                             }
                             else
                             {
+                                ProgressSendFile.Value = 0;
                                 StopTransfer.Visibility = Visibility.Hidden;
                             }
 
@@ -591,7 +597,8 @@ namespace ModbusSynchFormTest
                     }
 
                 }
-                Thread.Sleep(1000);
+
+                Thread.Sleep(2000);
             }
         }
 
@@ -922,6 +929,7 @@ namespace ModbusSynchFormTest
 
         private void StopTransfer_Click(object sender, RoutedEventArgs e)
         {
+            ProgressSendFile.Value = 0;
             if (masterSyncStruct!=null)
             {
                 queueOf.StopTransfer();
