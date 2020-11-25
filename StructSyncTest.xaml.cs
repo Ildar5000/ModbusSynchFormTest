@@ -445,6 +445,7 @@ namespace ModbusSynchFormTest
                         ifbuttonsendfileend();
                         queueOf.StopTransfer();
                         masterSyncStruct.StopTransfer();
+                        masterSyncStruct.status_bar = 0;
                     }
                     );
                 }
@@ -522,31 +523,31 @@ namespace ModbusSynchFormTest
                     else
                     {
                         this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-    (ThreadStart)delegate ()
-    {
+                        (ThreadStart)delegate ()
+                        {
 
-        value = ProgressSendFile.Value;
+                            value = ProgressSendFile.Value;
                             //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
 
-        if (managerConnectionModbus.have_connection == false)
-        {
-            value = 0;
-        }
+                            if (managerConnectionModbus.have_connection == false)
+                            {
+                                value = 0;
+                            }
 
 
-        if (slaveSyncSruct.have_trasfer == true)
-        {
-            StopTransfer.Visibility = Visibility.Visible;
-        }
-        else
-        {
-            StopTransfer.Visibility = Visibility.Hidden;
-        }
+                            if (slaveSyncSruct.have_trasfer == true)
+                            {
+                                StopTransfer.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                StopTransfer.Visibility = Visibility.Hidden;
+                            }
 
-    }
-    );
+                        }
+                        );
 
                         if (value >= 95)
                         {
