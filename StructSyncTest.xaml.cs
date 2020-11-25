@@ -436,7 +436,21 @@ namespace ModbusSynchFormTest
                     logger.Error(ex);
                 }
 
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                if (managerConnectionModbus.have_connection == false)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (ThreadStart)delegate ()
+                    {
+                        ProgressSendFile.Value = 0;
+                        ifbuttonsendfileend();
+                        queueOf.StopTransfer();
+                        masterSyncStruct.StopTransfer();
+                    }
+                    );
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
                     {
                         //value = ProgressSendFile.Value;
@@ -477,10 +491,9 @@ namespace ModbusSynchFormTest
                         }
 
 
-                    }
-
-                        
+                    }                       
                     );
+                }
                 Thread.Sleep(1000);
             }         
         }
@@ -495,57 +508,70 @@ namespace ModbusSynchFormTest
             {
                 if (slaveSyncSruct != null)
                 {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (ThreadStart)delegate ()
-                        {
-                            
-                            value = ProgressSendFile.Value;
-                            //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
-
-                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
-
-                            if (managerConnectionModbus.have_connection==false)
-                            {
-                                value = 0;
-                            }
-
-
-                            if (slaveSyncSruct.have_trasfer==true)
-                            {
-                                StopTransfer.Visibility = Visibility.Visible;
-                            }
-                            else
-                            {
-                                StopTransfer.Visibility = Visibility.Hidden;
-                            }
-
-                        }
-                        );
-
-                    if (value>=95)
+                    if (managerConnectionModbus.have_connection == false)
                     {
                         this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (ThreadStart)delegate ()
                         {
-                            value = ProgressSendFile.Value;
+                            ProgressSendFile.Value = 0;
+                            ifbuttonsendfileend();
+                            slaveSyncSruct.StopTransfer();
+                        }
+                        );
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+    (ThreadStart)delegate ()
+    {
+
+        value = ProgressSendFile.Value;
+                            //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
+
+                            ProgressSendFile.Value = slaveSyncSruct.status_bar;
+
+        if (managerConnectionModbus.have_connection == false)
+        {
+            value = 0;
+        }
+
+
+        if (slaveSyncSruct.have_trasfer == true)
+        {
+            StopTransfer.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            StopTransfer.Visibility = Visibility.Hidden;
+        }
+
+    }
+    );
+
+                        if (value >= 95)
+                        {
+                            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (ThreadStart)delegate ()
+                            {
+                                value = ProgressSendFile.Value;
                             //TickTimeLB.Content = "Передано" + Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3) + "кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
 
-                            if (slaveSyncSruct.have_trasfer == true)
-                            {
-                                StopTransfer.Visibility = Visibility.Visible;
-                            }
-                            else
-                            {
-                                ProgressSendFile.Value = 0;
-                                StopTransfer.Visibility = Visibility.Hidden;
-                            }
+                                if (slaveSyncSruct.have_trasfer == true)
+                                {
+                                    StopTransfer.Visibility = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    ProgressSendFile.Value = 0;
+                                    StopTransfer.Visibility = Visibility.Hidden;
+                                }
 
+                            }
+                            );
                         }
-                        );
                     }
-
                 }
                 Thread.Sleep(1000);
             }
