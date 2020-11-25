@@ -179,6 +179,8 @@ namespace ModbusSynchFormTest
         Thread porok;
         Thread managerConnection;
 
+        bool forgot_userbutton = false;
+
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (StopOrStart == false)
@@ -209,6 +211,8 @@ namespace ModbusSynchFormTest
                             managerConnection = new Thread(managerConnectionModbus.Start);
                             managerConnection.Start();
 
+                            porok = new Thread(timerprogressbar);
+                            porok.Start();
 
                             this.Title = "StructSyncTest -Master";
                         }
@@ -458,39 +462,25 @@ namespace ModbusSynchFormTest
                             StopTransfer.Visibility = Visibility.Hidden;
                         }
 
+                        if (masterSyncStruct.stoptransfer_signal==true)
+                        {
+                            forgot_userbutton = false;
+                        }
+
+                        if (forgot_userbutton==true)
+                        {
+                            ifbuttonsendfile();
+                        }
+                        else
+                        {
+                            ifbuttonsendfileend();
+                        }
                     }
 
                         
                     );
                 Thread.Sleep(500);
-            }
-            /*    
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    ellapledTicks = DateTime.Now.Ticks - ellapledTicks;
-                    elapsedSpan = new TimeSpan(ellapledTicks);
-                    //TickTimeLB.Content = "Передано" + Math.Round(date_value / 1024, 2) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
-
-                    //TickTimeShow.Text = "Передалось за " + Math.Round(elapsedSpan.TotalSeconds,1) + "сек";
-
-                    if (masterSyncStruct.havetrasfer == true)
-                    {
-                        StopTransfer.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        StopTransfer.Visibility = Visibility.Hidden;
-                    }
-                    ProgressSendFile.Value = 0;
-                    ifbuttonsendfileend();
-
-                }
-            );
-            */
-
-            return;
-            
+            }         
         }
 
         private void timerprogressbarSlave()
@@ -709,6 +699,7 @@ namespace ModbusSynchFormTest
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
         {
+            masterSyncStruct.stoptransfer_signal = false;
             sendfirst_struct();
         }
 
@@ -841,6 +832,7 @@ namespace ModbusSynchFormTest
         /// <param name="e"></param>
         private void button3_Click(object sender, RoutedEventArgs e)
         {
+            masterSyncStruct.stoptransfer_signal = false;
             structsecond_struct();
         }
 
@@ -912,8 +904,10 @@ namespace ModbusSynchFormTest
         {
             if (masterSyncStruct!=null)
             {
-              
-                send_files();
+                ifbuttonsendfile();
+                masterSyncStruct.stoptransfer_signal = false;
+                sendfile = Task.Run(() => send_files());
+                
             }
             else
             {
@@ -959,102 +953,16 @@ namespace ModbusSynchFormTest
             StopTransfer.Visibility = Visibility.Hidden;
         }
 
-        #region MenuItem Контекстное меню
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            
-            string selectedObject = (string)lB_PathFileView.SelectedItem;
-            if (selectedObject != null)
-            {
-                pathFiles.Remove(selectedObject);
-                lB_PathFileView.Items.Remove(selectedObject);
 
-            }
-        }
-
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            if (masterSyncStruct != null)
-            {
-                string selectedObject = (string)lB_PathFileView.SelectedItem;
-                if (selectedObject != null)
-                {
-                    send_file(selectedObject);
-                }
-            }
-            else
-            {
-                logger.Warn("Подключите Master");
-            }
-        }
-
-        #endregion 
-
-        #region sendFile Отправка файло
-
-        private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                nameFile = "nofile.txt";
-                lB_PathFileView.ItemsSource = null;
-                string filestr = null;
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    filestr = openFileDialog.FileName;
-                    nameFile = openFileDialog.SafeFileName;
-                    pathFiles.Add(filestr);
-                }
-                lB_PathFileView.Items.Add(filestr);
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex);
-            }
-        }
-
-        public void send_file(string path)
-        {
-            try
-            {
-                if (masterSyncStruct!=null)
-                {
-                    MemoryStream destination = new MemoryStream();
-                    ifbuttonsendfile();
-
-                    double valuefile = 0;
-
-                    if (path != "")
-                    {
-                        porok = new Thread(timerprogressbar);
-
-                        //new Thread(() => fileread(path, destination, valuefile)).Start();
-
-                        sendfile = Task.Run(() => fileread(path, destination, valuefile));
-
-                    }
-                    else
-                    {
-                        logger.Warn("откройте файл");
-                    }
-
-                }
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex);
-            }
-            
-        }
+        #region sendFile Отправка файлов
 
         public void send_files()
         {
-
+            forgot_userbutton = true;
             foreach (var path in pathFiles)
             {
 
-                if (path != ""|| path!=null)
+                if (path != "" || path != null)
                 {
                     send_file(path);
                 }
@@ -1073,9 +981,14 @@ namespace ModbusSynchFormTest
                     string[] file_list = Directory.GetFiles(path);
                     foreach (var item in file_list)
                     {
+                        if (masterSyncStruct.stoptransfer_signal == true)
+                        {
+                            queueOf.ClearQueue();
+                            return;
+                        }
+
                         send_file(item);
                     }
-
 
                 }
                 else
@@ -1083,71 +996,109 @@ namespace ModbusSynchFormTest
                     logger.Warn("откройте файл");
                 }
             }
-
+            forgot_userbutton = false;
         }
 
-        public void fileread(string path, MemoryStream destination, double valuefile)
+        public void send_file(string path)
         {
-            FileAttributes attributes = new FileAttributes();
-            DateTime dtFirstCreate=DateTime.Now;
-            DateTime dTLASTWRITE = DateTime.Now;
-
             try
             {
-
-                using (FileStream fs = new FileStream(path, FileMode.Open))
+                if (masterSyncStruct!=null)
                 {
-                
-                    queueOf.master = masterSyncStruct;
+                    MemoryStream destination = new MemoryStream();
+                    FileAttributes attributes = new FileAttributes();
+                    DateTime dtFirstCreate = DateTime.Now;
+                    DateTime dTLASTWRITE = DateTime.Now;
 
-                    byte[] vs;
+                    double valuefile = 0;
 
-                    fs.CopyTo(destination);
-                    valuefile = fs.Length;                    
-                    attributes = File.GetAttributes(path);
-                    dtFirstCreate = File.GetCreationTime(path);
-                    dTLASTWRITE = File.GetLastWriteTime(path);
+                    if (path != "")
+                    {
+                        logger.Info("Файл готовится к отправка"+ path);
+                        //porok = new Thread(timerprogressbar);
+
+                        //new Thread(() => fileread(path, destination, valuefile)).Start();
+
+                        //sendfile = Task.Run(() => fileread(path, destination, valuefile, attributes, dtFirstCreate, dTLASTWRITE));
+                        //sendfile.Wait();
+                        using (FileStream fs = new FileStream(path, FileMode.Open))
+                        {
+                            queueOf.master = masterSyncStruct;
+                            fs.CopyTo(destination);
+                            valuefile = fs.Length;
+                            attributes = File.GetAttributes(path);
+                            dtFirstCreate = File.GetCreationTime(path);
+                            dTLASTWRITE = File.GetLastWriteTime(path);
+                        }
+
+                        
+                        string[] words = path.Split('\\');
+                        metaClassFor = new MetaClassForStructAndtherData(destination, true, words[words.Length - 1], attributes, dtFirstCreate, dTLASTWRITE);
+                        // создаем объект BinaryFormatter
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+                        var stream = new MemoryStream();
+                        formatter.Serialize(stream, metaClassFor);
+                        var oustream = masterSyncStruct.Compress(stream, false);
+                        
+                        
+                        //ifbuttonsendfile();
+                        // отправка данных 
+
+                        if (masterSyncStruct.stoptransfer_signal==true)
+                        {
+                            queueOf.ClearQueue();
+                            return;
+                        }
+                        queueOf.AddQueue(oustream);
+                        logger.Info("Будет отправлен следущий файл " + words[words.Length - 1] + "(" + valuefile + "байт)");
+
+                        //porok.Start();
+                    }
+                    else
+                    {
+                        logger.Warn("откройте файл");
+                    }
+
                 }
             }
             catch (Exception ex)
             {
+                //queueOf.StopTransfer();
                 logger.Error(ex);
-                porok.Abort();
-            }
+                queueOf.StopTransfer();
 
-            
-            try
-            {
-                string[] words = path.Split('\\');
+                logger.Error("Передача не удалась");
 
-                metaClassFor = new MetaClassForStructAndtherData(destination, true, words[words.Length - 1], attributes, dtFirstCreate, dTLASTWRITE);
-                // создаем объект BinaryFormatter
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-                var stream = new MemoryStream();
-
-                formatter.Serialize(stream, metaClassFor);
-
-                var oustream = masterSyncStruct.Compress(stream, false);
-
-                logger.Info("Будет отправлен следущий файл " + words[words.Length - 1] + "(" + valuefile + "байт)");
-
-                // отправка данных 
-                queueOf.AddQueue(oustream);
-                
-                porok.Start();
-              
-            }
-            catch (Exception ex)
-            {
                 timeprocessing_file = false;
+                forgot_userbutton = false;
                 return;
             }
 
-
-
-
         }
+
+        private void OpenFiledialog_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                nameFile = "nofile.txt";
+                lB_PathFileView.ItemsSource = null;
+                string filestr = null;
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    filestr = openFileDialog.FileName;
+                    nameFile = openFileDialog.SafeFileName;
+                    pathFiles.Add(filestr);
+                }
+                lB_PathFileView.Items.Add(filestr);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
+        }
+
 
         private void ClearSelectbr_Click(object sender, RoutedEventArgs e)
         {
