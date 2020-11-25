@@ -69,7 +69,7 @@ namespace ModbusSynchFormTest
         #endregion
 
         #region settings
-
+        SettingsModbus msload;
         int timecheckconnection = 2000;
         #endregion
 
@@ -102,7 +102,7 @@ namespace ModbusSynchFormTest
                     using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Open))
                     {
                         XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
-                        var msload = (SettingsModbus)formatter.Deserialize(fs);
+                        msload = (SettingsModbus)formatter.Deserialize(fs);
                         if (msload.defaulttypemodbus==0)
                         {
                             radioButton.IsChecked = true;
@@ -467,7 +467,7 @@ namespace ModbusSynchFormTest
                             forgot_userbutton = false;
                         }
 
-                        if (forgot_userbutton==true)
+                        if (forgot_userbutton == true)
                         {
                             ifbuttonsendfile();
                         }
@@ -475,6 +475,8 @@ namespace ModbusSynchFormTest
                         {
                             ifbuttonsendfileend();
                         }
+
+
                     }
 
                         
@@ -889,6 +891,9 @@ namespace ModbusSynchFormTest
                 }
                 Environment.Exit(0);
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
+                this.Hide();
+
+
             }
             catch(Exception ex)
             {
@@ -1151,5 +1156,28 @@ namespace ModbusSynchFormTest
         }
 
         #endregion
+
+        private void E_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int defaulttypemodbus = 0;
+            if (radioButton.IsChecked == true)
+            {
+                defaulttypemodbus = 0;
+            }
+            if (radioButton1.IsChecked == true)
+            {
+                defaulttypemodbus = 1;
+            }
+
+
+            using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
+            {
+                XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
+                msload.defaulttypemodbus = defaulttypemodbus;
+                formatter.Serialize(fs, msload);
+
+                logger.Info("Кофигурация создана");
+            }
+        }
     }
 }

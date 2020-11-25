@@ -548,5 +548,8 @@ namespace ModbusSynchFormTest
         {
             IpAdress_Lb.Content = "IP Adress Slave";
         }
+
+
+
     }
 }

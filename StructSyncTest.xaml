@@ -7,7 +7,7 @@
         xmlns:WPFTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         mc:Ignorable="d"
-        Title="StructSyncTest" Height="559.6" Width="800" Closed="Window_Closed" VerticalAlignment="Center" HorizontalAlignment="Center" Activated="Window_Activated" ResizeMode="NoResize">
+        Title="StructSyncTest" Height="559.6" Width="800" Closed="Window_Closed" VerticalAlignment="Center" HorizontalAlignment="Center" Activated="Window_Activated" ResizeMode="NoResize" Closing="E_Closing">
     <Grid>
         <GroupBox x:Name="groupBox" Header="Подключение" HorizontalAlignment="Left" Height="83" Margin="10,10,0,0" VerticalAlignment="Top" Width="772" BorderBrush="#FF3373F2">
             <Grid>
@@ -35,12 +35,16 @@
             </TabItem>
             <TabItem Header="Структура 2">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="10,38,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="10,66,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="textBox8" HorizontalAlignment="Left" Height="23" Margin="10,94,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="button3" Content="Применить" HorizontalAlignment="Left" Margin="10,132,0,0" VerticalAlignment="Top" Width="120" Height="52" Click="button3_Click" BorderBrush="#FF3373F2"/>
-                    <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="107" Margin="163,10,0,0" VerticalAlignment="Top" Width="579">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="53*"/>
+                        <ColumnDefinition Width="714*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="textBox5" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="121" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="textBox6" HorizontalAlignment="Left" Height="23" Margin="10,38,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="textBox7" HorizontalAlignment="Left" Height="23" Margin="10,66,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="textBox8" HorizontalAlignment="Left" Height="23" Margin="10,94,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                    <Button x:Name="button3" Content="Применить" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="120" Height="52" Click="button3_Click" BorderBrush="#FF3373F2" Grid.ColumnSpan="2"/>
+                    <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="107" Margin="110.2,10,0,0" VerticalAlignment="Top" Width="579" Grid.Column="1">
                         <FlowDocument>
                             <Paragraph>
                                 <Run Text=""/>
