@@ -481,7 +481,7 @@ namespace ModbusSynchFormTest
 
                         
                     );
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }         
         }
 
@@ -503,6 +503,12 @@ namespace ModbusSynchFormTest
                             //TickTimeLB.Content = Math.Round(slaveSyncSruct.get_all_getpacket() / 1024, 3)+"из"+Math.Round(slaveSyncSruct.get_all_packet() / 1024, 3)+"кб";
 
                             ProgressSendFile.Value = slaveSyncSruct.status_bar;
+
+                            if (managerConnectionModbus.have_connection==false)
+                            {
+                                value = 0;
+                            }
+
 
                             if (slaveSyncSruct.have_trasfer==true)
                             {
@@ -541,7 +547,7 @@ namespace ModbusSynchFormTest
                     }
 
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
 
 
