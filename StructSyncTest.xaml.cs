@@ -698,8 +698,7 @@ namespace ModbusSynchFormTest
 
         //синхронизировать
         private void button2_Click(object sender, RoutedEventArgs e)
-        {
-            masterSyncStruct.stoptransfer_signal = false;
+        {         
             sendfirst_struct();
         }
 
@@ -709,7 +708,7 @@ namespace ModbusSynchFormTest
         {
             if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "")
             {
-
+                masterSyncStruct.stoptransfer_signal = false;
                 TestSendStruct testSendStruct;
 
                 testSendStruct.ab = textBox1.Text;
@@ -766,6 +765,7 @@ namespace ModbusSynchFormTest
         {
             if (textBox5.Text != "" && textBox6.Text != "" && textBox7.Text != "" && textBox8.Text != "")
             {
+                masterSyncStruct.stoptransfer_signal = false;
                 Test4SendStruct testSendStruct;
 
                 testSendStruct.ab = textBox5.Text;
@@ -812,7 +812,7 @@ namespace ModbusSynchFormTest
 
                         // отправка данных 
                         queueOf.AddQueue(oustream);
-                        //masterSyncStruct.send_multi_message(oustream);
+                        logger.Info("Данные добавлены в очереди");
                     }
                 }
                 catch (Exception ex)
@@ -832,7 +832,6 @@ namespace ModbusSynchFormTest
         /// <param name="e"></param>
         private void button3_Click(object sender, RoutedEventArgs e)
         {
-            masterSyncStruct.stoptransfer_signal = false;
             structsecond_struct();
         }
 
