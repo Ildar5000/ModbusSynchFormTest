@@ -91,6 +91,7 @@ namespace ModbusSynchFormTest
 
             time_rebootaftercrash = new List<string>();
 
+            time_rebootaftercrash.Add("10 секунд");
             time_rebootaftercrash.Add("30 секунд");
             time_rebootaftercrash.Add("1 минута");
             time_rebootaftercrash.Add("2 минуты");
@@ -229,25 +230,29 @@ namespace ModbusSynchFormTest
 
                     int selectedtimecheckaftercrash_int = settings.tryconnectionaftercrash;
 
+                    //10 секунд
                     //time_rebootaftercrash.Add("30 секунд");
                     //time_rebootaftercrash.Add("1 минута");
                     //time_rebootaftercrash.Add("2 минуты");
                     //time_rebootaftercrash.Add("5 минут");
 
-                    
+
                     switch (selectedtimecheckaftercrash_int)
                     {
-                        case 3 * 1000:
+                        case 10 * 1000:
                             RebootConnection_after_crash_cb.SelectedIndex = 0;
                             break;
-                        case 60 * 1000:
+                        case 30 * 1000:
                             RebootConnection_after_crash_cb.SelectedIndex = 1;
                             break;
-                        case 2 * 60 * 1000:
+                        case 60 * 1000:
                             RebootConnection_after_crash_cb.SelectedIndex = 2;
                             break;
-                        case 5 * 60 * 1000:
+                        case 2 * 60 * 1000:
                             RebootConnection_after_crash_cb.SelectedIndex = 3;
+                            break;
+                        case 5 * 60 * 1000:
+                            RebootConnection_after_crash_cb.SelectedIndex = 4;
                             break;
                         default:
                             RebootConnection_after_crash_cb.SelectedIndex = 0;
@@ -466,8 +471,11 @@ namespace ModbusSynchFormTest
                 int selectedtimecheckaftercrash_int=3000;
                 switch (selectedtimecheckaftercrash)
                 {
+                    case "10 секунд":
+                        selectedtimecheckaftercrash_int = 10 * 1000;
+                        break;
                     case "30 секунд":
-                        selectedtimecheckaftercrash_int = 3 * 1000;
+                        selectedtimecheckaftercrash_int = 30 * 1000;
                         break;
                     case "1 минута":
                         selectedtimecheckaftercrash_int = 60 * 1000;

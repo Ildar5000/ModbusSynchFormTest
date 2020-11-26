@@ -188,32 +188,21 @@ namespace ModbusSynchFormTest
                 StopOrStart = true;
                 stoptransfer = false;
                 button.Content = "Стоп";
+                
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
                 diagnostik_show = new Thread(CheckConnection);
                 diagnostik_show.Start();
                 if (radioButton.IsChecked == true)
                 {
+                    StopTransfer.Visibility = Visibility.Hidden;
+
                     //Master
                     try
                     {
                         HideButtonsIfConnectionMaster();
                         if (File.Exists(path) == true)
                         {
-                            logger.Info("Создание мастера");
-                            masterSyncStruct = new MasterSyncStruct();
-
-                            //masterSyncStruct.Open();
-
-                            //thread = new Thread(masterSyncStruct.Open);
-                            //thread.Start();
-
-                            managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
-                            managerConnection = new Thread(managerConnectionModbus.Start);
-                            managerConnection.Start();
-
-                            porok = new Thread(timerprogressbar);
-                            porok.Start();
-
+                            var t=Task.Run(() => startinitmaster());
                             this.Title = "StructSyncTest -Master";
                         }
                         else
@@ -330,6 +319,28 @@ namespace ModbusSynchFormTest
 
         }
 
+        public void startinitmaster()
+        {
+            logger.Info("Создание мастера");
+            masterSyncStruct = new MasterSyncStruct();
+
+            //masterSyncStruct.Open();
+
+            //thread = new Thread(masterSyncStruct.Open);
+            //thread.Start();
+
+            managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
+            managerConnection = new Thread(managerConnectionModbus.Start);
+            managerConnection.Start();
+
+            porok = new Thread(timerprogressbar);
+            porok.Start();
+
+            
+        }
+
+
+
         public bool stoptransfer;
 
         #region buttonhideorview and update
@@ -401,22 +412,7 @@ namespace ModbusSynchFormTest
             double sentpacket_value = 0;
 
             double timetrasfer = 0;
-            //сколько осталось по времени
-            double timetrasferhave = 0;
-
             long ellapledTicks = DateTime.Now.Ticks;
-            TimeSpan elapsedSpan;
-            bool enable_button = false;
-
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    //TickTimeLB.Content = "";
-                    //ProgressSendFile.Value = 0;
-                    //TickTimeShow.Text = "";
-                    StopTransfer.Visibility = Visibility.Visible;
-                }
-                );
 
             while (true)
             {
@@ -454,9 +450,6 @@ namespace ModbusSynchFormTest
                     this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
                     {
-                        //value = ProgressSendFile.Value;
-                        //TickTimeLB.Content = "Передано" + Math.Round(sentpacket_value / 1024, 3) + " из " + Math.Round(date_value / 1024, 2) + " КБайт";
-                        //TickTimeShow.Text = "Осталось " + Math.Round(timetrasfer, 1) + "сек";
                         ProgressSendFile.Value = value;
                         if (value == 0)
                         {
@@ -490,8 +483,6 @@ namespace ModbusSynchFormTest
                         {
                             ifbuttonsendfileend();
                         }
-
-
                     }                       
                     );
                 }
@@ -743,7 +734,11 @@ namespace ModbusSynchFormTest
         {
             if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "")
             {
-                masterSyncStruct.stoptransfer_signal = false;
+                if (masterSyncStruct!=null)
+                {
+                    masterSyncStruct.stoptransfer_signal = false;
+                }
+                
                 TestSendStruct testSendStruct;
 
                 testSendStruct.ab = textBox1.Text;
@@ -800,9 +795,12 @@ namespace ModbusSynchFormTest
         {
             if (textBox5.Text != "" && textBox6.Text != "" && textBox7.Text != "" && textBox8.Text != "")
             {
-                masterSyncStruct.stoptransfer_signal = false;
-                Test4SendStruct testSendStruct;
+                if (masterSyncStruct != null)
+                {
+                    masterSyncStruct.stoptransfer_signal = false;
+                }
 
+                Test4SendStruct testSendStruct;
                 testSendStruct.ab = textBox5.Text;
                 testSendStruct.cd = textBox6.Text;
                 testSendStruct.fre = textBox7.Text;
@@ -971,6 +969,7 @@ namespace ModbusSynchFormTest
                 ifbuttonsendfileend();
                 Thread.Sleep(100);
                 stoptransfer = true;
+
             }
             
             if (porok!=null)
