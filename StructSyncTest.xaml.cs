@@ -1104,11 +1104,6 @@ namespace ModbusSynchFormTest
 
             }
             
-            if (porok!=null)
-            {
-                porok.Abort();
-            }
-
             if (slaveSyncSruct != null)
             {
 
