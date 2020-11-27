@@ -21,7 +21,7 @@
         </GroupBox>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="230" Margin="10,93,0,0" VerticalAlignment="Top" Width="772" BorderBrush="#FF3373F2">
             <TabItem Header="Структура 1">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="179*"/>
                         <ColumnDefinition Width="587*"/>
@@ -34,7 +34,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Структура 2">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="53*"/>
                         <ColumnDefinition Width="714*"/>

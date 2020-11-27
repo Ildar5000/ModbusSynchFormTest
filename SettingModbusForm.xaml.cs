@@ -264,6 +264,7 @@ namespace ModbusSynchFormTest
                 catch(Exception ex)
                 {
                     logger.Error(ex);
+                    logger.Error("Настройки определены не правильно. Проверьте корректность данных");
                 }
 
             }
@@ -286,11 +287,10 @@ namespace ModbusSynchFormTest
                 #region checkuserwrite
                 string regexCOM = @"Com\d";
 
-                string regex_decre = @"\d";
+                string regex_decre = @"^[0-9]*$";
 
                 //string iprex = @"\d{3}.";
                 Regex iprex = new Regex(@"[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9]");
-
 
                 if (Regex.IsMatch(Com_name_txb.Text, regexCOM, RegexOptions.IgnoreCase))
                 {
@@ -306,7 +306,15 @@ namespace ModbusSynchFormTest
 
                 if (Regex.IsMatch(BaudRate_txb.Text, regex_decre, RegexOptions.IgnoreCase))
                 {
-                    
+                    int value = 0;
+                    if (int.TryParse(BaudRate_txb.Text, out value))
+                    {
+
+                    }
+                    else
+                    {
+                        logger.Warn("Введите целые числа в BaudRate");
+                    }
                 }
                 else
                 {
@@ -518,6 +526,8 @@ namespace ModbusSynchFormTest
             catch(Exception ex)
             {
                 logger.Error(ex);
+                logger.Error("Проверьте данные");
+                MessageBoxResult result = MessageBox.Show("Проверьте данные на пустоту и правильность", "Настройки", MessageBoxButton.OK);
             } 
         }
 

@@ -26,6 +26,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using ModbusSyncStructLIb.CheckConnect;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using ModbusSyncStructLIb.DespriptionState;
 
 namespace ModbusSynchFormTest
 {
@@ -167,7 +168,7 @@ namespace ModbusSynchFormTest
             catch(Exception ex)
             {
                 logger.Error(ex);
-
+                logger.Error("Ошибка в конфигурации файла");
             }
             
         }
@@ -179,31 +180,49 @@ namespace ModbusSynchFormTest
         Thread porok;
         Thread managerConnection;
 
-        bool forgot_userbutton = false;
-
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (StopOrStart == false)
-            {
-                StopOrStart = true;
-                stoptransfer = false;
-                button.Content = "Стоп";
-                
+            {           
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
                 diagnostik_show = new Thread(CheckConnection);
                 diagnostik_show.Start();
                 if (radioButton.IsChecked == true)
                 {
                     StopTransfer.Visibility = Visibility.Hidden;
-
                     //Master
                     try
                     {
-                        HideButtonsIfConnectionMaster();
                         if (File.Exists(path) == true)
                         {
-                            var t=Task.Run(() => startinitmaster());
-                            this.Title = "StructSyncTest -Master";
+                            logger.Info("Создание мастера");
+                            masterSyncStruct = new MasterSyncStruct();
+
+                            //masterSyncStruct.Open();
+
+                            //thread = new Thread(masterSyncStruct.Open);
+                            //thread.Start();
+
+                            managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
+                            managerConnection = new Thread(managerConnectionModbus.Start);
+                            managerConnection.Start();
+
+                            if (masterSyncStruct.state_master!=SlaveState.haveerror)
+                            {
+                                porok = new Thread(timerprogressbar);
+                                porok.Start();
+                                this.Title = "StructSyncTest -Master";
+
+                                HideButtonsIfConnectionMaster();
+                                StopOrStart = true;
+                                stoptransfer = false;
+                                button.Content = "Стоп";
+                            }
+                            else
+                            {
+                                logger.Error("Неправильный файл конфигурации");
+                                MessageBoxResult result = MessageBox.Show("Исправьте файл конфигурации", "My App", MessageBoxButton.OK);
+                            }
                         }
                         else
                         {
@@ -212,6 +231,7 @@ namespace ModbusSynchFormTest
                             logger.Info("Настройки мастера");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
+                            pessButtonStop();
                         }
 
                     }
@@ -228,8 +248,6 @@ namespace ModbusSynchFormTest
                     //Slave
                     try
                     {
-                        HideButtonsIfConnectionSlave();
-                        
                         if (File.Exists(path) == true)
                         {
                             logger.Info("Создание Slave");
@@ -252,11 +270,22 @@ namespace ModbusSynchFormTest
                             managerConnection = new Thread(managerConnectionModbus.Start);
                             managerConnection.Start();
 
+                            if (slaveSyncSruct.stateSlave!=SlaveState.haveerror)
+                            {
+                                HideButtonsIfConnectionSlave();
+                                StopOrStart = true;
+                                stoptransfer = false;
+                                button.Content = "Стоп";
+                                this.Title = "StructSyncTest-slave";
+                            }
+                            else
+                            {
+                                logger.Error("Неправильный файл конфигурации");
+                                MessageBoxResult result = MessageBox.Show("Исправьте файл конфигурации", "My App", MessageBoxButton.OK);
+                            }
                             //thread = new Thread(slaveSyncSruct.Open);
                             //thread.Start();
-                            this.Title = "StructSyncTest-slave";
-                            //Console.WriteLine("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
-                            //logger.Trace("Slave Запущен на " + slaveSyncSruct.serialPort.PortName);
+
                         }
                         else
                         {
@@ -264,10 +293,8 @@ namespace ModbusSynchFormTest
                             logger.Info("Настройки Slave");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
+                            pessButtonStop();
                         }
-
-
-
                     }
                     catch (Exception ex)
                     {
@@ -287,6 +314,13 @@ namespace ModbusSynchFormTest
                 pessButtonStop();
                 diagnostik_show.Abort();
 
+                if (porok != null)
+                {
+                    porok.Abort();
+                }
+
+                StopTransfer.Visibility = Visibility.Hidden;
+
                 if (radioButton.IsChecked == true && masterSyncStruct != null)
                 {
                     masterSyncStruct.Close();
@@ -295,52 +329,27 @@ namespace ModbusSynchFormTest
                         managerConnectionModbus.CloseManager();
                         managerConnection.Abort();
                     }
-
                     pessButtonStop();
-                    
-                    
                 }
 
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
                 {
                     slaveSyncSruct.Close();
-                    if(managerConnectionModbus!=null)
+                    slaveSyncSruct.have_trasfer = false;
+                    if (managerConnectionModbus!=null)
                     {
                         managerConnectionModbus.CloseManager();
                         managerConnection.Abort();
                     }
-                    
-                    
-
                     pessButtonStop();
                 }
+
             }
 
 
         }
 
-        public void startinitmaster()
-        {
-            logger.Info("Создание мастера");
-            masterSyncStruct = new MasterSyncStruct();
-
-            //masterSyncStruct.Open();
-
-            //thread = new Thread(masterSyncStruct.Open);
-            //thread.Start();
-
-            managerConnectionModbus = new ManagerConnectionModbus(masterSyncStruct);
-            managerConnection = new Thread(managerConnectionModbus.Start);
-            managerConnection.Start();
-
-            porok = new Thread(timerprogressbar);
-            porok.Start();
-
-            
-        }
-
-
-
+ 
         public bool stoptransfer;
 
         #region buttonhideorview and update
@@ -360,12 +369,13 @@ namespace ModbusSynchFormTest
             btn_settings_modbus.IsEnabled = false;
             button2.Visibility = Visibility.Hidden;
             button3.Visibility = Visibility.Hidden;
-           //StopTransfer.Visibility = Visibility.Visible;
+            tabControl.SelectedIndex = 1;
+
+           StopTransfer.Visibility = Visibility.Hidden;
         }
 
         private void pessButtonStop()
         {
-            //StopTransfer.Visibility = Visibility.Visible;
             FileTab.Visibility = Visibility.Visible;
             radioButton.IsEnabled = true;
             radioButton1.IsEnabled = true;
@@ -432,6 +442,16 @@ namespace ModbusSynchFormTest
                     logger.Error(ex);
                 }
 
+                if (sendfile != null)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (ThreadStart)delegate ()
+                    {
+                        ifbuttonsendfile();
+                    });
+                    //sendfile.Wait();      
+                }
+
                 if (managerConnectionModbus.have_connection == false)
                 {
                     this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -462,26 +482,13 @@ namespace ModbusSynchFormTest
 
                         if (masterSyncStruct.havetrasfer==true)
                         {
+                            ifbuttonsendfile();
                             StopTransfer.Visibility = Visibility.Visible;
                         }
                         else
                         {
                             ifbuttonsendfileend();
                             StopTransfer.Visibility = Visibility.Hidden;
-                        }
-
-                        if (masterSyncStruct.stoptransfer_signal==true)
-                        {
-                            forgot_userbutton = false;
-                        }
-
-                        if (forgot_userbutton == true)
-                        {
-                            ifbuttonsendfile();
-                        }
-                        else
-                        {
-                            ifbuttonsendfileend();
                         }
                     }                       
                     );
@@ -939,13 +946,13 @@ namespace ModbusSynchFormTest
         {
             if (masterSyncStruct!=null)
             {
-                ifbuttonsendfile();
                 masterSyncStruct.stoptransfer_signal = false;
                 sendfile = Task.Run(() => send_files());
-                
+                ifbuttonsendfile();
             }
             else
             {
+                ifbuttonsendfileend();
                 logger.Warn("Подключитите Master");
             }
             
@@ -994,12 +1001,15 @@ namespace ModbusSynchFormTest
 
         public void send_files()
         {
-            forgot_userbutton = true;
             foreach (var path in pathFiles)
             {
 
                 if (path != "" || path != null)
                 {
+                    if (masterSyncStruct.stoptransfer_signal == true)
+                    {
+                        return;
+                    }
                     send_file(path);
                 }
                 else
@@ -1032,7 +1042,6 @@ namespace ModbusSynchFormTest
                     logger.Warn("откройте файл");
                 }
             }
-            forgot_userbutton = false;
         }
 
         public void send_file(string path)
@@ -1052,11 +1061,10 @@ namespace ModbusSynchFormTest
                     {
                         logger.Info("Файл готовится к отправка"+ path);
                         //porok = new Thread(timerprogressbar);
-
                         //new Thread(() => fileread(path, destination, valuefile)).Start();
-
                         //sendfile = Task.Run(() => fileread(path, destination, valuefile, attributes, dtFirstCreate, dTLASTWRITE));
                         //sendfile.Wait();
+
                         using (FileStream fs = new FileStream(path, FileMode.Open))
                         {
                             queueOf.master = masterSyncStruct;
@@ -1107,7 +1115,6 @@ namespace ModbusSynchFormTest
                 logger.Error("Передача не удалась");
 
                 timeprocessing_file = false;
-                forgot_userbutton = false;
                 return;
             }
 
@@ -1152,8 +1159,6 @@ namespace ModbusSynchFormTest
                     pathFolder.Remove(path);
                     pathFiles.Remove(path);
                 }
-                
-
             }
 
         }
@@ -1201,14 +1206,18 @@ namespace ModbusSynchFormTest
                 defaulttypemodbus = 1;
             }
 
-
-            using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
+            if (msload != null)
             {
-                XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
-                msload.defaulttypemodbus = defaulttypemodbus;
-                formatter.Serialize(fs, msload);
+                using (FileStream fs = new FileStream("Settingsmodbus.xml", FileMode.Create))
+                {
 
-                logger.Info("Кофигурация создана");
+                    {
+                        XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
+                        msload.defaulttypemodbus = defaulttypemodbus;
+                        formatter.Serialize(fs, msload);
+                        logger.Info("Кофигурация создана");
+                    }
+                }
             }
         }
     }
