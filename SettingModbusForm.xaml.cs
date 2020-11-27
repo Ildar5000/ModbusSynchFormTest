@@ -99,7 +99,15 @@ namespace ModbusSynchFormTest
             RebootConnection_after_crash_cb.ItemsSource = time_rebootaftercrash;
             RebootConnection_after_crash_cb.SelectedIndex = 0;
 
-            loadSettings();
+            if (structSync.errorsettings==false)
+            {
+                loadSettings();
+            }
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Конфигурация сброшена на начальные настройки", "My App", MessageBoxButton.OK);
+            }
+
 
             if (structSync.radioButton.IsChecked==true)
             {
@@ -132,6 +140,7 @@ namespace ModbusSynchFormTest
 
                         Console.WriteLine("Объект десериализован");
                     }
+
                     Com_name_txb.Text = settings.ComName;
                     BaudRate_txb.Text = settings.BoudRate.ToString();
                     DataBits_lb_txb.Text = settings.DataBits.ToString();
@@ -162,28 +171,7 @@ namespace ModbusSynchFormTest
                         }
                     }
 
-                    foreach (var pt in type_ModbusList)
-                    {
-                        if (pt == settings.typeModbusSTR)
-                        {
-                            int index = type_ModbusList.IndexOf(pt);
-                            TypeModbuscB.SelectedIndex = index;
-
-                            if (index == 2)
-                            {
-                                tab1.Visibility = Visibility.Hidden;
-                                tab2.Visibility = Visibility.Visible;
-                                TypeViewModbus.SelectedIndex = 1;
-                            }
-                            else
-                            {
-                                tab2.Visibility = Visibility.Hidden;
-                                tab1.Visibility = Visibility.Visible;
-                                TypeViewModbus.SelectedIndex = 0;
-                            }
-                        }
-                    }
-
+                   
                     if (settings.defaulttypemodbus == 0)
                     {
                         MasterRB.IsChecked = true;
@@ -273,6 +261,7 @@ namespace ModbusSynchFormTest
                 Console.WriteLine("Создайте файл ");
             }
         }
+
 
         /// <summary>
         /// Применить настройки
@@ -521,6 +510,7 @@ namespace ModbusSynchFormTest
                 }
                 this.Hide();
 
+                structSync.Show();
                 structSync.UpdateRadio();
             }
             catch(Exception ex)
@@ -535,16 +525,26 @@ namespace ModbusSynchFormTest
         {
             if (TypeModbuscB.SelectedIndex==2)
             {
+
                 TypeViewModbus.SelectedIndex = 1;
                 tab2.Visibility = Visibility.Visible;
                 tab1.Visibility = Visibility.Hidden;
+                Com_name_txb.Text = "Com1";
+                BaudRate_txb.Text = "9600";
+                DataBits_lb_txb.Text = "8";
+                ReadTimeout_txt.Text = "1000";
+                WriteTimeout_txt.Text = "1000";
             }
             else
             {
                 TypeViewModbus.SelectedIndex = 0;
                 tab1.Visibility = Visibility.Visible;
                 tab2.Visibility = Visibility.Hidden;
+
+                IpAdressLb_txt.Text = "127.0.0.1";
+                Port_lb_txt.Text = "502";
             }
+            
         }
 
         private void Com_name_txb_TextChanged(object sender, TextChangedEventArgs e)
@@ -567,7 +567,14 @@ namespace ModbusSynchFormTest
             IpAdress_Lb.Content = "IP Adress Slave";
         }
 
+        private void Grid_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            structSync.Show();
+        }
 
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            structSync.Show();
+        }
     }
 }

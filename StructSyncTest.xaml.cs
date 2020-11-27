@@ -27,6 +27,7 @@ using System.Diagnostics;
 using ModbusSyncStructLIb.CheckConnect;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModbusSyncStructLIb.DespriptionState;
+using System.Text.RegularExpressions;
 
 namespace ModbusSynchFormTest
 {
@@ -49,6 +50,7 @@ namespace ModbusSynchFormTest
 
         bool timeprocessing_file = false;
 
+        public bool errorsettings = false;
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
         SlaveSyncSruct slaveSyncSruct;
@@ -97,6 +99,8 @@ namespace ModbusSynchFormTest
         {
             try
             {
+                errorsettings = false;
+                msload = null;
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
                 if (File.Exists(path) == true)
                 {
@@ -112,13 +116,21 @@ namespace ModbusSynchFormTest
                         {
                             radioButton1.IsChecked = true;
                         }
-                        timecheckconnection = msload.deltatimeManager;
+                        check_settings(msload);
+                        if (errorsettings == true)
+                        {
+                            logger.Info("Данные некорректны");
+                        }
+                        else
+                        {
+                            timecheckconnection = msload.deltatimeManager;
 
-                        logger.Info("Данные загружены");
+                            logger.Info("Данные загружены");
+                            errorsettings = false;
+                        }
+                        
                     }
                 }
-
-
 
                 var pathVMS = System.IO.Path.GetFullPath(@"dataSaveStruct2.xml");
 
@@ -173,7 +185,114 @@ namespace ModbusSynchFormTest
             
         }
 
+        public void check_settings(SettingsModbus settings)
+        {
+            #region checkuserwrite
+            string regexCOM = @"Com\d";
 
+            string regex_decre = @"^[0-9]*$";
+
+            //string iprex = @"\d{3}.";
+            Regex iprex = new Regex(@"[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9].[0-3][0-9][0-9]");
+
+            if (Regex.IsMatch(settings.ComName, regexCOM, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+            if (Regex.IsMatch(settings.BoudRate.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+                int value = 0;
+                if (int.TryParse(settings.BoudRate.ToString(), out value))
+                {
+
+                }
+                else
+                {
+                    errorsettings = true;
+                }
+            }
+            else
+            {
+
+            }
+
+            if (Regex.IsMatch(settings.DataBits.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+
+            if (Regex.IsMatch(settings.WriteTimeout.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+            if (Regex.IsMatch(settings.ReadTimeout.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+            if (Regex.IsMatch(settings.slaveID.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+            if (Regex.IsMatch(settings.deltatime.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+            if (Regex.IsMatch(settings.port_IP_client.ToString(), regex_decre, RegexOptions.IgnoreCase))
+            {
+
+            }
+            else
+            {
+                errorsettings = true;
+            }
+
+
+            try
+            {
+                string[] words = settings.IP_client.ToString().Split('.');
+                foreach (var word in words)
+                {
+                    if (Convert.ToInt32(word) > 255)
+                    {
+                        errorsettings = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorsettings = true;
+            }
+            #endregion
+        }
 
         #endregion
 
@@ -182,6 +301,11 @@ namespace ModbusSynchFormTest
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            if (errorsettings == true)
+            {
+                MessageBoxResult result = MessageBox.Show("Исправьте файл конфигурации", "My App", MessageBoxButton.OK);
+                return;
+            }
             if (StopOrStart == false)
             {           
                 var path = System.IO.Path.GetFullPath(@"Settingsmodbus.xml");
@@ -898,6 +1022,7 @@ namespace ModbusSynchFormTest
         {
             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
             settingModbusForm.Show();
+            this.Hide();
         }
 
         private void Window_Closed(object sender, EventArgs e)

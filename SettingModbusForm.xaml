@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:ModbusSynchFormTest"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib" xmlns:local1="clr-namespace:System.IO.Ports;assembly=System"
         mc:Ignorable="d"
-        Title="SettingModbusForm" Height="585.6" Width="416.258" ResizeMode="NoResize">
-    <Grid>
+        Title="SettingModbusForm" Height="585.6" Width="416.258" ResizeMode="NoResize" Closing="Window_Closing">
+    <Grid ContextMenuClosing="Grid_ContextMenuClosing">
         <Button x:Name="Apply_btn" Content="Применить" HorizontalAlignment="Left" Margin="10,473,0,0" VerticalAlignment="Top" Width="104" Height="33" Click="Apply_btn_Click" BorderBrush="#FF3373F2"/>
         <Label x:Name="Type_modbus_lb" Content="Type modbus" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top"/>
         <Label x:Name="slaveID_lb" Content="Modbus ID" HorizontalAlignment="Left" Margin="23,291,0,0" VerticalAlignment="Top" Width="99" Height="26"/>
