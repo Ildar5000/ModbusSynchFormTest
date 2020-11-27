@@ -96,6 +96,8 @@ namespace ModbusSynchFormTest
             time_rebootaftercrash.Add("1 минута");
             time_rebootaftercrash.Add("2 минуты");
             time_rebootaftercrash.Add("5 минут");
+
+
             RebootConnection_after_crash_cb.ItemsSource = time_rebootaftercrash;
             RebootConnection_after_crash_cb.SelectedIndex = 0;
 
@@ -151,7 +153,35 @@ namespace ModbusSynchFormTest
                     slaveID_txt.Text = settings.slaveID.ToString();
                     DeltaTime_txt.Text = settings.deltatime.ToString();
 
-                    
+                    int type_modbus = settings.typeModbus;
+
+                    switch (type_modbus)
+                    {
+                        case 0:
+                            TypeViewModbus.SelectedIndex = 0;
+                            tab1.Visibility = Visibility.Visible;
+                            tab2.Visibility = Visibility.Hidden;
+                            TypeModbuscB.SelectedIndex = 0;
+                            break;
+                        case 1:
+                            TypeViewModbus.SelectedIndex = 0;
+                            tab1.Visibility = Visibility.Visible;
+                            tab2.Visibility = Visibility.Hidden;
+                            TypeModbuscB.SelectedIndex = 1;
+                            break;
+                        case 2:
+                            tab1.Visibility = Visibility.Hidden;
+                            tab2.Visibility = Visibility.Visible;
+                            TypeViewModbus.SelectedIndex = 1;
+                            TypeModbuscB.SelectedIndex = 2;
+                            break;
+                        default:
+                            TypeViewModbus.SelectedIndex = 1;
+                            TypeModbuscB.SelectedIndex = 1;
+                            break;
+
+                    }
+
 
                     foreach (var pt in typeParitylist)
                     {

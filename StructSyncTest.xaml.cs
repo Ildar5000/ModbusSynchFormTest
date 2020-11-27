@@ -131,7 +131,7 @@ namespace ModbusSynchFormTest
                         
                     }
                 }
-
+                errorsettings = false;
                 var pathVMS = System.IO.Path.GetFullPath(@"dataSaveStruct2.xml");
 
                 var pathMMS = System.IO.Path.GetFullPath(@"dataSaveStruct1.xml");

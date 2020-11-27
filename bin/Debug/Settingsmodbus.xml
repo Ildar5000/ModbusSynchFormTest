@@ -16,7 +16,7 @@
   <typeModbus>2</typeModbus>
   <typeModbusSTR>TCP</typeModbusSTR>
   <slaveID>1</slaveID>
-  <defaulttypemodbus>1</defaulttypemodbus>
+  <defaulttypemodbus>0</defaulttypemodbus>
   <deltatime>300</deltatime>
   <try_reboot_connection>true</try_reboot_connection>
 </SettingsModbus>
