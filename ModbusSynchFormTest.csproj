@@ -56,11 +56,7 @@
     </Reference>
     <Reference Include="NModbus4, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ModbusSyncStructLIb\dll\NModbus4.dll</HintPath>
-    </Reference>
-    <Reference Include="NModbus4.Serial, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ModbusSyncStructLIb\dll\NModbus4.Serial.dll</HintPath>
+      <HintPath>..\ModbusSyncStructLIb\dll\EMS\NModbus4.dll</HintPath>
     </Reference>
     <Reference Include="SevenZip, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\ModbusSyncStructLIb\packages\LZMA-SDK.19.0.0\lib\net20\SevenZip.dll</HintPath>
