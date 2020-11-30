@@ -51,6 +51,8 @@ namespace ModbusSynchFormTest
         bool timeprocessing_file = false;
 
         public bool errorsettings = false;
+
+        public bool havesetiings = false;
         #region Base Modbus
         MasterSyncStruct masterSyncStruct;
         SlaveSyncSruct slaveSyncSruct;
@@ -606,14 +608,25 @@ namespace ModbusSynchFormTest
 
                         if (masterSyncStruct.havetrasfer==true)
                         {
-                            ifbuttonsendfile();
-                            StopTransfer.Visibility = Visibility.Visible;
+
+                            if (havesetiings==false)
+                            {
+                                ifbuttonsendfileend();
+                                StopTransfer.Visibility = Visibility.Hidden;
+                            }
+                            else
+                            {
+                                ifbuttonsendfile();
+                                StopTransfer.Visibility = Visibility.Visible;
+                            }
+
                         }
                         else
                         {
                             ifbuttonsendfileend();
                             StopTransfer.Visibility = Visibility.Hidden;
                         }
+
                     }                       
                     );
                 }
@@ -661,7 +674,15 @@ namespace ModbusSynchFormTest
 
                             if (slaveSyncSruct.have_trasfer == true)
                             {
-                                StopTransfer.Visibility = Visibility.Visible;
+                                if (havesetiings == false)
+                                {
+                                    ifbuttonsendfileend();
+                                }
+                                else
+                                {
+                                    StopTransfer.Visibility = Visibility.Visible;
+                                }
+                                    
                             }
                             else
                             {
@@ -721,6 +742,7 @@ namespace ModbusSynchFormTest
                                 HaveConnectionlbSignal.Fill = Brushes.Green;
                             }
                         );
+                        havesetiings = true;
                     }
                     else
                     {
@@ -742,6 +764,7 @@ namespace ModbusSynchFormTest
                             }
                             );
                         }
+                        havesetiings = false;
                     }
 
                 }
