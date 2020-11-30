@@ -588,6 +588,7 @@ namespace ModbusSynchFormTest
                         queueOf.StopTransfer();
                         masterSyncStruct.StopTransfer();
                         masterSyncStruct.status_bar = 0;
+                        StopTransfer.Visibility = Visibility.Hidden;
                     }
                     );
                 }
