@@ -1145,6 +1145,7 @@ namespace ModbusSynchFormTest
 
         public void send_files()
         {
+            masterSyncStruct.state_master = SlaveState.have_free_time;
             foreach (var path in pathFiles)
             {
 
