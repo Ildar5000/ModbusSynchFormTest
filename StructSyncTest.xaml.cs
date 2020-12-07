@@ -892,7 +892,9 @@ namespace ModbusSynchFormTest
                 {
                     masterSyncStruct.stoptransfer_signal = false;
                 }
-                
+
+                masterSyncStruct.state_master = SlaveState.have_free_time;
+
                 TestSendStruct testSendStruct;
 
                 testSendStruct.ab = textBox1.Text;
@@ -971,6 +973,8 @@ namespace ModbusSynchFormTest
 
                 testSendStruct.count2 = ab;
                 vc = new VMS(testSendStruct);
+
+                masterSyncStruct.state_master = SlaveState.have_free_time;
 
                 queueOf.master = masterSyncStruct;
                 try
@@ -1144,6 +1148,7 @@ namespace ModbusSynchFormTest
 
         public void send_files()
         {
+            masterSyncStruct.state_master = SlaveState.have_free_time;
             foreach (var path in pathFiles)
             {
 
