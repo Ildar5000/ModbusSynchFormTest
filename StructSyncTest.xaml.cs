@@ -893,7 +893,7 @@ namespace ModbusSynchFormTest
                 {
                     masterSyncStruct.stoptransfer_signal = false;
                 }
-                
+                masterSyncStruct.state_master = SlaveState.have_free_time;
                 TestSendStruct testSendStruct;
 
                 testSendStruct.ab = textBox1.Text;
@@ -969,7 +969,7 @@ namespace ModbusSynchFormTest
                 {
                     ab[i] = rand.Next(0, 100);
                 }
-
+                masterSyncStruct.state_master = SlaveState.have_free_time;
                 testSendStruct.count2 = ab;
                 vc = new VMS(testSendStruct);
 
