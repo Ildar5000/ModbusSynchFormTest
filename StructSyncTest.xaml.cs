@@ -891,9 +891,10 @@ namespace ModbusSynchFormTest
                 if (masterSyncStruct!=null)
                 {
                     masterSyncStruct.stoptransfer_signal = false;
+                    masterSyncStruct.state_master = SlaveState.have_free_time;
                 }
 
-                masterSyncStruct.state_master = SlaveState.have_free_time;
+                
 
                 TestSendStruct testSendStruct;
 
@@ -954,6 +955,7 @@ namespace ModbusSynchFormTest
                 if (masterSyncStruct != null)
                 {
                     masterSyncStruct.stoptransfer_signal = false;
+                    masterSyncStruct.state_master = SlaveState.have_free_time;
                 }
 
                 Test4SendStruct testSendStruct;
@@ -974,7 +976,7 @@ namespace ModbusSynchFormTest
                 testSendStruct.count2 = ab;
                 vc = new VMS(testSendStruct);
 
-                masterSyncStruct.state_master = SlaveState.have_free_time;
+                
 
                 queueOf.master = masterSyncStruct;
                 try
@@ -1099,6 +1101,7 @@ namespace ModbusSynchFormTest
             if (masterSyncStruct!=null)
             {
                 masterSyncStruct.stoptransfer_signal = false;
+                masterSyncStruct.state_master = SlaveState.have_free_time;
                 sendfile = Task.Run(() => send_files());
                 ifbuttonsendfile();
             }
