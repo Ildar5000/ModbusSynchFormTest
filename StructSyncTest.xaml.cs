@@ -588,6 +588,7 @@ namespace ModbusSynchFormTest
                         queueOf.StopTransfer();
                         masterSyncStruct.StopTransfer();
                         masterSyncStruct.status_bar = 0;
+                        StopTransfer.Visibility = Visibility.Hidden;
                     }
                     );
                 }
@@ -893,9 +894,7 @@ namespace ModbusSynchFormTest
                     masterSyncStruct.stoptransfer_signal = false;
                     masterSyncStruct.state_master = SlaveState.have_free_time;
                 }
-
                 
-
                 TestSendStruct testSendStruct;
 
                 testSendStruct.ab = textBox1.Text;
@@ -972,11 +971,9 @@ namespace ModbusSynchFormTest
                 {
                     ab[i] = rand.Next(0, 100);
                 }
-
+                
                 testSendStruct.count2 = ab;
                 vc = new VMS(testSendStruct);
-
-                
 
                 queueOf.master = masterSyncStruct;
                 try
@@ -1101,7 +1098,6 @@ namespace ModbusSynchFormTest
             if (masterSyncStruct!=null)
             {
                 masterSyncStruct.stoptransfer_signal = false;
-                masterSyncStruct.state_master = SlaveState.have_free_time;
                 sendfile = Task.Run(() => send_files());
                 ifbuttonsendfile();
             }
