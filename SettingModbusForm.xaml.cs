@@ -139,8 +139,6 @@ namespace ModbusSynchFormTest
                     {
                         XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
                         settings = (SettingsModbus)formatter.Deserialize(fs);
-
-                        Console.WriteLine("Объект десериализован");
                     }
 
                     Com_name_txb.Text = settings.ComName;
@@ -179,9 +177,7 @@ namespace ModbusSynchFormTest
                             TypeViewModbus.SelectedIndex = 1;
                             TypeModbuscB.SelectedIndex = 1;
                             break;
-
                     }
-
 
                     foreach (var pt in typeParitylist)
                     {
@@ -201,7 +197,6 @@ namespace ModbusSynchFormTest
                         }
                     }
 
-                   
                     if (settings.defaulttypemodbus == 0)
                     {
                         MasterRB.IsChecked = true;
@@ -210,7 +205,6 @@ namespace ModbusSynchFormTest
                     {
                         SlaveRB.IsChecked = true;
                     }
-
 
                     int selectedtimecheck = settings.deltatimeManager;
 
@@ -254,7 +248,6 @@ namespace ModbusSynchFormTest
                     //time_rebootaftercrash.Add("2 минуты");
                     //time_rebootaftercrash.Add("5 минут");
 
-
                     switch (selectedtimecheckaftercrash_int)
                     {
                         case 10 * 1000:
@@ -277,7 +270,6 @@ namespace ModbusSynchFormTest
                             break;
                     }
 
-
                 }
                 catch(Exception ex)
                 {
@@ -288,7 +280,7 @@ namespace ModbusSynchFormTest
             }
             else
             {
-                Console.WriteLine("Создайте файл ");
+                logger.Warn("Создайте файл ");
             }
         }
 
@@ -318,7 +310,6 @@ namespace ModbusSynchFormTest
                 else
                 {
                     MessageBoxResult result = MessageBox.Show("Введите правильный Com", "My App", MessageBoxButton.OK);
-                    Console.WriteLine("Введите правильный Com");
                     logger.Warn("Введите правильный Com");
                     return;
                 }
@@ -536,7 +527,7 @@ namespace ModbusSynchFormTest
                 {
                     formatter.Serialize(fs, settings);
 
-                    logger.Info("Кофигурация создана");
+                    logger.Info("Кофигурация и настройки созданы");
                 }
                 this.Hide();
 
@@ -553,6 +544,7 @@ namespace ModbusSynchFormTest
 
         private void comboBox_MouseLeave(object sender, MouseEventArgs e)
         {
+            //в случае переключения сбрасываются на начальные 
             if (TypeModbuscB.SelectedIndex==2)
             {
 

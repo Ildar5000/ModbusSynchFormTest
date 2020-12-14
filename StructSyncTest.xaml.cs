@@ -78,6 +78,7 @@ namespace ModbusSynchFormTest
         int timecheckconnection = 2000;
         #endregion
 
+        public bool stoptransfer;
 
         #region init
         public StructSyncTest()
@@ -118,16 +119,18 @@ namespace ModbusSynchFormTest
                         {
                             radioButton1.IsChecked = true;
                         }
+                        //проверяем на правильность настроек, (возможно можно другим способом), пока не найден, в
+                        // в случае ошибки errorsettings становится true 
                         check_settings(msload);
                         if (errorsettings == true)
                         {
-                            logger.Info("Данные некорректны");
+                            logger.Info("Данные настроки Modbus некорректны, исправьте");
                         }
                         else
                         {
                             timecheckconnection = msload.deltatimeManager;
 
-                            logger.Info("Данные загружены");
+                            logger.Info("Настройки приложения и настроек загружены в программу");
                             errorsettings = false;
                         }
                         
@@ -147,7 +150,7 @@ namespace ModbusSynchFormTest
                         XmlSerializer formatter = new XmlSerializer(typeof(MMS));
                         msload = (MMS)formatter.Deserialize(fs);
 
-                        logger.Info("Данные загружены");
+                        logger.Info("Данные структры 1 загружены");
                     }
 
                     textBox1.Text = msload.testSendStruct.ab;
@@ -165,7 +168,7 @@ namespace ModbusSynchFormTest
                         XmlSerializer formatter = new XmlSerializer(typeof(VMS));
                         VMSload = (VMS)formatter.Deserialize(fs);
 
-                        logger.Info("Данные загружены");
+                        logger.Info("Данные структры 2 загружены");
                     }
 
                     textBox5.Text = VMSload.test4SendStruct.ab;
@@ -182,11 +185,11 @@ namespace ModbusSynchFormTest
             catch(Exception ex)
             {
                 logger.Error(ex);
-                logger.Error("Ошибка в конфигурации файла");
+                logger.Error("Ошибка в настройках или в данных");
             }
             
         }
-
+        // проверка на правильность
         public void check_settings(SettingsModbus settings)
         {
             #region checkuserwrite
@@ -321,7 +324,7 @@ namespace ModbusSynchFormTest
                     {
                         if (File.Exists(path) == true)
                         {
-                            logger.Info("Создание мастера");
+                            logger.Info("Создается Modbus Master");
                             masterSyncStruct = new MasterSyncStruct();
 
                             //masterSyncStruct.Open();
@@ -354,7 +357,7 @@ namespace ModbusSynchFormTest
                         {
                             MessageBoxResult result = MessageBox.Show("Создайте файл конфигурацию", "My App", MessageBoxButton.OK);
 
-                            logger.Info("Настройки мастера");
+                            logger.Info("Вызов окна настройки мастера");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
                             pessButtonStop();
@@ -376,14 +379,14 @@ namespace ModbusSynchFormTest
                     {
                         if (File.Exists(path) == true)
                         {
-                            logger.Info("Создание Slave");
+                            logger.Info("Создается Modbus Slave");
                             slaveSyncSruct = new SlaveSyncSruct();
 
                             //Ловим при обработке (произвольная структура)
                             ms = new MMS();
                             vc = new VMS();
 
-                            logger.Info("Создание подписок");
+                            logger.Info("Подписывание на события от Modbus Master");
                             slaveSyncSruct.SignalFormedMetaClass += ms.ExecutionProcessingReguest;
                             slaveSyncSruct.SignalFormedMetaClass += vc.ExecutionProcessingReguest;
 
@@ -416,7 +419,7 @@ namespace ModbusSynchFormTest
                         else
                         {
                             MessageBoxResult result = MessageBox.Show("Создайте файл конфигурацию", "My App", MessageBoxButton.OK);
-                            logger.Info("Настройки Slave");
+                            logger.Info("Вызов окна настройки Slave");
                             SettingModbusForm settingModbusForm = new SettingModbusForm(this);
                             settingModbusForm.Show();
                             pessButtonStop();
@@ -456,6 +459,8 @@ namespace ModbusSynchFormTest
                         managerConnection.Abort();
                     }
                     pessButtonStop();
+
+                    logger.Warn("Пользователь отключил Modbus Master");
                 }
 
                 if (radioButton1.IsChecked == true && slaveSyncSruct != null)
@@ -468,6 +473,7 @@ namespace ModbusSynchFormTest
                         managerConnection.Abort();
                     }
                     pessButtonStop();
+                    logger.Warn("Пользователь отключил Modbus Slave");
                 }
 
             }
@@ -476,7 +482,7 @@ namespace ModbusSynchFormTest
         }
 
  
-        public bool stoptransfer;
+        
 
         #region buttonhideorview and update
         private void HideButtonsIfConnectionMaster()
@@ -541,6 +547,7 @@ namespace ModbusSynchFormTest
             ClearSelectbr.IsEnabled = true;
         }
 
+        //здесь происходит обратка progressbara в отдельном потоке
         private void timerprogressbar()
         {
             double value = 0;
@@ -634,7 +641,7 @@ namespace ModbusSynchFormTest
                 Thread.Sleep(1000);
             }         
         }
-
+        //здесь происходит обратка progressbara в отдельном потоке
         private void timerprogressbarSlave()
         {
             double value = 0;
@@ -652,7 +659,8 @@ namespace ModbusSynchFormTest
                         {
                             ProgressSendFile.Value = 0;
                             ifbuttonsendfileend();
-                            slaveSyncSruct.StopTransfer();
+                            slaveSyncSruct.StopTransferBecauseNoConnection();
+                            StopTransfer.Visibility = Visibility.Hidden;
                         }
                         );
                     }
@@ -724,11 +732,17 @@ namespace ModbusSynchFormTest
 
         }
 
+        /// <summary>
+        /// ОБновление Radiobutton после возращение из настроек
+        /// </summary>
         public void UpdateRadio()
         {
             loadsetings();
         }
-
+        
+        /// <summary>
+        /// Проверка соединения
+        /// </summary>
         public void CheckConnection()
         {
             while (true)
@@ -795,9 +809,7 @@ namespace ModbusSynchFormTest
                 using (FileStream fs = new FileStream(fullname, FileMode.Create))
                 {
                     destination.Position = 0;
-                    destination.CopyTo(fs);
-                    
-                    
+                    destination.CopyTo(fs); 
                 }
                 try
                 {
@@ -839,8 +851,6 @@ namespace ModbusSynchFormTest
             using (FileStream fs = new FileStream("dataSaveStruct2.xml", FileMode.Create))
             {
                 XMLformatter.Serialize(fs, v1);
-
-                Console.WriteLine("Объект сериализован");
             }
         }
 
@@ -862,8 +872,6 @@ namespace ModbusSynchFormTest
             using (FileStream fs = new FileStream("dataSaveStruct1.xml", FileMode.Create))
             {
                 XMLformatter.Serialize(fs, m1);
-
-                Console.WriteLine("Объект сериализован");
             }
         }
 
@@ -882,7 +890,16 @@ namespace ModbusSynchFormTest
         {         
             sendfirst_struct();
         }
-
+        
+        /// <summary>
+        /// 2 структура
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            structsecond_struct();
+        }
 
         #region sendstruct
         private void sendfirst_struct()
@@ -892,7 +909,9 @@ namespace ModbusSynchFormTest
                 if (masterSyncStruct!=null)
                 {
                     masterSyncStruct.stoptransfer_signal = false;
+                    //Костыль в случае если вдруг мастер не будет свободен, надо освобождать для отправки
                     masterSyncStruct.state_master = SlaveState.have_free_time;
+                    queueOf.master = masterSyncStruct;
                 }
                 
                 TestSendStruct testSendStruct;
@@ -903,7 +922,6 @@ namespace ModbusSynchFormTest
                 testSendStruct.name = textBox4.Text;
 
                 ms = new MMS(testSendStruct);
-                queueOf.master = masterSyncStruct;
                 try
                 {
                     XmlSerializer XMLformatter = new XmlSerializer(typeof(MMS));
@@ -912,8 +930,6 @@ namespace ModbusSynchFormTest
                     using (FileStream fs = new FileStream("dataSaveStruct1.xml", FileMode.Create))
                     {
                         XMLformatter.Serialize(fs, ms);
-
-                        logger.Info("Данные примены");
                     }
 
                     if (masterSyncStruct != null)
@@ -932,16 +948,15 @@ namespace ModbusSynchFormTest
                         outStream = masterSyncStruct.Compress(stream, false);
 
                         // отправка данных 
-                       
-
                         queueOf.AddQueue(outStream);
-                        logger.Info("Данные добавлены в очереди");
+                        logger.Info("Структура 1 добавлена в очередь на отправку");
                         //masterSyncStruct.send_multi_message(outStream);
                     }
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex);
+                    logger.Error("Не удалось отправить данные");
                 }
             }
         }
@@ -954,7 +969,10 @@ namespace ModbusSynchFormTest
                 if (masterSyncStruct != null)
                 {
                     masterSyncStruct.stoptransfer_signal = false;
+                    //Костыль в случае если вдруг мастер не будет свободен, надо освобождать для отправки
                     masterSyncStruct.state_master = SlaveState.have_free_time;
+
+                    queueOf.master = masterSyncStruct;
                 }
 
                 Test4SendStruct testSendStruct;
@@ -975,7 +993,7 @@ namespace ModbusSynchFormTest
                 testSendStruct.count2 = ab;
                 vc = new VMS(testSendStruct);
 
-                queueOf.master = masterSyncStruct;
+                
                 try
                 {
                     XmlSerializer XMLformatter = new XmlSerializer(typeof(VMS));
@@ -984,8 +1002,6 @@ namespace ModbusSynchFormTest
                     using (FileStream fs = new FileStream("dataSaveStruct2.xml", FileMode.Create))
                     {
                         XMLformatter.Serialize(fs, vc);
-
-                        Console.WriteLine("Объект сериализован");
                     }
 
                     if (masterSyncStruct != null)
@@ -1002,30 +1018,19 @@ namespace ModbusSynchFormTest
 
                         // отправка данных 
                         queueOf.AddQueue(oustream);
-                        logger.Info("Данные добавлены в очереди");
+                        logger.Info("Структура 2 добавлена в очередь на отправку");
                     }
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex);
+                    logger.Error("Не удалось отправить данные");
                 }
             }
         }
 
         #endregion
 
-
-        /// <summary>
-        /// 2 структура
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button3_Click(object sender, RoutedEventArgs e)
-        {
-            structsecond_struct();
-        }
-
-        
 
         /// <summary>
         /// Синхронизировать все
@@ -1362,7 +1367,7 @@ namespace ModbusSynchFormTest
                         XmlSerializer formatter = new XmlSerializer(typeof(SettingsModbus));
                         msload.defaulttypemodbus = defaulttypemodbus;
                         formatter.Serialize(fs, msload);
-                        logger.Info("Кофигурация создана");
+                        logger.Info("Кофигурация обновлена после завершения программы");
                     }
                 }
             }
