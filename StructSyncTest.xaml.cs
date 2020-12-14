@@ -130,7 +130,7 @@ namespace ModbusSynchFormTest
                         {
                             timecheckconnection = msload.deltatimeManager;
 
-                            logger.Info("Настройки приложения и настроек загружены в программу");
+                            logger.Info("Настройки приложения загружены в программу");
                             errorsettings = false;
                         }
                         
@@ -1166,7 +1166,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
-                    logger.Warn("откройте файл");
+                    logger.Warn("Откройте файл");
                 }
             }
 
@@ -1191,7 +1191,7 @@ namespace ModbusSynchFormTest
                 }
                 else
                 {
-                    logger.Warn("откройте файл");
+                    logger.Warn("Откройте файл");
                 }
             }
         }
@@ -1211,7 +1211,7 @@ namespace ModbusSynchFormTest
 
                     if (path != "")
                     {
-                        logger.Info("Файл готовится к отправка"+ path);
+                        logger.Info("Файл готовится к отправке "+ path);
                         //porok = new Thread(timerprogressbar);
                         //new Thread(() => fileread(path, destination, valuefile)).Start();
                         //sendfile = Task.Run(() => fileread(path, destination, valuefile, attributes, dtFirstCreate, dTLASTWRITE));
@@ -1253,7 +1253,7 @@ namespace ModbusSynchFormTest
                     }
                     else
                     {
-                        logger.Warn("откройте файл");
+                        logger.Warn("Откройте файл");
                     }
 
                 }
