@@ -294,6 +294,7 @@ namespace ModbusSynchFormTest
             }
             catch (Exception ex)
             {
+                logger.Error(ex);
                 errorsettings = true;
             }
             #endregion
